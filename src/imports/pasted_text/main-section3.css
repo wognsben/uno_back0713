@@ -1,0 +1,1465 @@
+/* 메인페이지-3번 섹션 */
+
+position: absolute;
+width: 1440px;
+height: 1421px;
+
+
+
+/* Frame 7 */
+
+position: absolute;
+width: 1440px;
+height: 1421px;
+
+background: #FFFFFF;
+
+
+/* 섹션 03 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+position: absolute;
+width: 300px;
+height: 44px;
+left: 50px;
+top: 44px;
+
+
+
+/* Group 6 */
+
+width: 280px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 03 */
+
+position: absolute;
+width: 34px;
+height: 24px;
+left: 10px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* WHAT NEXT */
+
+position: absolute;
+width: 163px;
+height: 24px;
+left: 127px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 30px;
+height: 0px;
+left: 76px;
+top: 22px;
+
+border: 1px solid #000000;
+
+
+/* 03 스크롤 기반 슬라이더 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 30px;
+
+position: absolute;
+width: 2245px;
+height: 425px;
+left: 50px;
+top: 148px;
+
+background: #FFFFFF;
+
+
+/* 도형 1 */
+
+width: 334px;
+height: 405px;
+
+background: #FCC800;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+position: absolute;
+width: 285px;
+height: 307px;
+left: 24px;
+top: 49px;
+
+
+
+/* Group 11 */
+
+position: absolute;
+width: 260px;
+height: 240px;
+left: 24px;
+top: 49px;
+
+
+
+/* SEMI PACKAGE */
+
+position: absolute;
+width: 260px;
+height: 70px;
+left: 24px;
+top: 49px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 40px;
+/* 또는 83% */
+display: flex;
+align-items: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 81.5px;
+height: 0px;
+left: 24px;
+top: 163px;
+
+border: 1px solid #000000;
+
+
+/* 프리미엄 세미패키지 여행 */
+
+position: absolute;
+width: 180px;
+height: 16px;
+left: 24px;
+top: 196px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 24px;
+top: 289px;
+
+border: 2px solid #000000;
+
+
+/* Group 12 */
+
+position: absolute;
+width: 111px;
+height: 119px;
+left: 198px;
+top: 237px;
+
+
+
+/* 로고 1 */
+
+position: absolute;
+width: 60px;
+height: 34px;
+left: 224px;
+top: 299px;
+
+background: url(로고.png);
+
+
+/* Ellipse 11 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 80px;
+height: 80px;
+left: 214px;
+top: 276px;
+
+border: 2px solid #151515;
+
+
+/* Text on a Path */
+
+position: absolute;
+width: 111px;
+height: 79px;
+left: 198px;
+top: 237px;
+
+
+
+/* P */
+
+position: absolute;
+width: 12.68px;
+height: 55.34px;
+left: 198px;
+top: 262.19px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.58, -0.81, 0.63, 0.77, 0, 0);
+
+
+/* R */
+
+position: absolute;
+width: 14.52px;
+height: 58.76px;
+left: 209.83px;
+top: 247.7px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.76, -0.65, 0.44, 0.9, 0, 0);
+
+
+/* E */
+
+position: absolute;
+width: 12.43px;
+height: 61.36px;
+left: 225.21px;
+top: 240.01px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.91, -0.41, 0.25, 0.97, 0, 0);
+
+
+/* M */
+
+position: absolute;
+width: 18.01px;
+height: 62.71px;
+left: 242.09px;
+top: 237px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(1, -0.06, 0.03, 1, 0, 0);
+
+
+/* I */
+
+position: absolute;
+width: 7.29px;
+height: 62.28px;
+left: 255.48px;
+top: 238.25px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.97, 0.24, -0.14, 0.99, 0, 0);
+
+
+/* U */
+
+position: absolute;
+width: 15.23px;
+height: 60.51px;
+left: 257.37px;
+top: 241.7px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.86, 0.51, -0.33, 0.95, 0, 0);
+
+
+/* M */
+
+position: absolute;
+width: 20.63px;
+height: 56.67px;
+left: 263.62px;
+top: 253.54px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+transform: matrix(0.65, 0.76, -0.56, 0.83, 0, 0);
+
+
+/* 도형 2 */
+
+width: 405px;
+height: 405px;
+
+background: #DAD5D5;
+border-radius: 1000px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+position: absolute;
+width: 260px;
+height: 240px;
+left: 72px;
+top: 82.5px;
+
+
+
+/* Group 11 */
+
+position: absolute;
+width: 260px;
+height: 240px;
+left: 72px;
+top: 82.5px;
+
+
+
+/* DAILY TOUR */
+
+position: absolute;
+width: 260px;
+height: 70px;
+left: 72px;
+top: 82.5px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 40px;
+/* 또는 83% */
+display: flex;
+align-items: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 81.5px;
+height: 0px;
+left: 72px;
+top: 196.5px;
+
+border: 1px solid #151515;
+
+
+/* 일일 투어 */
+
+position: absolute;
+width: 180px;
+height: 16px;
+left: 72px;
+top: 229.5px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 72px;
+top: 322.5px;
+
+border: 2px solid #151515;
+
+
+/* image 32 */
+
+position: absolute;
+width: 434px;
+height: 408px;
+left: 52px;
+top: 72px;
+
+background: url(bg_removal [Background removed].png);
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* 도형 9 */
+
+width: 334px;
+height: 405px;
+
+background: #DAD5D5;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+position: absolute;
+width: 286px;
+height: 344.5px;
+left: 24px;
+top: 30.25px;
+
+
+
+/* Group 11 */
+
+position: absolute;
+width: 286px;
+height: 344.5px;
+left: 24px;
+top: 30.25px;
+
+
+
+/* CURATED JOURNEYS */
+
+position: absolute;
+width: 286px;
+height: 100px;
+left: 24px;
+top: 30.25px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 40px;
+/* 또는 83% */
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 82px;
+height: 0px;
+left: 24px;
+top: 147.75px;
+
+border: 1px solid #151515;
+
+
+/* 이탈리아 여행 가이드 & 스토리 */
+
+position: absolute;
+width: 286px;
+height: 150px;
+left: 24px;
+top: 224.75px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 26px;
+/* 또는 162% */
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 276px;
+top: 374.25px;
+
+border: 2px solid #151515;
+
+
+/* 도형 8 */
+
+width: 334px;
+height: 405px;
+
+background: #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+position: absolute;
+width: 286px;
+height: 344.5px;
+left: 24px;
+top: 30.25px;
+
+
+
+/* Group 11 */
+
+position: absolute;
+width: 286px;
+height: 344.5px;
+left: 24px;
+top: 30.25px;
+
+
+
+/* TALK TO US */
+
+position: absolute;
+width: 286px;
+height: 100px;
+left: 24px;
+top: 30.25px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 40px;
+/* 또는 83% */
+letter-spacing: -0.03em;
+
+color: #FFFFFF;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 82px;
+height: 0px;
+left: 24px;
+top: 147.75px;
+
+background: #FFFFFF;
+border: 1px solid #FFFFFF;
+
+
+/* 카카오톡으로 간편하게 문의하기 */
+
+position: absolute;
+width: 286px;
+height: 150px;
+left: 24px;
+top: 224.75px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 26px;
+/* 또는 162% */
+letter-spacing: -0.03em;
+
+color: #FFFFFF;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 276px;
+top: 374.25px;
+
+border: 2px solid #FFFFFF;
+
+
+/* 도형 6 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 15px 24px;
+gap: 10px;
+
+width: 334px;
+height: 405px;
+
+background: #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+width: 286px;
+height: 344.5px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 11 */
+
+position: absolute;
+width: 286px;
+height: 344.5px;
+left: 24px;
+top: 30.25px;
+
+
+
+/* 우노트래블 가이드 모집! */
+
+position: absolute;
+width: 286px;
+height: 100px;
+left: 24px;
+top: 30.25px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 48px;
+/* 또는 100% */
+letter-spacing: -0.03em;
+
+color: #FFFFFF;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 82px;
+height: 0px;
+left: 24px;
+top: 147.75px;
+
+background: #FFFFFF;
+border: 1px solid #FFFFFF;
+
+
+/* 우노트래블과 함께할 로마현지 가이드를 모집합니다! 여행을 사랑하고! 낭만과 열정있는! 당신이 필요해요! */
+
+position: absolute;
+width: 286px;
+height: 150px;
+left: 24px;
+top: 224.75px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 26px;
+/* 또는 162% */
+letter-spacing: -0.03em;
+
+color: #FFFFFF;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 276px;
+top: 374.25px;
+
+border: 2px solid #FFFFFF;
+
+
+/* 도형 7 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 15px 24px;
+gap: 10px;
+
+width: 334px;
+height: 405px;
+
+background: #F4FE44;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 5;
+flex-grow: 0;
+
+
+/* Group 13 */
+
+width: 286px;
+height: 344px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 11 */
+
+position: absolute;
+width: 286px;
+height: 344px;
+left: 24px;
+top: 30.5px;
+
+
+
+/* 페리투어: 투어소개 */
+
+position: absolute;
+width: 286px;
+height: 100px;
+left: 24px;
+top: 30.5px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 48px;
+/* 또는 100% */
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 5 */
+
+position: absolute;
+width: 82px;
+height: 0px;
+left: 24px;
+top: 148px;
+
+border: 1px solid #151515;
+
+
+/* [우노트래블X마이리얼트립] 반짝이는 지중해와 함께 원데이 바캉스! 페리투어를 오픈했습니다. */
+
+position: absolute;
+width: 286px;
+height: 150px;
+left: 24px;
+top: 224.25px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 26px;
+/* 또는 162% */
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+
+/* Vector 6 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 276px;
+top: 374.5px;
+
+border: 2px solid #151515;
+
+
+/* Frame 316 */
+
+position: absolute;
+width: 866px;
+height: 100px;
+left: 60px;
+top: 688px;
+
+
+
+/* WHAT NEXT? */
+
+position: absolute;
+width: 866px;
+height: 100px;
+left: 0px;
+top: 0px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 140px;
+line-height: 40px;
+/* 또는 29% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+
+/* Frame 20 */
+
+position: absolute;
+width: 1440px;
+height: 526px;
+left: 0px;
+top: 894px;
+
+background: #FFFFFF;
+
+
+/* Frame 315 */
+
+position: absolute;
+width: 798px;
+height: 721px;
+left: -2px;
+top: 0px;
+
+
+
+/* image 36 */
+
+position: absolute;
+width: 798px;
+height: 721px;
+left: 0px;
+top: 0px;
+
+background: url(image.png);
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Frame 16 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 30px 10px;
+gap: 14px;
+
+position: absolute;
+width: 316px;
+height: 406px;
+left: 0px;
+top: -1px;
+
+background: #67CE4B;
+
+
+/* 우노트래블 X 헤이트래블 */
+
+width: 300px;
+height: 50px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 28px;
+line-height: 40px;
+/* 또는 143% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 유럽 유심 VODAFONE/THREE/02 */
+
+width: 300px;
+height: 69px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector 7 */
+
+width: 300px;
+height: 0px;
+
+border: 1px solid #000000;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* ㆍ이탈리아 로마 ㆍ서울 홍대 수령 ㆍ인천ㆍ김포ㆍ김해 공항 수령 ㆍ택배 배송 */
+
+width: 300px;
+height: 216px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+
+color: #FFFFFF;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Frame 20 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 10px;
+gap: 14px;
+
+position: absolute;
+width: 320px;
+height: 285px;
+left: 316px;
+top: 121px;
+
+background: #D5EDFF;
+
+
+/* INSURANCE */
+
+width: 300px;
+height: 50px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 54px;
+line-height: 40px;
+/* 또는 74% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 여행자 보험 */
+
+width: 292px;
+height: 41px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 36px;
+line-height: 40px;
+/* 또는 111% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Travel with confidence, knowing you're protected every step of the way. From unexpected delays to medical emergencies abroad, comprehensive coverage ensures peace of mind throughout your journey. */
+
+width: 300px;
+height: 136px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 14px;
+/* 또는 117% */
+display: flex;
+align-items: center;
+letter-spacing: 0.06em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 19 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px;
+gap: 9px;
+
+position: absolute;
+width: 320px;
+height: 405px;
+left: 636px;
+top: 121px;
+
+background: #FCC800;
+
+
+/* REDAY TO GO */
+
+width: 296px;
+height: 150px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 54px;
+line-height: 54px;
+/* 또는 100% */
+display: flex;
+align-items: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Ellipse 12 */
+
+width: 150px;
+height: 137px;
+
+background: url(image.png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 출발 전 준비물 BEFORE DEPARTURE */
+
+width: 292px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 36px;
+line-height: 30px;
+/* 또는 83% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 23 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+
+position: absolute;
+width: 320px;
+height: 526px;
+left: 956px;
+top: 0px;
+
+background: #FFFFFF;
+
+
+/* Frame 27 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 320px;
+height: 122px;
+
+background: #DAD5D5;
+border-radius: 0px 0px 100px 0px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* NOTICE 공지사항 */
+
+width: 296px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 54px;
+line-height: 30px;
+/* 또는 56% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 26 */
+
+width: 320px;
+height: 100px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* image 33 */
+
+position: absolute;
+width: 182px;
+height: 182px;
+left: 0px;
+top: 0px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* Frame 25 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px 0px 10px;
+
+width: 320px;
+height: 306px;
+
+background: #DAD5D5;
+border-radius: 0px 100px 0px 0px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* REVIEW 여행후기 */
+
+width: 296px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 54px;
+line-height: 30px;
+/* 또는 56% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: -0.03em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* image 30 */
+
+width: 336px;
+height: 336px;
+
+background: url(bg_removal [Background removed].png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 22 */
+
+position: absolute;
+width: 164px;
+height: 777px;
+left: 1276px;
+top: 643px;
+
+background: #FFFFFF;
+
+
+/* UNO */
+
+position: absolute;
+width: 777px;
+height: 164px;
+left: 4px;
+top: 0px;
+
+font-family: 'Source Serif Pro';
+font-style: normal;
+font-weight: 700;
+font-size: 240px;
+line-height: 40px;
+/* 또는 17% */
+display: flex;
+align-items: flex-end;
+text-align: right;
+letter-spacing: 0.14em;
+
+color: #151515;
+
+transform: rotate(-90deg);

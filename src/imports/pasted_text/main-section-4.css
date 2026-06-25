@@ -1,0 +1,1191 @@
+/* 메인페이지-4번 섹션 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+position: absolute;
+width: 1440px;
+height: 1352px;
+
+
+
+/* 4번 섹션 */
+
+width: 1440px;
+height: 1352px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 43 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+position: absolute;
+width: 1360px;
+height: 60px;
+left: 50px;
+top: 44px;
+
+background: #FFFFFF;
+
+
+/* 섹션 03 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 300px;
+height: 44.5px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 6 */
+
+width: 281px;
+height: 24.5px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 04 */
+
+position: absolute;
+width: 34px;
+height: 24px;
+left: 10px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* CONTACT */
+
+position: absolute;
+width: 164px;
+height: 24px;
+left: 127px;
+top: 10.5px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 30px;
+height: 0px;
+left: 76px;
+top: 22px;
+
+border: 1px solid #000000;
+
+
+/* 섹션 4 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: flex-end;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 300px;
+height: 60px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 6 */
+
+width: 164px;
+height: 40px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Need help planning Italy? We’re here for you */
+
+position: absolute;
+width: 164px;
+height: 40px;
+left: 126px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 26px;
+/* 또는 162% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Frame 29 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+gap: 50px;
+
+position: absolute;
+width: 1250px;
+height: 570px;
+left: 95px;
+top: 166px;
+
+background: #FFFFFF;
+
+
+/* Frame 28 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+gap: 40px;
+
+width: 550px;
+height: 570px;
+
+background: #FFFFFF;
+border-right: 1px solid rgba(21, 21, 21, 0.6);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* READY FOR TRAVEL? */
+
+width: 550px;
+height: 370px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 120px;
+line-height: 140px;
+/* 또는 117% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 8 */
+
+width: 62px;
+height: 0px;
+
+border: 1px solid #000000;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 당신만의 여행을 시작하세요 우노트래블과 함께하는 프리미엄 여행가이드 */
+
+width: 550px;
+height: 120px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 30px;
+/* 또는 150% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 30 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 650px;
+height: 570px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 28 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 40px;
+
+margin: 0 auto;
+width: 650px;
+height: 570px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 31 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 1px 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 650px;
+height: 62px;
+
+background: #FFFFFF;
+border-bottom: 1px solid rgba(21, 21, 21, 0.6);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* TALK TO UNO */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 140px;
+/* 또는 700% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 32 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 1px 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 650px;
+height: 115px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 33 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 148px;
+height: 88px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* KOREA */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 20px;
+/* 또는 100% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 9 */
+
+width: 20px;
+height: 0px;
+
+border: 1px solid #000000;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 031-998-2136 */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 140px;
+/* 또는 700% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Vector 10 */
+
+margin: 0 auto;
+width: 0px;
+height: 86px;
+
+border: 1px solid rgba(21, 21, 21, 0.1);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 148px;
+height: 88px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* KOREA */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 20px;
+/* 또는 100% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 9 */
+
+width: 20px;
+height: 0px;
+
+border: 1px solid #000000;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 031-998-2136 */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 140px;
+/* 또는 700% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Vector 11 */
+
+margin: 0 auto;
+width: 0px;
+height: 86px;
+
+border: 1px solid rgba(21, 21, 21, 0.1);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Frame 35 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 148px;
+height: 88px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* FRANCE */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 20px;
+/* 또는 100% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 9 */
+
+width: 20px;
+height: 0px;
+
+border: 1px solid #000000;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 031-998-2136 */
+
+width: 128px;
+height: 24px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 140px;
+/* 또는 700% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 인스타 */
+
+margin: 0 auto;
+width: 640px;
+height: 200px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 292 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 640px;
+height: 200px;
+left: 5px;
+top: 370px;
+
+background: rgba(255, 221, 91, 0.85);
+border: 1px solid rgba(182, 166, 154, 0.4);
+border-radius: 15px;
+
+
+/* Group 303 */
+
+position: absolute;
+width: 425px;
+height: 62.5px;
+left: 61px;
+top: 7px;
+
+
+
+/* KAKAO TALK 상담 가능 시간: 평일 10:00 - 17:00(주말, 공휴일 휴무) */
+
+position: absolute;
+width: 425px;
+height: 62px;
+left: 61px;
+top: 7px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 40px;
+/* 또는 250% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+
+/* Vector 77 */
+
+position: absolute;
+width: 30px;
+height: 0px;
+left: 62px;
+top: 69.5px;
+
+border: 2px solid #C5B175;
+
+
+/* Group 311 */
+
+position: absolute;
+width: 412px;
+height: 70px;
+left: 61px;
+top: 90px;
+
+
+
+/* 문의하기 */
+
+position: absolute;
+width: 412px;
+height: 70px;
+left: 61px;
+top: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 64px;
+line-height: 40px;
+/* 또는 62% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+
+/* Vector 13 */
+
+position: absolute;
+width: 60px;
+height: 0px;
+left: 336px;
+top: 123.44px;
+
+border: 4px solid #151515;
+
+
+/* Group 312 */
+
+position: absolute;
+width: 244px;
+height: 40px;
+left: 381px;
+top: 153px;
+
+
+
+/* 카톡 로고 */
+
+position: absolute;
+width: 40px;
+height: 40px;
+left: 535px;
+top: 153px;
+
+background: url(free-icon-kakao-talk-3992630.png);
+
+
+/* Group 304 */
+
+position: absolute;
+width: 244px;
+height: 21px;
+left: 381px;
+top: 172px;
+
+
+
+/* Vector 78 */
+
+position: absolute;
+width: 0px;
+height: 21px;
+left: 381px;
+top: 172px;
+
+background: #C5B175;
+border: 1px solid #C5B175;
+
+
+/* 우노트래블 */
+
+position: absolute;
+width: 216px;
+height: 18px;
+left: 409px;
+top: 173.5px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+
+/* 인스타그램 로고 */
+
+position: absolute;
+width: 40px;
+height: 40px;
+left: 585px;
+top: 153px;
+
+background: url(free-icon-instagram-logo-87390.png);
+
+
+/* Frame 55 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+position: absolute;
+width: 1420px;
+height: 562px;
+left: 10px;
+top: 800px;
+
+background: #FFFFFF;
+
+
+/* Frame 53 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+margin: 0 auto;
+width: 1400px;
+height: 7px;
+
+background: #FFFFFF;
+border-top: 1px solid rgba(21, 21, 21, 0.6);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 45 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+margin: 0 auto;
+width: 1384px;
+height: 500px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 50 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+
+width: 448px;
+height: 454px;
+
+background: rgba(255, 255, 255, 0.1);
+box-shadow: 0px 10px 4px rgba(21, 21, 21, 0.25);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 49 */
+
+width: 428px;
+height: 324px;
+
+background: url(image 22 (1).png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Group 15 */
+
+width: 200px;
+height: 110px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* AMALFI COAST */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 334px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* 아말피코스트 */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 394px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Frame 53 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+
+width: 448px;
+height: 454px;
+
+background: rgba(255, 255, 255, 0.1);
+box-shadow: 0px 10px 4px rgba(21, 21, 21, 0.25);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 49 */
+
+width: 428px;
+height: 324px;
+
+background: url(image 22 (1).png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Group 15 */
+
+width: 200px;
+height: 110px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* FLORENCE */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 334px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* 플로랜스 */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 394px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Frame 54 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+
+width: 448px;
+height: 454px;
+
+background: rgba(255, 255, 255, 0.1);
+box-shadow: 0px 10px 4px rgba(21, 21, 21, 0.25);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 49 */
+
+width: 428px;
+height: 324px;
+
+background: url(image 22 (1).png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Group 15 */
+
+width: 200px;
+height: 110px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* POMPEII */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 334px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* 품페이 */
+
+position: absolute;
+width: 200px;
+height: 50px;
+left: 10px;
+top: 394px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+

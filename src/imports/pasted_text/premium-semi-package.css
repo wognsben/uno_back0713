@@ -1,0 +1,852 @@
+/* Frame 7 */
+
+position: absolute;
+width: 1440px;
+height: 1245px;
+
+background: #FFFFFF;
+
+
+/* Frame 8 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+position: absolute;
+width: 300px;
+height: 44px;
+left: 50px;
+top: 44px;
+
+
+
+/* Group 6 */
+
+width: 280px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 02 */
+
+position: absolute;
+width: 39.5px;
+height: 24px;
+left: 10px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* JOURNEYS */
+
+position: absolute;
+width: 144.07px;
+height: 24px;
+left: 145.93px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Vector 2 */
+
+position: absolute;
+width: 30px;
+height: 0px;
+left: 86px;
+top: 22px;
+
+border: 1px solid #000000;
+
+
+/* PREMIUM SEMI-PACKAGE */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+position: absolute;
+width: 476px;
+height: 590px;
+left: 50px;
+top: 208px;
+
+
+
+/* 이탈리아 일주 9박 11일 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 456px;
+height: 100px;
+
+border-bottom: 1px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Ellipse 14 */
+
+width: 10px;
+height: 10px;
+
+background: #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 01 */
+
+width: 48px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 600;
+font-size: 48px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+width: 378px;
+height: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 7박 9일 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 456px;
+height: 100px;
+
+border-bottom: 1px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 02 */
+
+width: 48px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 7박 9일 */
+
+width: 378px;
+height: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* [8-9]월 한정  이탈리아일주+돌로미티 11 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 456px;
+height: 100px;
+
+border-bottom: 1px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 03 */
+
+width: 48px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* [8-9]월 한정 이탈리아일주+돌로미티 11 */
+
+width: 378px;
+height: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 나의 두번째 이탈리아, 지중해의 황금빛 시칠리아 일주 9일 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 456px;
+height: 120px;
+
+border-bottom: 1px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 04 */
+
+width: 48px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 나의 두번째 이탈리아, 지중해의 황금빛 시칠리아 일주 9일 */
+
+width: 378px;
+height: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 이탈리아 아트투어 일주 9박 11일 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 456px;
+height: 120px;
+
+border-bottom: 1px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* 05 */
+
+width: 48px;
+height: 80px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 48px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 아트투어 일주 9박 11일 */
+
+width: 378px;
+height: 90px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 314 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 100px;
+
+position: absolute;
+width: 890px;
+height: 354px;
+left: 675px;
+top: 208px;
+
+
+
+/* Frame 10 */
+
+width: 531px;
+height: 354px;
+
+background: #080000;
+border-radius: 14px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 11 */
+
+width: 531px;
+height: 354px;
+
+background: #000000;
+border-radius: 14px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 9 */
+
+position: absolute;
+width: 666px;
+height: 237px;
+left: 746px;
+top: 571px;
+
+
+
+/* 화살표(왼쪽) */
+
+position: absolute;
+width: 50px;
+height: 50px;
+left: 746px;
+top: 571px;
+
+
+
+/* Ellipse 10 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 50px;
+height: 50px;
+left: 746px;
+top: 571px;
+
+border: 1px solid #000000;
+
+
+/* Vector 3 */
+
+position: absolute;
+width: 16px;
+height: 0px;
+left: 763px;
+top: 596px;
+
+border: 2px solid #000000;
+
+
+/* 화살표(오른쪽) */
+
+position: absolute;
+width: 50px;
+height: 50px;
+left: 1362px;
+top: 571px;
+
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Ellipse 10 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 50px;
+height: 50px;
+left: 1362px;
+top: 571px;
+
+border: 1px solid #000000;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Vector 3 */
+
+position: absolute;
+width: 16px;
+height: 0px;
+left: 1379px;
+top: 596px;
+
+border: 2px solid #000000;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Group 8 */
+
+position: absolute;
+width: 300px;
+height: 80px;
+left: 929px;
+top: 601px;
+
+
+
+/* 이탈리아 일주 9박 11일 */
+
+position: absolute;
+width: 300px;
+height: 40px;
+left: 929px;
+top: 601px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 40px;
+/* 상자 높이와 동일 또는 167% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* 1/5 */
+
+position: absolute;
+width: 300px;
+height: 40px;
+left: 929px;
+top: 641px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 상자 높이와 동일 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Frame 13 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+position: absolute;
+width: 650px;
+height: 90px;
+left: 754px;
+top: 718px;
+
+
+
+/* VIP같은 세미 페키지 투어로 더 다양한 일정을 만나보세요. */
+
+width: 260px;
+height: 60px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector 4 */
+
+width: 0px;
+height: 60px;
+
+border: 2px solid #151515;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* SEMI-PACKAGE */
+
+width: 160px;
+height: 60px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 12 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 10px;
+gap: 10px;
+
+width: 180px;
+height: 70px;
+
+background: #FCC800;
+border-radius: 20px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 상세보기 → */
+
+width: 160px;
+height: 50px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* image 21 */
+
+position: absolute;
+width: 1515px;
+height: 906px;
+left: -106px;
+top: 808px;
+
+background: url(bg_removal [Background removed].png);
+filter: blur(50px);
+
+
+/* image 20 */
+
+position: absolute;
+width: 1440px;
+height: 447px;
+left: 0px;
+top: 798px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* Group 10 */
+
+position: absolute;
+width: 431px;
+height: 24px;
+left: 959px;
+top: 44px;
+
+
+
+/* PREMIUM SEMI-PACKAGE */
+
+position: absolute;
+width: 240px;
+height: 24px;
+left: 959px;
+top: 44px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* DAILY TOUR */
+
+position: absolute;
+width: 144px;
+height: 24px;
+left: 1246px;
+top: 44px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+

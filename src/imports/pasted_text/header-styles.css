@@ -1,0 +1,713 @@
+/* Frame 1 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+padding: 51px 55px 54px;
+gap: 40px;
+
+position: absolute;
+width: 1440px;
+height: 960px;
+
+background: #FFFFFF;
+
+
+/* 로그인 후, 헤더 최상단 섹션 */
+
+box-sizing: border-box;
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 10px 20px;
+gap: 10px;
+
+margin: 0 auto;
+width: 820px;
+height: 90px;
+
+background: #FFFFFF;
+border: 2px solid #E8E9E9;
+border-radius: 20px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 로고 1 */
+
+margin: 0 auto;
+width: 122px;
+height: 70px;
+
+background: url(로고.png);
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 311 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+gap: 20px;
+
+margin: 0 auto;
+width: 454px;
+height: 70px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* VIEWED */
+
+width: 80px;
+height: 30px;
+
+font-family: 'IBM Plex Mono';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* INFO */
+
+width: 80px;
+height: 30px;
+
+font-family: 'IBM Plex Mono';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* CONTACT */
+
+width: 84px;
+height: 30px;
+
+font-family: 'IBM Plex Mono';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 313 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 80px;
+height: 44px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* ***님 */
+
+width: 80px;
+height: 20px;
+
+font-family: 'IBM Plex Mono';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* MY PAGE */
+
+width: 80px;
+height: 20px;
+
+font-family: 'IBM Plex Mono';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 0px;
+/* 또는 0% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 2 */
+
+width: 30px;
+height: 30px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Ellipse 1 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 414px;
+top: 20px;
+
+background: #151515;
+
+
+/* Ellipse 4 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 414px;
+top: 32px;
+
+background: #151515;
+
+
+/* Ellipse 7 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 414px;
+top: 44px;
+
+background: #151515;
+
+
+/* Ellipse 2 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 426px;
+top: 20px;
+
+background: #151515;
+
+
+/* Ellipse 5 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 426px;
+top: 32px;
+
+background: #151515;
+
+
+/* Ellipse 8 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 426px;
+top: 44px;
+
+background: #151515;
+
+
+/* Ellipse 3 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 438px;
+top: 20px;
+
+background: #151515;
+
+
+/* Ellipse 6 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 438px;
+top: 32px;
+
+background: #151515;
+
+
+/* Ellipse 9 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 438px;
+top: 44px;
+
+background: #151515;
+
+
+/* Frame 4 */
+
+margin: 0 auto;
+width: 1330px;
+height: 725px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 3 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: 0px;
+top: 0px;
+
+
+
+/* card 1 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 210px;
+height: 480px;
+left: 0px;
+top: 2px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: 0px;
+top: 0px;
+
+background: url(image.png);
+
+
+/* card 8 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 210px;
+height: 320px;
+left: 810px;
+top: 162px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -809px;
+top: -165px;
+
+background: url(image.png);
+
+
+/* card 9 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 305px;
+height: 206px;
+left: 1025px;
+top: 276px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -1025px;
+top: -278px;
+
+background: url(image.png);
+
+
+/* card 10 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 310px;
+height: 266px;
+left: 1020px;
+top: 0px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -1020px;
+top: 0px;
+
+background: url(image.png);
+
+
+/* card 11 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 204px;
+height: 152px;
+left: 810px;
+top: 0px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -807px;
+top: 0px;
+
+background: url(image.png);
+
+
+/* card 12 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 254px;
+height: 256px;
+left: 551px;
+top: 0px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -552px;
+top: 0px;
+
+background: url(image.png);
+
+
+/* card 13 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 326px;
+height: 256px;
+left: 216px;
+top: 0px;
+
+background: rgba(255, 255, 255, 0.1);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* LA DOLCE VITA  Mediterranean Collection */
+
+position: absolute;
+width: 326px;
+height: 256px;
+left: 0px;
+top: 0px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 34px;
+/* 또는 106% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #151515;
+
+
+
+/* Frame 6 */
+
+position: absolute;
+width: 174px;
+height: 240px;
+left: 0px;
+top: 485px;
+
+
+
+/* card 3-y */
+
+position: absolute;
+width: 174px;
+height: 240px;
+left: 0px;
+top: 0px;
+
+background: #FCC800;
+border-radius: 20px;
+
+
+/* EST.2011  ITALY FRANCE SPAIN GREECE */
+
+position: absolute;
+width: 174px;
+height: 240px;
+left: 0px;
+top: 0px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 30px;
+/* 또는 125% */
+display: flex;
+align-items: center;
+text-align: center;
+letter-spacing: 0.03em;
+
+background: linear-gradient(180deg, #000000 0%, #666666 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+
+
+
+/* card 4 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 190px;
+height: 240px;
+left: 179px;
+top: 485px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -183px;
+top: -485px;
+
+background: url(image.png);
+
+
+/* card 5 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 246px;
+height: 240px;
+left: 374px;
+top: 485px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -375px;
+top: -485px;
+
+background: url(image.png);
+
+
+/* card 6 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 530px;
+height: 240px;
+left: 625px;
+top: 485px;
+
+background: rgba(0, 0, 0, 0.004);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -624px;
+top: -485px;
+
+background: url(image.png);
+
+
+/* card 7 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 170px;
+height: 240px;
+left: 1160px;
+top: 485px;
+
+background: rgba(255, 255, 255, 0.1);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+
+
+/* card 2 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 220px;
+height: 590px;
+left: 215px;
+top: 262px;
+
+background: rgba(166, 38, 38, 0.2);
+border: 3px solid #FFFFFF;
+border-radius: 18px;
+transform: rotate(90deg);
+
+
+/* image 10 */
+
+position: absolute;
+width: 1330px;
+height: 725px;
+left: -217px;
+top: -262px;
+
+background: url(image.png);
