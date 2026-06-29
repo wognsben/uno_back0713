@@ -1,7 +1,7 @@
 
-  # Header before Login
+  # uno web
 
-  This is a code bundle for Header before Login. The original project is available at https://www.figma.com/design/qmiWHJm8d9qYzwcV5bgpbz/Header-before-Login.
+  This is a code bundle for uno web. The original project is available at https://www.figma.com/design/qmiWHJm8d9qYzwcV5bgpbz/uno-web.
 
   ## Running the code
 

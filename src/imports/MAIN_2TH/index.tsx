@@ -124,7 +124,7 @@ function Group() {
 
 function Frame1() {
   return (
-    <div className="absolute content-stretch flex items-center left-[50px] overflow-clip p-[10px] top-[44px] w-[300px]">
+    <div className="absolute content-stretch flex items-center left-[120px] overflow-clip p-[10px] top-[44px] w-[300px]">
       <Group />
     </div>
   );
@@ -222,7 +222,7 @@ function PremiumSemiPackage({
   onChange: (index: number) => void;
 }) {
   return (
-    <div className="absolute content-stretch flex flex-col gap-[4px] h-[470px] items-start left-[50px] overflow-visible p-[10px] top-[208px]" data-name="PRODUCT CATEGORY LIST">
+    <div className="absolute content-stretch flex flex-col gap-[4px] h-[470px] items-start left-[120px] overflow-visible p-[10px] top-[208px]" data-name="PRODUCT CATEGORY LIST">
       {items.map((item, index) => (
         <PackageRow
           key={item.id}
@@ -307,7 +307,7 @@ function PreviewImage({
 
       const bottomX = index * 72;
       const bottomY = 382;
-      const sideX = 572;
+      const sideX = 702;
       const sideY = index * 61;
 
       gsap.to(thumbnail, {
@@ -325,7 +325,7 @@ function PreviewImage({
   }, [safeIndex, hasInteracted]);
 
   return (
-    <div className="absolute left-[675px] top-[208px] w-[650px] h-[455px]">
+    <div className="absolute left-[880px] top-[208px] w-[780px] h-[455px]">
       <div
         ref={stageRef}
         className="absolute inset-0 overflow-visible opacity-0"
@@ -333,7 +333,7 @@ function PreviewImage({
         role="img"
       >
         <div
-          className="absolute left-0 top-0 h-[354px] w-[550px] overflow-hidden bg-[#f7f1df]"
+          className="absolute left-0 top-0 h-[354px] w-[680px] overflow-hidden bg-[#f7f1df]"
           style={{
             borderRadius: 0,
             boxShadow: "0 24px 70px rgba(0,0,0,0.065)",
@@ -403,7 +403,7 @@ function PreviewImage({
 
         <div
           aria-hidden
-          className="absolute left-0 top-0 h-[455px] w-[650px] pointer-events-none"
+          className="absolute left-0 top-0 h-[455px] w-[780px] pointer-events-none"
         >
           {items.map((item, index) => (
             <button
@@ -415,8 +415,8 @@ function PreviewImage({
               tabIndex={-1}
               className="absolute left-0 top-0 overflow-hidden bg-[#f7f1df]"
               style={{
-                width: hasInteracted ? 58 : 62,
-                height: hasInteracted ? 80 : 84,
+                width: hasInteracted ? 68 : 72,
+                height: hasInteracted ? 92 : 96,
                 borderRadius: 0,
                 pointerEvents: "none",
                 willChange: "transform, opacity",
@@ -520,7 +520,7 @@ function Frame5({ category, activeItem }: { category: CategoryKey; activeItem: P
   const label = CATEGORY_LABELS[category];
 
   return (
-    <div className="absolute content-stretch flex gap-[10px] items-center justify-center left-[754px] overflow-clip p-[10px] top-[718px]">
+    <div className="absolute content-stretch flex gap-[10px] items-center justify-center left-[970px] overflow-clip p-[10px] top-[718px]">
       <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Regular','Noto_Sans_KR:Regular',sans-serif] h-[60px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[18px] text-center w-[260px] whitespace-pre-wrap" style={{ fontVariationSettings: '"wght" 400' }}>
         <p className="leading-[32px] mb-0">{label.description[0]}</p>
         <p className="leading-[32px]">{label.description[1]}</p>
@@ -548,12 +548,12 @@ function Group3({
   onChange: (category: CategoryKey) => void;
 }) {
   const tabs: Array<{ key: CategoryKey; title: string; count: string; left: number; width: number }> = [
-    { key: "semi", title: "PREMIUM SEMI-PACKAGE", count: String(SEMI_PACKAGE_ITEMS.length).padStart(2, "0"), left: 1079, width: 270 },
-    { key: "daily", title: "DAILY TOUR", count: String(DAILY_TOUR_ITEMS.length).padStart(2, "0"), left: 1318, width: 160 },
+    { key: "semi", title: "PREMIUM SEMI-PACKAGE", count: String(SEMI_PACKAGE_ITEMS.length).padStart(2, "0"), left: 1320, width: 270 },
+    { key: "daily", title: "DAILY TOUR", count: String(DAILY_TOUR_ITEMS.length).padStart(2, "0"), left: 1559, width: 160 },
   ];
 
   return (
-    <div className="[word-break:break-word] absolute contents font-['Crimson_Text:Regular',sans-serif] leading-[0] left-[959px] not-italic text-[#151515] text-[20px] text-center top-[44px]">
+    <div className="[word-break:break-word] absolute contents font-['Crimson_Text:Regular',sans-serif] leading-[0] left-[1200px] not-italic text-[#151515] text-[20px] text-center top-[44px]">
       {tabs.map((tab) => {
         const isActive = category === tab.key;
 
@@ -611,38 +611,40 @@ function Frame() {
   const items = category === "semi" ? SEMI_PACKAGE_ITEMS : DAILY_TOUR_ITEMS;
 
   return (
-    <div className="absolute bg-white h-[1245px] left-0 overflow-clip top-0 w-[1440px]">
-      <Frame1 />
-      <PremiumSemiPackage
-        items={items}
-        activeIndex={activeIndex}
-        onChange={(index) => {
-          setHasInteracted(true);
-          setActiveIndex(index);
-        }}
-      />
-      <PreviewImage key={category} items={items} activeIndex={activeIndex} hasInteracted={hasInteracted} />
+    <div className="absolute left-0 top-0 h-[1245px] w-screen overflow-hidden bg-white">
+      <div className="relative mx-auto h-[1245px] w-[1700px] overflow-visible bg-white">
+        <Frame1 />
+        <PremiumSemiPackage
+          items={items}
+          activeIndex={activeIndex}
+          onChange={(index) => {
+            setHasInteracted(true);
+            setActiveIndex(index);
+          }}
+        />
+        <PreviewImage key={category} items={items} activeIndex={activeIndex} hasInteracted={hasInteracted} />
 
-      <Frame5 category={category} activeItem={items[activeIndex] ?? items[0]} />
+        <Frame5 category={category} activeItem={items[activeIndex] ?? items[0]} />
 
-      <div className="absolute blur-[50px] h-[906px] left-[-106px] top-[808px] w-[1515px]" data-name="image 21">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[125.39%] left-[-16.65%] max-w-none top-[-25.39%] w-[133.3%]" src={imgImage21} />
+        <div className="absolute blur-[50px] h-[906px] left-[-36px] top-[808px] w-[1775px]" data-name="image 21">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img alt="" className="absolute h-[125.39%] left-[-16.65%] max-w-none top-[-25.39%] w-[133.3%]" src={imgImage21} />
+          </div>
         </div>
-      </div>
-      <div className="absolute h-[447px] left-0 top-[798px] w-[1440px]" data-name="image 20">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <img alt="" className="absolute h-[254.14%] left-[-23.7%] max-w-none top-[-55.93%] w-[140.25%]" src={imgImage21} />
+        <div className="absolute h-[447px] left-0 top-[798px] w-[1700px]" data-name="image 20">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img alt="" className="absolute h-[254.14%] left-[-23.7%] max-w-none top-[-55.93%] w-[140.25%]" src={imgImage21} />
+          </div>
         </div>
+        <Group3
+          category={category}
+          onChange={(nextCategory) => {
+            setCategory(nextCategory);
+            setActiveIndex(0);
+            setHasInteracted(false);
+          }}
+        />
       </div>
-      <Group3
-        category={category}
-        onChange={(nextCategory) => {
-          setCategory(nextCategory);
-          setActiveIndex(0);
-          setHasInteracted(false);
-        }}
-      />
     </div>
   );
 }

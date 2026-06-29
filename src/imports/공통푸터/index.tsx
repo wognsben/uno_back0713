@@ -4,17 +4,133 @@ import img from "./050e70839c8a865a3bc5bf5529ebbff52dab7a81.png";
 import img2 from "./aa36fe66f91d4d474a7c3e64585689a25e85b055.png";
 import imgImage43 from "./e1cbe6c063a42f81ec9aab230ab12273b9bce560.png";
 
+/* ────────────────────────────────────────────
+   공통 FOOTER
+   Premium Editorial Footer
+──────────────────────────────────────────── */
+
 export default function Component({ className }: { className?: string }) {
   return (
-    <div className={className || "h-[760px] relative w-[1440px]"} data-name="공통 푸터">
-      <div className="absolute bg-white inset-0 overflow-clip" data-name="푸터 정보란">
-        <div className="absolute bg-white h-[290px] left-0 top-0 w-[1440px]">
+    <div className={className || "relative h-[760px] w-screen min-w-[1440px] overflow-hidden"} data-name="공통 푸터">
+      <style>{`
+        .footer-logo-hover {
+          cursor: pointer;
+          transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease;
+          will-change: transform;
+        }
+
+        .footer-logo-hover:hover {
+          transform: scale(1.015);
+          opacity: 0.92;
+        }
+
+        .footer-social-link {
+          cursor: pointer;
+          color: inherit;
+          text-decoration: none;
+          transition:
+            transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.28s ease;
+          will-change: transform;
+        }
+
+        .footer-social-link:hover {
+          transform: translateY(-3px) scale(1.015);
+          opacity: 0.9;
+        }
+
+        .footer-social-link img,
+        .footer-social-link svg {
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
+        }
+
+        .footer-social-link:hover img,
+        .footer-social-link:hover svg {
+          transform: scale(1.04);
+        }
+
+        .footer-share-link {
+          cursor: pointer;
+          transition:
+            transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.28s ease;
+          will-change: transform;
+        }
+
+        .footer-share-link:hover,
+        .footer-share-link:focus-visible {
+          transform: translateY(-2px) scale(1.08);
+          opacity: 0.86;
+        }
+
+        .footer-share-link svg,
+        .footer-share-link path {
+          transition: stroke 0.28s ease;
+        }
+
+        .footer-share-link:hover path,
+        .footer-share-link:focus-visible path {
+          stroke: #000000;
+        }
+
+        .footer-text-link,
+        .footer-contact-link {
+          cursor: pointer;
+          color: inherit;
+          position: relative;
+          text-decoration: none;
+        }
+
+        .footer-text-link::after,
+        .footer-contact-link::after {
+          background: #151515;
+          bottom: -8px;
+          content: "";
+          height: 1px;
+          left: 0;
+          position: absolute;
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          width: 100%;
+        }
+
+        .footer-text-link:hover::after,
+        .footer-contact-link:hover::after {
+          transform: scaleX(1);
+        }
+
+        .footer-text-link {
+          transition:
+            opacity 0.28s ease,
+            transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
+        }
+
+        .footer-text-link:hover,
+        .footer-text-link:focus-visible {
+          opacity: 0.72;
+          transform: translateY(-1px);
+        }
+
+        .footer-contact-row {
+          transition: opacity 0.28s ease;
+        }
+
+        .footer-contact-row:hover {
+          opacity: 0.82;
+        }
+      `}</style>
+      <div className="absolute inset-0 bg-white overflow-hidden" data-name="푸터 정보란">
+        <div className="relative mx-auto h-full w-[1440px]">
+          <div className="absolute bg-white h-[290px] left-0 top-0 w-[1440px]">
           <div className="content-stretch flex gap-[200px] items-center justify-center overflow-clip px-[20px] py-[10px] relative rounded-[inherit] size-full">
-            <div className="h-[122px] relative shrink-0 w-[200px]" data-name="큰 로고 1">
+            <div className="footer-logo-hover h-[122px] relative shrink-0 w-[200px]" data-name="큰 로고 1">
               <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img1} />
             </div>
             <div className="bg-white content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0">
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px]">회사소개</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -24,7 +140,7 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px]">이용안내</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -34,7 +150,7 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px]">개인정보처리방침</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -44,7 +160,7 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[90px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[90px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px] mb-0">여행자약관</p>
                 <p className="leading-[0px]">​</p>
               </div>
@@ -55,7 +171,7 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px] mb-0">취소 및 환불 규정</p>
                 <p className="leading-[0px]">​</p>
               </div>
@@ -66,7 +182,7 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px]">예약시 주의사항</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -76,10 +192,10 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
                 <p className="leading-[0px]">보증보험확인</p>
               </div>
-              <div className="relative shrink-0 size-[24px]" data-name="icon-park-outline:share">
+              <div className="footer-share-link relative shrink-0 size-[24px]" data-name="icon-park-outline:share" role="button" tabIndex={0} aria-label="공유하기">
                 <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
                   <g id="icon-park-outline:share">
                     <path d={svgPaths.pf895a00} id="Vector" stroke="var(--stroke-0, #151515)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
@@ -92,7 +208,7 @@ export default function Component({ className }: { className?: string }) {
         </div>
         <div className="absolute bg-white content-stretch flex items-center justify-between left-0 overflow-clip px-[20px] py-[10px] top-[290px] w-[1440px]">
           <div className="content-stretch flex gap-[21px] items-center relative shrink-0" data-name="SNS 로고">
-            <div className="content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="카톡">
+            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="카톡" role="link" tabIndex={0} aria-label="카카오톡 문의하기">
               <div className="relative shrink-0 size-[40px]" data-name="카톡 로고">
                 <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img} />
               </div>
@@ -107,7 +223,7 @@ export default function Component({ className }: { className?: string }) {
                 </svg>
               </div>
             </div>
-            <div className="content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="인스타">
+            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="인스타" role="link" tabIndex={0} aria-label="인스타그램 보기">
               <div className="relative shrink-0 size-[40px]" data-name="인스타그램 로고">
                 <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img2} />
               </div>
@@ -122,7 +238,7 @@ export default function Component({ className }: { className?: string }) {
                 </svg>
               </div>
             </div>
-            <div className="content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="블로그">
+            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="블로그" role="link" tabIndex={0} aria-label="블로그 보기">
               <div className="overflow-clip relative shrink-0 size-[40px]" data-name="네이버 블로그 로고">
                 <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 40 40">
                   <g id="Group">
@@ -148,7 +264,7 @@ export default function Component({ className }: { className?: string }) {
               </div>
             </div>
             <div className="bg-white content-stretch flex flex-col items-start overflow-clip p-[10px] relative shrink-0">
-              <div className="content-stretch flex h-[40px] items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]">
+              <div className="footer-contact-row content-stretch flex h-[40px] items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]" role="link" tabIndex={0} aria-label="전화 문의하기">
                 <div className="relative shrink-0 size-[20px]" data-name="TELL">
                   <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
                     <g id="TELL">
@@ -158,17 +274,17 @@ export default function Component({ className }: { className?: string }) {
                     </g>
                   </svg>
                 </div>
-                <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[226px]">
+                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[226px]">
                   <p className="leading-[0px]">031-998-2136</p>
                 </div>
               </div>
-              <div className="content-stretch flex items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]">
+              <div className="footer-contact-row content-stretch flex items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]" role="link" tabIndex={0} aria-label="이메일 문의하기">
                 <div className="relative shrink-0 size-[20px]" data-name="Vector">
                   <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p13ac2480} fill="var(--fill-0, #151515)" id="Vector" />
                   </svg>
                 </div>
-                <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[226px]">
+                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[226px]">
                   <p className="leading-[0px]">unotravel-roma@hotmail.com</p>
                 </div>
               </div>
@@ -229,7 +345,7 @@ export default function Component({ className }: { className?: string }) {
               <div className="bg-white relative shrink-0 w-full">
                 <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
                   <div className="content-stretch flex items-center p-[10px] relative size-full">
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[286px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                    <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[286px]" style={{ fontVariationSettings: '"wght" 700' }}>
                       <p className="leading-[0px]">대표메일 : unotravel-roma@hotmail.com</p>
                     </div>
                   </div>
@@ -278,6 +394,7 @@ export default function Component({ className }: { className?: string }) {
               <img alt="" className="absolute h-[127.93%] left-[-55.01%] max-w-none top-[-7.36%] w-[155.82%]" src={imgImage43} />
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

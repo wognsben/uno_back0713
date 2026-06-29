@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import svgPaths from "./svg-nu881w2do7";
 import img1 from "./82946044a68c061ee150f4ee5fd02f4ec778c1b7.png";
 import imgImage32 from "./83f6e07e44eb6a5c6fed9fff909db3be08a145b9.png";
@@ -420,31 +421,171 @@ function MarqueeSet() {
 }
 
 function Component3() {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const offsetRef = useRef(0);
+  const isPausedRef = useRef(false);
+  const resumeTimerRef = useRef<number | null>(null);
+
+  const getLoopWidth = () => {
+    const track = trackRef.current;
+    if (!track) return 0;
+
+    return track.scrollWidth / 2;
+  };
+
+  const normalizeOffset = (offset: number) => {
+    const loopWidth = getLoopWidth();
+    if (!loopWidth) return offset;
+
+    let nextOffset = offset;
+
+    while (nextOffset <= -loopWidth) {
+      nextOffset += loopWidth;
+    }
+
+    while (nextOffset > 0) {
+      nextOffset -= loopWidth;
+    }
+
+    return nextOffset;
+  };
+
+  const applyOffset = (offset: number, smooth = false) => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    offsetRef.current = normalizeOffset(offset);
+    track.style.transition = smooth ? "transform 680ms cubic-bezier(0.22, 1, 0.36, 1)" : "none";
+    track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
+  };
+
+  const moveSlider = (direction: "prev" | "next") => {
+    const cardStep = 334 + 30;
+    const moveAmount = cardStep * 3;
+    const nextOffset = offsetRef.current + (direction === "next" ? -moveAmount : moveAmount);
+
+    if (resumeTimerRef.current) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+
+    isPausedRef.current = true;
+    applyOffset(nextOffset, true);
+
+    resumeTimerRef.current = window.setTimeout(() => {
+      const track = trackRef.current;
+      if (track) track.style.transition = "none";
+    }, 700);
+  };
+
+  useEffect(() => {
+    let animationFrame = 0;
+    let previousTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const delta = currentTime - previousTime;
+      previousTime = currentTime;
+
+      if (!isPausedRef.current) {
+        applyOffset(offsetRef.current - delta * 0.035);
+      }
+
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    animationFrame = window.requestAnimationFrame(animate);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      if (resumeTimerRef.current) {
+        window.clearTimeout(resumeTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="absolute bg-white left-0 overflow-hidden p-0 top-[148px] w-[1440px]" data-name="03 스크롤 기반 슬라이더">
+    <div className="absolute bg-white left-1/2 min-w-[1440px] overflow-visible p-0 top-[148px] w-screen -translate-x-1/2" data-name="03 스크롤 기반 슬라이더">
       <style>{`
-        @keyframes whereNextMarquee {
-          from {
-            transform: translate3d(0, 0, 0);
-          }
-          to {
-            transform: translate3d(calc(-50% - 15px), 0, 0);
-          }
+        .where-marquee {
+          position: relative;
+          overflow: visible;
         }
 
         .where-marquee-track {
           display: flex;
           gap: 30px;
           width: max-content;
-          animation: whereNextMarquee 42s linear infinite;
           will-change: transform;
         }
 
-        .where-marquee:hover .where-marquee-track {
-          animation-play-state: paused;
+        .where-marquee-nav {
+          align-items: center;
+          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+          background: #FFFFFF;
+          border: 1px solid rgba(21, 21, 21, 0.12);
+          border-radius: 999px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+          color: #151515;
+          cursor: pointer;
+          display: flex;
+          height: 54px;
+          justify-content: center;
+          opacity: 0;
+          pointer-events: none;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%) scale(0.92);
+          transition:
+            opacity 0.28s ease,
+            transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+            border-color 0.28s ease,
+            background 0.28s ease;
+          width: 54px;
+          z-index: 30;
+        }
+
+        .where-marquee:hover .where-marquee-nav,
+        .where-marquee:focus-within .where-marquee-nav {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateY(-50%) scale(1);
+        }
+
+        .where-marquee-nav:hover {
+          background: #FFFFFF;
+          border-color: rgba(21, 21, 21, 0.28);
+        }
+
+        .where-marquee-nav-icon {
+          display: block;
+          height: 28px;
+          width: 28px;
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
+        }
+
+        .where-marquee-nav--prev {
+          left: 24px;
+        }
+
+        .where-marquee-nav--prev .where-marquee-nav-icon {
+          transform: rotate(180deg);
+        }
+
+        .where-marquee-nav--prev:hover .where-marquee-nav-icon {
+          transform: translateX(-3px) rotate(180deg);
+        }
+
+        .where-marquee-nav--next {
+          right: 24px;
+        }
+
+        .where-marquee-nav--next:hover .where-marquee-nav-icon {
+          transform: translateX(3px);
         }
 
         .where-card {
+          isolation: isolate;
           transition:
             transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
             box-shadow 0.42s ease,
@@ -452,9 +593,36 @@ function Component3() {
           will-change: transform;
         }
 
+        .where-card::after {
+          background: rgba(255, 255, 255, 0.08);
+          content: "";
+          inset: 0;
+          opacity: 0;
+          pointer-events: none;
+          position: absolute;
+          transition: opacity 0.32s ease;
+          z-index: 10;
+        }
+
         .where-card:hover {
-          transform: translateY(-6px) scale(1.012);
-          box-shadow: 0 24px 70px rgba(0, 0, 0, 0.08);
+          transform: translateY(-3px) scale(1.005);
+          box-shadow: 0 18px 54px rgba(0, 0, 0, 0.07);
+        }
+
+        .where-card:hover::after {
+          opacity: 1;
+        }
+
+        .where-card img {
+          transition:
+            transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+            filter 0.42s ease;
+          transform-origin: center center;
+        }
+
+        .where-card:hover img {
+          filter: contrast(1.06) saturate(1.04);
+          transform: scale(1.025);
         }
 
         .where-arrow {
@@ -573,8 +741,36 @@ function Component3() {
         }
       `}</style>
 
-      <div className="where-marquee overflow-visible">
-        <div className="where-marquee-track">
+      <div
+        className="where-marquee"
+        onMouseEnter={() => {
+          isPausedRef.current = true;
+        }}
+        onMouseLeave={() => {
+          isPausedRef.current = false;
+        }}
+      >
+        <button
+          aria-label="이전 카드 보기"
+          className="where-marquee-nav where-marquee-nav--prev"
+          onClick={() => moveSlider("prev")}
+          type="button"
+        >
+          <svg className="where-marquee-nav-icon" fill="none" preserveAspectRatio="none" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M6 4L28 16L6 28L11.2 17.8H3.5V14.2H11.2L6 4Z" fill="#151515" />
+          </svg>
+        </button>
+        <button
+          aria-label="다음 카드 보기"
+          className="where-marquee-nav where-marquee-nav--next"
+          onClick={() => moveSlider("next")}
+          type="button"
+        >
+          <svg className="where-marquee-nav-icon" fill="none" preserveAspectRatio="none" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M6 4L28 16L6 28L11.2 17.8H3.5V14.2H11.2L6 4Z" fill="#151515" />
+          </svg>
+        </button>
+        <div className="where-marquee-track" ref={trackRef}>
           <MarqueeSet />
           <MarqueeSet />
         </div>
@@ -582,10 +778,9 @@ function Component3() {
     </div>
   );
 }
-
 function Frame11() {
   return (
-    <div className="absolute h-[100px] left-[60px] top-[688px] w-[866px]">
+    <div className="absolute h-[100px] left-1/2 top-[688px] w-[1700px] -translate-x-1/2">
       <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Crimson_Text:Regular',sans-serif] h-[100px] justify-center leading-[0] left-0 not-italic text-[#151515] text-[140px] top-[50px] w-[866px]">
         <p className="leading-[40px]">WHAT NEXT?</p>
       </div>
@@ -609,7 +804,7 @@ function Frame10() {
 
 function Frame1() {
   return (
-    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="유럽 유심 보기" className="bottom-cta-card absolute bg-[#67ce4b] content-stretch flex flex-col gap-[14px] h-[406px] items-center left-[50px] overflow-clip px-[10px] py-[30px] top-[-1px] w-[330px]">
+    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="유럽 유심 보기" className="bottom-cta-card absolute bg-[#67ce4b] content-stretch flex flex-col gap-[14px] h-[406px] items-center left-[80px] overflow-clip px-[10px] py-[30px] top-[-1px] w-[390px]">
       <div className="bottom-open-label is-dark">OPEN ↗</div>
       <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[50px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[28px] text-center tracking-[-0.84px] w-[300px]" style={{ fontVariationSettings: '"wght" 700' }}>
         <p className="leading-[40px]">우노트래블 X 헤이트래블</p>
@@ -651,7 +846,7 @@ function Frame1() {
 
 function Frame4() {
   return (
-    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="여행자 보험 보기" className="bottom-cta-card [word-break:break-word] absolute bg-[#d5edff] content-stretch flex flex-col gap-[14px] h-[285px] items-center leading-[0] left-[380px] overflow-clip p-[10px] text-[#151515] top-[121px] w-[340px]">
+    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="여행자 보험 보기" className="bottom-cta-card [word-break:break-word] absolute bg-[#d5edff] content-stretch flex flex-col gap-[14px] h-[285px] items-center leading-[0] left-[470px] overflow-clip p-[10px] text-[#151515] top-[121px] w-[390px]">
       <div className="bottom-open-label is-dark">OPEN ↗</div>
       <div className="flex flex-col font-['Crimson_Text:SemiBold',sans-serif] h-[50px] justify-center not-italic relative shrink-0 text-[54px] text-center tracking-[-1.62px] w-[300px]">
         <p className="leading-[40px]">INSURANCE</p>
@@ -669,7 +864,7 @@ function Frame4() {
 
 function Frame2() {
   return (
-    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="출발 전 준비물 보기" className="bottom-cta-card absolute bg-[#fcc800] content-stretch flex flex-col gap-[9px] h-[405px] items-center justify-center left-[720px] overflow-clip p-[10px] top-[121px] w-[340px]">
+    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="출발 전 준비물 보기" className="bottom-cta-card absolute bg-[#fcc800] content-stretch flex flex-col gap-[9px] h-[405px] items-center justify-center left-[860px] overflow-clip p-[10px] top-[121px] w-[390px]">
       <div className="bottom-open-label is-dark">OPEN ↗</div>
       <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold',sans-serif] h-[150px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[54px] tracking-[-1.62px] w-[296px]">
         <p className="leading-[54px] mb-0">REDAY</p>
@@ -726,7 +921,7 @@ function Frame7() {
 
 function Frame6() {
   return (
-    <div className="absolute bg-white content-stretch flex flex-col h-[526px] items-center justify-center left-[1060px] overflow-clip top-0 w-[330px]">
+    <div className="absolute bg-white content-stretch flex flex-col h-[526px] items-center justify-center left-[1250px] overflow-clip top-0 w-[390px]">
       <Frame9 />
       <Frame8 />
       <Frame7 />
@@ -736,7 +931,7 @@ function Frame6() {
 
 function Frame3() {
   return (
-    <div className="absolute bg-white h-[526px] left-0 overflow-clip top-[894px] w-[1440px]">
+    <div className="absolute bg-white h-[526px] left-1/2 overflow-clip top-[894px] w-[1700px] -translate-x-1/2">
       <Frame10 />
       <Frame1 />
       <Frame4 />
@@ -746,28 +941,13 @@ function Frame3() {
   );
 }
 
-function Frame5() {
-  return (
-    <div className="absolute bg-white h-[777px] left-[1360px] overflow-clip top-[643px] w-[80px]">
-      <div className="-translate-x-full -translate-y-full absolute flex h-[777px] items-center justify-center left-[82px] top-[777px] w-[80px]">
-        <div className="-rotate-90 flex-none">
-          <div className="[word-break:break-word] flex flex-col font-['Source_Serif_Pro:Bold',sans-serif] h-[164px] justify-end leading-[0] not-italic relative text-[#151515] text-[240px] text-right tracking-[33.6px] w-[777px]">
-            <p className="leading-[40px]">UNO</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Frame() {
   return (
-    <div className="absolute bg-white h-[1421px] left-0 overflow-clip top-0 w-[1440px]">
+    <div className="absolute bg-white h-[1421px] left-0 overflow-visible top-0 w-screen">
       <Component8 />
       <Component3 />
       <Frame11 />
       <Frame3 />
-      <Frame5 />
     </div>
   );
 }

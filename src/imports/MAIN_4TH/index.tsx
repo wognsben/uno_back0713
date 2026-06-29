@@ -1,7 +1,9 @@
 import svgPaths from "./svg-vaq8d9b51g";
 import img from "./050e70839c8a865a3bc5bf5529ebbff52dab7a81.png";
 import img1 from "./aa36fe66f91d4d474a7c3e64585689a25e85b055.png";
-import imgFrame49 from "./6f247ad25885431e4027540fe1c8d635412bbb5e.png";
+
+const KAKAO_TALK_URL = "#";
+const INSTAGRAM_URL = "#";
 
 function Group() {
   return (
@@ -52,7 +54,7 @@ function Component4() {
 
 function Frame9() {
   return (
-    <div className="absolute bg-white content-stretch flex items-center justify-between left-[50px] overflow-clip top-[44px] w-[1360px]">
+    <div className="absolute bg-white content-stretch flex items-center justify-between left-[120px] overflow-clip top-[44px] w-[1460px]">
       <Component5 />
       <Component4 />
     </div>
@@ -208,7 +210,7 @@ function Group7() {
       <div className="-translate-y-1/2 [word-break:break-word] absolute flex flex-col font-['Crimson_Text:Regular','Noto_Sans_KR:Regular',sans-serif] h-[70px] justify-center leading-[0] left-[61px] text-[#151515] text-[64px] top-[125px] w-[412px]" style={{ fontVariationSettings: '"wght" 400' }}>
         <p className="leading-[40px]">문의하기</p>
       </div>
-      <div className="absolute h-0 left-[336px] top-[123.44px] w-[60px]">
+      <div className="absolute h-0 left-[336px] top-[123.44px] transition-transform duration-300 ease-out group-hover:translate-x-[8px] w-[60px]">
         <div className="absolute inset-[-14.73px_-3.33%_-14.73px_0]">
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 62 29.4558">
             <path d={svgPaths.p2987d600} fill="var(--stroke-0, #151515)" id="Vector 13" />
@@ -239,20 +241,35 @@ function Group6() {
 function Group8() {
   return (
     <div className="absolute contents left-[380px] top-[152px]">
-      <div className="absolute left-[535px] size-[40px] top-[153px]" data-name="카톡 로고">
+      <a
+        aria-label="카카오톡 문의하기"
+        className="absolute cursor-pointer left-[535px] size-[40px] top-[153px] z-10 transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-105"
+        data-name="카톡 로고"
+        href={KAKAO_TALK_URL}
+      >
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img} />
-      </div>
+      </a>
       <Group6 />
-      <div className="absolute left-[585px] size-[40px] top-[153px]" data-name="인스타그램 로고">
+      <a
+        aria-label="인스타그램 문의하기"
+        className="absolute cursor-pointer left-[585px] size-[40px] top-[153px] z-10 transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-105"
+        data-name="인스타그램 로고"
+        href={INSTAGRAM_URL}
+      >
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img1} />
-      </div>
+      </a>
     </div>
   );
 }
 
 function Frame19() {
   return (
-    <div className="border border-[rgba(182,166,154,0.4)] border-solid col-1 h-[200px] ml-0 mt-0 overflow-clip relative rounded-[15px] row-1 w-[640px]">
+    <div
+      aria-label="우노트래블 문의하기"
+      className="group border border-[rgba(182,166,154,0.4)] border-solid col-1 cursor-pointer h-[200px] ml-0 mt-0 overflow-clip relative rounded-[15px] row-1 transition-colors duration-300 ease-out hover:border-[rgba(182,166,154,0.7)] w-[640px]"
+      role="link"
+      tabIndex={0}
+    >
       <Group5 />
       <Group7 />
       <Group8 />
@@ -288,146 +305,28 @@ function Frame2() {
 
 function Frame1() {
   return (
-    <div className="absolute bg-white content-stretch flex gap-[50px] items-start justify-center left-[95px] overflow-clip top-[166px]">
+    <div className="absolute bg-white content-stretch flex gap-[80px] items-start justify-center left-[185px] overflow-clip top-[166px]">
       <Frame />
       <Frame2 />
     </div>
   );
 }
 
-function Frame15() {
-  return (
-    <div className="bg-white h-[7px] relative shrink-0 w-[1400px]">
-      <div className="flex flex-row items-center justify-center size-full">
-        <div className="relative size-full" />
-      </div>
-      <div aria-hidden className="absolute border-[rgba(21,21,21,0.6)] border-solid border-t inset-0 pointer-events-none" />
-    </div>
-  );
-}
-
-function Frame11() {
-  return (
-    <div className="h-[324px] relative shrink-0 w-full">
-      <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgFrame49} />
-    </div>
-  );
-}
-
-function Group2() {
-  return (
-    <div className="[word-break:break-word] grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-[#151515] text-[24px] text-center">
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular',sans-serif] h-[50px] justify-center ml-0 mt-0 not-italic relative row-1 w-[200px]">
-        <p className="leading-[0px]">AMALFI COAST</p>
-      </div>
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular','Noto_Sans_KR:Regular',sans-serif] h-[50px] justify-center ml-0 mt-[60px] relative row-1 w-[200px]" style={{ fontVariationSettings: '"wght" 400' }}>
-        <p className="leading-[0px]">아말피코스트</p>
-      </div>
-    </div>
-  );
-}
-
-function Frame12() {
-  return (
-    <div className="bg-[rgba(255,255,255,0.1)] content-stretch flex flex-col items-start overflow-clip p-[10px] relative shadow-[0px_10px_4px_0px_rgba(21,21,21,0.25)] shrink-0 w-[448px]">
-      <Frame11 />
-      <Group2 />
-    </div>
-  );
-}
-
-function Frame13() {
-  return (
-    <div className="h-[324px] relative shrink-0 w-full">
-      <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgFrame49} />
-    </div>
-  );
-}
-
-function Group3() {
-  return (
-    <div className="[word-break:break-word] grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-[#151515] text-[24px] text-center">
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular',sans-serif] h-[50px] justify-center ml-0 mt-0 not-italic relative row-1 w-[200px]">
-        <p className="leading-[0px]">FLORENCE</p>
-      </div>
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular','Noto_Sans_KR:Regular',sans-serif] h-[50px] justify-center ml-0 mt-[60px] relative row-1 w-[200px]" style={{ fontVariationSettings: '"wght" 400' }}>
-        <p className="leading-[0px]">플로랜스</p>
-      </div>
-    </div>
-  );
-}
-
-function Frame16() {
-  return (
-    <div className="bg-[rgba(255,255,255,0.1)] content-stretch flex flex-col items-start overflow-clip p-[10px] relative shadow-[0px_10px_4px_0px_rgba(21,21,21,0.25)] shrink-0 w-[448px]">
-      <Frame13 />
-      <Group3 />
-    </div>
-  );
-}
-
-function Frame14() {
-  return (
-    <div className="h-[324px] relative shrink-0 w-full">
-      <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgFrame49} />
-    </div>
-  );
-}
-
-function Group4() {
-  return (
-    <div className="[word-break:break-word] grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-[#151515] text-[24px] text-center">
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular',sans-serif] h-[50px] justify-center ml-0 mt-0 not-italic relative row-1 w-[200px]">
-        <p className="leading-[0px]">POMPEII</p>
-      </div>
-      <div className="col-1 flex flex-col font-['Crimson_Text:Regular','Noto_Sans_KR:Regular',sans-serif] h-[50px] justify-center ml-0 mt-[60px] relative row-1 w-[200px]" style={{ fontVariationSettings: '"wght" 400' }}>
-        <p className="leading-[0px]">품페이</p>
-      </div>
-    </div>
-  );
-}
-
-function Frame18() {
-  return (
-    <div className="bg-[rgba(255,255,255,0.1)] content-stretch flex flex-col items-start overflow-clip p-[10px] relative shadow-[0px_10px_4px_0px_rgba(21,21,21,0.25)] shrink-0 w-[448px]">
-      <Frame14 />
-      <Group4 />
-    </div>
-  );
-}
-
-function Frame10() {
-  return (
-    <div className="bg-white content-stretch flex gap-[10px] h-[500px] items-start overflow-clip p-[10px] relative shrink-0 w-[1384px]">
-      <Frame12 />
-      <Frame16 />
-      <Frame18 />
-    </div>
-  );
-}
-
-function Frame17() {
-  return (
-    <div className="absolute bg-white content-stretch flex flex-col h-[562px] items-center justify-between left-[10px] overflow-clip p-[10px] top-[800px]">
-      <Frame15 />
-      <Frame10 />
-    </div>
-  );
-}
-
 function Component3() {
   return (
-    <div className="bg-white h-[1352px] overflow-clip relative shrink-0 w-[1440px]" data-name="4번 섹션">
+    <div className="bg-white h-[800px] mx-auto overflow-visible relative w-[1700px]" data-name="4번 섹션">
       <Frame9 />
       <Frame1 />
-      <Frame17 />
     </div>
   );
 }
 
 function Component2() {
   return (
-    <div className="absolute content-stretch flex flex-col h-[1352px] items-center left-0 top-0" data-name="메인페이지-4번 섹션">
+    <div
+      className="absolute bg-white h-[800px] left-0 overflow-visible top-0 w-screen"
+      data-name="메인페이지-4번 섹션"
+    >
       <Component3 />
     </div>
   );

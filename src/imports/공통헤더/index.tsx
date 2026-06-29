@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import imgImage21 from "./82946044a68c061ee150f4ee5fd02f4ec778c1b7.png";
 
+/* ────────────────────────────────────────────
+   공통 HEADER
+   Premium Editorial Header
+──────────────────────────────────────────── */
 
 type HeaderProps = {
   isLoggedIn?: boolean;
@@ -255,7 +259,7 @@ function UserBlock({ userName }: { userName: string }) {
   );
 }
 
-function ShortMenuPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function ShortMenuPanel({ isOpen, onClose, isScrolled }: { isOpen: boolean; onClose: () => void; isScrolled: boolean }) {
   return (
     <div
       aria-hidden={!isOpen}
@@ -263,7 +267,8 @@ function ShortMenuPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         position: "absolute",
         top: 102,
         left: "50%",
-        width: 820,
+        width: isScrolled ? 1440 : 820,
+        maxWidth: "100%",
         height: isOpen ? 390 : 0,
         transform: isOpen ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(-14px)",
         opacity: isOpen ? 1 : 0,
@@ -341,7 +346,7 @@ function ExpandedMenuCard({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       style={{
         position: "absolute",
         top: 124,
-        right: 20,
+        right: 0,
         width: 625,
         height: 690,
         background: "#FFFFFF",
@@ -533,7 +538,8 @@ export default function Header({ isLoggedIn = false, userName = "김민수" }: H
         top: isScrolled ? 0 : 20,
         left: 0,
         zIndex: 1000,
-        width: "100%",
+        width: "100vw",
+        minWidth: 1440,
         display: "flex",
         justifyContent: "center",
         pointerEvents: "none",
@@ -557,29 +563,50 @@ export default function Header({ isLoggedIn = false, userName = "김민수" }: H
         />
       )}
 
-      <header
+      <div
         style={{
-          width: isScrolled ? 1440 : 820,
-          maxWidth: isScrolled ? "100%" : 820,
-          height: isScrolled ? 100 : 84,
-          background: "#FFFFFF",
-          border: isScrolled ? "0 solid transparent" : `2px solid ${BORDER}`,
-          borderRadius: 20,
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "10px 20px",
-          gap: 10,
-          boxSizing: "border-box",
-          flexShrink: 0,
-          pointerEvents: "auto",
-          transition:
-            "width 0.42s ease, max-width 0.42s ease, height 0.42s ease, border 0.25s ease, border-radius 0.42s ease",
           position: "relative",
-          zIndex: 4,
+          width: "100%",
+          maxWidth: 1440,
+          margin: "0 auto",
+          pointerEvents: "none",
         }}
       >
+      <header
+  style={{
+    width: "100%",
+    maxWidth: 1440,
+    height: isScrolled ? 100 : 84,
+
+    background: "#FFFFFF",
+
+    border: isScrolled
+      ? "0 solid transparent"
+      : `2px solid ${BORDER}`,
+
+    borderRadius: 20,
+
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+
+    padding: "10px 20px",
+
+    gap: 10,
+
+    boxSizing: "border-box",
+
+    pointerEvents: "auto",
+
+    position: "relative",
+
+    zIndex: 4,
+
+    transition:
+      "height .42s ease,border .25s ease,border-radius .42s ease",
+  }}
+>
         <Logo />
 
         <nav
@@ -639,8 +666,13 @@ export default function Header({ isLoggedIn = false, userName = "김민수" }: H
         </nav>
       </header>
 
-      <ShortMenuPanel isOpen={isMenuOpen && !isScrolled} onClose={() => setIsMenuOpen(false)} />
+      <ShortMenuPanel
+        isOpen={isMenuOpen && !isScrolled}
+        onClose={() => setIsMenuOpen(false)}
+        isScrolled={isScrolled}
+      />
       <ExpandedMenuCard isOpen={isMenuOpen && isScrolled} onClose={() => setIsMenuOpen(false)} />
+      </div>
     </div>
   );
 }

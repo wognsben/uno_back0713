@@ -1,0 +1,743 @@
+/* 세미패키지 메인 히어로 리스트 */
+
+position: absolute;
+width: 1440px;
+height: 736px;
+
+
+
+/* 세미패키지 메인 히어로 리스트 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 48px;
+
+position: absolute;
+width: 1440px;
+height: 736px;
+
+background: #FFFFFF;
+
+
+/* 세미패키지 메인 히어로 리스트 */
+
+width: 1440px;
+height: 672px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 75 */
+
+position: absolute;
+width: 1440px;
+height: 672px;
+left: 0px;
+top: 32px;
+
+background: #FFFFFF;
+
+
+/* 세미페키지 카테고리 */
+
+position: absolute;
+width: 788px;
+height: 540px;
+left: 0px;
+top: 120px;
+
+
+
+/* Frame 301 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 10px 0px;
+gap: 10px;
+
+position: absolute;
+height: 291px;
+left: 10px;
+right: 10px;
+top: 88px;
+
+background: #FFFFFF;
+
+
+/* 세미페키지 국가 카테고리  */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 10px 0px;
+gap: 10px;
+
+width: 200px;
+height: 240px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 293 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 200px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* ㆍALL */
+
+width: 200px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 298 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 200px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* ㆍ유럽 */
+
+width: 200px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 299 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 200px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* ㆍ아프리카 & 중동 */
+
+width: 200px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 300 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 200px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* ㆍ아시아 */
+
+width: 200px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* PREMIUM SEMI-PACKAGE */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: flex-start;
+padding: 10px 0px;
+gap: 10px;
+
+width: 510px;
+height: 200px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+
+margin: 0 auto;
+width: 490px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+width: 470px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+
+margin: 0 auto;
+width: 490px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 7박 9일 */
+
+width: 470px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+
+margin: 0 auto;
+width: 490px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* [8-9]월 한정 이탈리아일주+돌로미티 11 */
+
+width: 470px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+
+margin: 0 auto;
+width: 490px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 나의 두번째 이탈리아, 지중해의 황금빛 시칠리아 일주 9일 */
+
+width: 470px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이탈리아 일주 9박 11일 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 10px;
+
+margin: 0 auto;
+width: 490px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* 이탈리아 아트투어 일주 9박 11일 */
+
+width: 470px;
+height: 20px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 19 */
+
+position: absolute;
+width: 768px;
+height: 119px;
+left: 10px;
+top: 418px;
+
+
+
+/* Vector 26 */
+
+position: absolute;
+width: 68px;
+height: 0px;
+left: 10px;
+top: 418px;
+
+border: 1px solid rgba(21, 21, 21, 0.6);
+
+
+/* A COLLECTION OF PLACES AND MOMENTS. */
+
+position: absolute;
+width: 768px;
+height: 98px;
+left: 10px;
+top: 439px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 30px;
+/* 또는 125% */
+display: flex;
+align-items: center;
+
+color: #151515;
+
+
+
+/* 세미패키지 메인 타이포 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: flex-end;
+padding: 10px 20px;
+gap: 10px;
+
+position: absolute;
+width: 1440px;
+height: 120px;
+left: 0px;
+top: 0px;
+
+background: #FFFFFF;
+
+
+/* 세미패키지 */
+
+margin: 0 auto;
+width: 768px;
+height: 100px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 96px;
+line-height: 40px;
+/* 또는 42% */
+display: flex;
+align-items: center;
+letter-spacing: 0.04em;
+
+color: #151515;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 303 */
+
+margin: 0 auto;
+width: 368px;
+height: 48px;
+
+background: #FFFFFF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* FILTER : */
+
+position: absolute;
+width: 80px;
+height: 28px;
+left: 0px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Gallery */
+
+position: absolute;
+width: 80px;
+height: 28px;
+left: 144px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* List */
+
+position: absolute;
+width: 80px;
+height: 28px;
+left: 288px;
+top: 10px;
+
+font-family: 'Crimson Text';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 40px;
+/* 또는 200% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+
+
+/* Vector 79 */
+
+position: absolute;
+width: 34px;
+height: 0px;
+left: 311px;
+top: 42px;
+
+border: 3px solid #151515;
+
+
+/* Union */
+
+position: absolute;
+width: 843px;
+height: 454px;
+left: 597px;
+top: 208px;
+
+background: url(image 35.png);
+
+
+/* Rectangle 2 */
+
+position: absolute;
+width: 384px;
+height: 454px;
+left: 1056px;
+top: 208px;
+
+background: #D9D9D9;
+
+
+/* Rectangle 1 */
+
+position: absolute;
+width: 348px;
+height: 260px;
+left: 787px;
+top: 402px;
+
+background: #D9D9D9;
+
+
+/* Rectangle 3 */
+
+position: absolute;
+width: 210px;
+height: 160px;
+left: 597px;
+top: 502px;
+
+background: #FF0000;
+
+
+/* Group 313 */
+
+position: absolute;
+width: 158px;
+height: 340px;
+left: 847px;
+top: 35px;
+
+
+
+/* Frame 79 */
+
+position: absolute;
+width: 158px;
+height: 150px;
+left: 847px;
+top: 225px;
+
+background: #FCC800;
+border: 10px solid #FFFFFF;
+
+
+/* image 37 */
+
+position: absolute;
+width: 122.85px;
+height: 300px;
+left: 865px;
+top: 35px;
+
+background: url(bg_removal [Background removed].png);

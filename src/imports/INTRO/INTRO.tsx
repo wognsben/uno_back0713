@@ -158,9 +158,14 @@ export default function Intro({
     }
 
     function resizeCanvas() {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      width = window.innerWidth || document.documentElement.clientWidth || 1440;
+      height = window.innerHeight || document.documentElement.clientHeight || 900;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      if (width <= 0 || height <= 0) {
+        onFinish?.();
+        return;
+      }
 
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -434,7 +439,21 @@ export default function Intro({
       }
     }
 
+    // 환경에서 width가 0이면 즉시 종료
+    if (window.innerWidth <= 0) {
+      onFinish?.();
+      return;
+    }
+
     resizeCanvas();
+
+    // 안전 폴백: 6초 안에 애니메이션이 끝나지 않으면 강제 종료
+    const fallbackTimer = setTimeout(() => {
+      if (!finishedRef.current) {
+        finishedRef.current = true;
+        onFinish?.();
+      }
+    }, 6000);
 
     /**
      * Header가 뒤에 이미 렌더링된 뒤 실제 DotGrid 위치를 읽기 위해
@@ -449,6 +468,7 @@ export default function Intro({
     window.addEventListener("resize", resizeCanvas);
 
     return () => {
+      clearTimeout(fallbackTimer);
       window.removeEventListener("resize", resizeCanvas);
 
       if (rafRef.current) {

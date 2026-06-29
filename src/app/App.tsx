@@ -10,15 +10,24 @@ import Section2Component from "../imports/MAIN_2TH/index";
 import Section3Component from "../imports/MAIN_3TH/index";
 import Section4Component from "../imports/MAIN_4TH/index";
 
+/*
+  ProductTemplate 연결
 
+  메인 Hero에서 아래 경로로 이동할 때 이 페이지를 보여준다.
 
+  예)
+  - /product/semi/italy?view=gallery
+  - /product/semi/spain?view=gallery
+  - /product/daily/italy?view=gallery
 
-
-
-
+  나중에 우노트래블 PHP 백엔드 연동 시
+  window.location.pathname 값을 기준으로 category / region 값을 읽고
+  ProductTemplate에 실제 DB 데이터를 넘기면 된다.
+*/
+import ProductTemplate from "../pages/product/ProductTemplate";
 
 /* ────────────────────────────────────────────
-   Page (sections 3+ use Figma imports)
+   Page (sections use 100vw shell + full width content rule)
 ──────────────────────────────────────────── */
 
 const scrollCards = [
@@ -189,18 +198,39 @@ function ScrollCard({ card }: { card: (typeof scrollCards)[number] }) {
   );
 }
 
-
-
 /* ────────────────────────────────────────────
    Page
 ──────────────────────────────────────────── */
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
+  /*
+    ProductTemplate 임시 라우팅
+
+    Figma Make 환경에서 react-router가 아직 없을 수 있으므로
+    우선 window.location.pathname으로 분기한다.
+
+    현재 조건:
+    /product/ 로 시작하는 모든 경로는 ProductTemplate을 보여준다.
+
+    나중에 실제 백엔드 연동 시:
+    /product/semi/italy
+    /product/daily/rome
+    등의 URL 규칙에 맞춰 category / region / view 데이터를 추출하면 된다.
+  */
+  const isProductPage = window.location.pathname.startsWith("/product/");
+
+  const sectionShell = {
+    position: "relative" as const,
+    width: "100vw",
+    flexShrink: 0,
+    overflow: "visible" as const,
+  };
+
   return (
     <>
       {/* Intro */}
-      {showIntro && (
+      {!isProductPage && showIntro && (
         <Intro
           onFinish={() => {
             setShowIntro(false);
@@ -211,68 +241,90 @@ export default function App() {
       {/* Main */}
       <div
         style={{
-          minWidth: 1440,
+          width: "100vw",
           background: "#FFFFFF",
           display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
           boxSizing: "border-box",
+          overflowX: "hidden",
         }}
       >
         {/* Header */}
-        <div style={{ padding: "51px 55px 0" }}>
+        <div
+          style={{
+            width: "100vw",
+            boxSizing: "border-box",
+            padding: "51px 55px 0",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Header />
         </div>
 
-        {/* Hero */}
-        <div
-          style={{
-            width: 1440,
-            height: 830,
-            flexShrink: 0,
-          }}
-        >
-          <HeroComponent />
-        </div>
+        {isProductPage ? (
+          /*
+            Product Sub Page
 
-        {/* Section2 */}
-        <div
-          style={{
-            position: "relative",
-            width: 1440,
-            height: 1245,
-            flexShrink: 0,
-          }}
-        >
-          <Section2Component />
-        </div>
+            메인 Hero에서 국가/상품 클릭 시 진입하는 Type A 상품 서브페이지.
+            Header / Footer는 App.tsx에서 공통으로 유지한다.
+          */
+          <ProductTemplate />
+        ) : (
+          <>
+            {/* Hero */}
+            <div
+              style={{
+                ...sectionShell,
+                height: 1040,
+              }}
+            >
+              <HeroComponent />
+            </div>
 
-        {/* Section3 */}
-        <div
-          style={{
-            position: "relative",
-            width: 1440,
-            height: 1421,
-            flexShrink: 0,
-          }}
-        >
-          <Section3Component />
-        </div>
+            {/* Section2 */}
+            <div
+              style={{
+                ...sectionShell,
+                height: 1245,
+              }}
+            >
+              <Section2Component />
+            </div>
 
-        {/* Section4 */}
-        <div
-          style={{
-            position: "relative",
-            width: 1440,
-            height: 1352,
-            flexShrink: 0,
-          }}
-        >
-          <Section4Component />
-        </div>
+            {/* Section3 */}
+            <div
+              style={{
+                ...sectionShell,
+                height: 1421,
+              }}
+            >
+              <Section3Component />
+            </div>
+
+            {/* Section4 */}
+            <div
+              style={{
+                ...sectionShell,
+                height: 900,
+              }}
+            >
+              <Section4Component />
+            </div>
+          </>
+        )}
 
         {/* Footer */}
-        <Footer className="h-[760px] relative w-[1440px]" />
+        <div
+          style={{
+            width: "100vw",
+            flexShrink: 0,
+            overflow: "visible",
+          }}
+        >
+          <Footer className="relative h-[760px] w-screen" />
+        </div>
       </div>
     </>
   );
