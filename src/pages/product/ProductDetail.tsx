@@ -34,7 +34,7 @@ import imgDetailC from "../../imports/세미패키지메인히어로그리드/ca
    - 1600px 이하에서는 canvas 전체를 부모 폭에 맞춰 scale 처리 */
 const DETAIL_CANVAS_WIDTH = 1700;
 const DETAIL_DESKTOP_BASE_WIDTH = 1600;
-const DETAIL_CANVAS_HEIGHT = 6200;
+const DETAIL_CANVAS_HEIGHT = 6260;
 
 /*
   Recently Viewed Storage
@@ -1600,7 +1600,7 @@ const STYLE = `
 
   .pd-canvas {
     width: 1700px;
-    height: 6000px;
+    height: 6060px;
     flex-shrink: 0;
     background: #ffffff;
     color: #151515;
@@ -1612,7 +1612,7 @@ const STYLE = `
   .pd-hero {
     position: relative;
     width: 1700px;
-    padding: 70px 50px 0;
+    padding: 120px 50px 0;
     box-sizing: border-box;
   }
 
@@ -1626,7 +1626,7 @@ const STYLE = `
 
   .pd-eyebrow {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.18em;
     color: rgba(21, 21, 21, 0.56);
@@ -1698,7 +1698,7 @@ const STYLE = `
     gap: 16px;
     align-items: center;
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.14em;
     color: #ffffff;
@@ -1781,7 +1781,7 @@ const STYLE = `
 
   .pd-tab-index {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.1em;
     color: rgba(21, 21, 21, 0.46);
@@ -2031,7 +2031,7 @@ const STYLE = `
 
   .pd-section-label {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.18em;
     color: rgba(21, 21, 21, 0.52);
@@ -2113,7 +2113,7 @@ const STYLE = `
 
   .pd-ticket-code {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.14em;
     color: rgba(21, 21, 21, 0.52);
@@ -2210,7 +2210,7 @@ const STYLE = `
 
   .pd-flight-date {
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.035em;
     color: rgba(21, 21, 21, 0.56);
@@ -2223,7 +2223,7 @@ const STYLE = `
     align-items: center;
     gap: 9px;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.03em;
     color: rgba(21, 21, 21, 0.52);
@@ -2273,7 +2273,7 @@ const STYLE = `
 
   .pd-ticket-summary-label {
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.035em;
     color: rgba(21, 21, 21, 0.5);
@@ -2373,7 +2373,7 @@ const STYLE = `
   .pd-calendar-weekdays {
     padding: 18px 24px 0;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     color: rgba(21,21,21,0.48);
     text-align: center;
   }
@@ -2551,7 +2551,7 @@ const STYLE = `
 
   .pd-reservation-kicker {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.16em;
     color: rgba(21, 21, 21, 0.52);
@@ -2693,7 +2693,7 @@ const STYLE = `
     justify-content: space-between;
     margin-bottom: 14px;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.03em;
     color: rgba(21, 21, 21, 0.52);
@@ -2759,14 +2759,14 @@ const STYLE = `
   .pd-cart-preview-price {
     white-space: nowrap;
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1.25;
     color: #151515;
   }
 
   .pd-cart-preview-price .pd-price-symbol,
   .pd-cart-preview-price .pd-price-number {
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
   }
 
   .pd-cart-drawer-backdrop {
@@ -2879,7 +2879,7 @@ const STYLE = `
     display: block;
     margin-top: 8px;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1.35;
     letter-spacing: -0.03em;
     color: rgba(21, 21, 21, 0.48);
@@ -2938,7 +2938,7 @@ const STYLE = `
     background: transparent;
     cursor: pointer;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     letter-spacing: -0.03em;
     color: rgba(21, 21, 21, 0.52);
   }
@@ -3120,7 +3120,7 @@ const STYLE = `
 
   .pd-editorial-kicker {
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.16em;
     color: rgba(21, 21, 21, 0.52);
@@ -3327,7 +3327,7 @@ const STYLE = `
     margin-top: 16px;
     cursor: pointer;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.035em;
     color: rgba(21, 21, 21, 0.52);
@@ -3388,8 +3388,8 @@ const STYLE = `
   }
 
   .pd-meeting-meta-icon {
-    width: 32px;
-    height: 32px;
+    width: clamp(26px, 2.1vw, 32px);
+    height: clamp(26px, 2.1vw, 32px);
     border-radius: 999px;
     background: #f7f7f4;
     border: 1px solid rgba(21, 21, 21, 0.08);
@@ -3584,7 +3584,7 @@ const STYLE = `
   .pd-related-meta {
     margin-top: auto;
     font-family: var(--font-en);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: 0.12em;
     color: rgba(21, 21, 21, 0.48);
@@ -3963,15 +3963,15 @@ const STYLE = `
   .pd-bottom-dock {
     position: fixed;
     left: 50%;
-    bottom: 24px;
+    bottom: clamp(14px, 1.7vw, 26px);
     z-index: 80;
     width: auto;
-    max-width: calc(100% - 48px);
-    height: 96px;
-    padding: 8px 14px;
+    max-width: min(92vw, 860px);
+    min-height: clamp(72px, 5.8vw, 96px);
+    padding: clamp(7px, 0.7vw, 10px) clamp(10px, 1vw, 16px);
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 34px;
+    border-radius: clamp(26px, 2.2vw, 34px);
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(18px) saturate(125%);
     -webkit-backdrop-filter: blur(18px) saturate(125%);
@@ -3979,19 +3979,27 @@ const STYLE = `
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    transform: translateX(-50%);
+    gap: clamp(10px, 1.15vw, 18px);
+    transform: translateX(-50%) scale(1) translateY(0);
+    transform-origin: bottom center;
+    opacity: 1;
     pointer-events: auto;
+    overflow: visible;
     transition:
-      background 0.28s ease,
-      border-color 0.28s ease,
-      box-shadow 0.28s ease;
+      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .pd-bottom-dock:hover {
-    border-color: rgba(255, 255, 255, 0.24);
-    background: rgba(255, 255, 255, 0.13);
-    box-shadow: 0 22px 62px rgba(21, 21, 21, 0.07);
+  .pd-bottom-dock.is-compact {
+    transform: translateX(-50%) scale(0.82) translateY(0);
+  }
+
+  .pd-bottom-dock.is-compact .pd-dock-label {
+    display: inline-flex;
+  }
+
+  .pd-bottom-dock.is-compact:hover,
+  .pd-bottom-dock.is-compact:focus-within {
+    transform: translateX(-50%) scale(1) translateY(0);
   }
 
   .pd-dock-tab-group,
@@ -3999,15 +4007,15 @@ const STYLE = `
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 14px;
+    gap: clamp(8px, 0.85vw, 14px);
     pointer-events: auto;
   }
 
   .pd-dock-divider {
     width: 1px;
-    height: 34px;
+    height: clamp(26px, 2.1vw, 34px);
     background: rgba(21, 21, 21, 0.08);
-    margin: 0 4px;
+    margin: 0 clamp(2px, 0.35vw, 4px);
     pointer-events: none;
   }
 
@@ -4017,9 +4025,9 @@ const STYLE = `
     border: 0;
     border-radius: 22px;
     background: transparent;
-    width: 78px;
-    min-width: 78px;
-    height: 72px;
+    width: clamp(54px, 4.8vw, 78px);
+    min-width: clamp(54px, 4.8vw, 78px);
+    height: clamp(56px, 4.6vw, 72px);
     padding: 0;
     box-sizing: border-box;
     cursor: pointer;
@@ -4037,21 +4045,21 @@ const STYLE = `
 
   .pd-dock-item:hover,
   .pd-dock-item.is-hover {
-    width: 96px;
-    min-width: 96px;
+    width: clamp(70px, 6.2vw, 96px);
+    min-width: clamp(70px, 6.2vw, 96px);
     background: transparent;
     box-shadow: none;
     transform: translateY(-10px);
   }
 
   .pd-dock-item.is-sibling-close {
-    width: 84px;
-    min-width: 84px;
+    width: clamp(62px, 5.35vw, 84px);
+    min-width: clamp(62px, 5.35vw, 84px);
   }
 
   .pd-dock-item.is-sibling-far {
-    width: 78px;
-    min-width: 78px;
+    width: clamp(54px, 4.8vw, 78px);
+    min-width: clamp(54px, 4.8vw, 78px);
   }
 
   .pd-dock-item.is-active {
@@ -4060,8 +4068,8 @@ const STYLE = `
   }
 
   .pd-dock-icon {
-    width: 66px;
-    height: 66px;
+    width: clamp(46px, 4.1vw, 66px);
+    height: clamp(46px, 4.1vw, 66px);
     border-radius: 0;
     background: transparent;
     border: 0;
@@ -4079,8 +4087,8 @@ const STYLE = `
   }
 
   .pd-dock-icon svg {
-    width: 35px;
-    height: 35px;
+    width: clamp(26px, 2.35vw, 36px);
+    height: clamp(26px, 2.35vw, 36px);
     fill: none;
     stroke: currentColor;
     stroke-width: 1.75;
@@ -4110,12 +4118,12 @@ const STYLE = `
   .pd-dock-label {
     position: absolute;
     left: 50%;
-    bottom: calc(100% + 12px);
+    bottom: calc(100% + clamp(10px, 0.9vw, 14px));
     transform: translate(-50%, 8px);
     opacity: 0;
     pointer-events: none;
-    height: 34px;
-    padding: 0 14px;
+    height: clamp(30px, 2.25vw, 36px);
+    padding: 0 clamp(12px, 1vw, 16px);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.96);
     border: 1px solid rgba(21, 21, 21, 0.08);
@@ -4124,17 +4132,19 @@ const STYLE = `
     align-items: center;
     justify-content: center;
     font-family: var(--font-ko);
-    font-size: 13px;
+    font-size: clamp(12px, 0.9vw, 14px);
     line-height: 1;
     letter-spacing: -0.035em;
     color: #151515;
     white-space: nowrap;
+    z-index: 30;
     transition:
       opacity 0.2s ease,
       transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .pd-dock-item:hover .pd-dock-label,
+  .pd-dock-item:focus-visible .pd-dock-label,
   .pd-dock-item.is-hover .pd-dock-label {
     opacity: 1;
     transform: translate(-50%, 0);
@@ -4142,8 +4152,8 @@ const STYLE = `
 
   .pd-dock-badge {
     position: absolute;
-    top: 7px;
-    right: 7px;
+    top: clamp(5px, 0.48vw, 7px);
+    right: clamp(5px, 0.48vw, 7px);
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
@@ -4162,11 +4172,11 @@ const STYLE = `
   }
 
   .pd-dock-reserve {
-    width: 168px;
-    min-width: 168px;
-    height: 70px;
-    padding: 0 24px;
-    gap: 9px;
+    width: clamp(132px, 10.5vw, 168px);
+    min-width: clamp(132px, 10.5vw, 168px);
+    height: clamp(56px, 4.5vw, 70px);
+    padding: 0 clamp(18px, 1.5vw, 24px);
+    gap: clamp(7px, 0.65vw, 9px);
     background: #fcc800;
     border-radius: 30px;
     box-shadow: 0 18px 48px rgba(252, 200, 0, 0.28);
@@ -4175,16 +4185,16 @@ const STYLE = `
   }
 
   .pd-dock-reserve:hover {
-    width: 168px;
-    min-width: 168px;
+    width: clamp(132px, 10.5vw, 168px);
+    min-width: clamp(132px, 10.5vw, 168px);
     background: #fcc800;
     box-shadow: 0 24px 58px rgba(252, 200, 0, 0.34);
     transform: translateY(-6px);
   }
 
   .pd-dock-reserve .pd-dock-icon {
-    width: 32px;
-    height: 32px;
+    width: clamp(26px, 2.1vw, 32px);
+    height: clamp(26px, 2.1vw, 32px);
     border-radius: 0;
     background: transparent;
     border: 0;
@@ -4445,6 +4455,9 @@ export default function ProductDetail({ products = [] }: ProductDetailProps = {}
     return parseCartItems(sessionStorage.getItem(CART_STORAGE_KEY));
   });
   const [hoveredDockIndex, setHoveredDockIndex] = useState<number | null>(null);
+  const [isDockExpanded, setIsDockExpanded] = useState(false);
+  const lastDockScrollYRef = useRef(0);
+  const dockScrollFrameRef = useRef<number | null>(null);
 
   const getDockItemInteractionClass = (index: number) => {
     if (hoveredDockIndex === null) return "";
@@ -4471,6 +4484,51 @@ export default function ProductDetail({ products = [] }: ProductDetailProps = {}
   const selectedAvailabilityStatus = getAvailabilityStatus(selectedDate);
   const selectedAvailabilityClassName = getAvailabilityClassName(selectedDate);
   const isDailyTour = DETAIL_DATA.productType === "daily";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const updateDockVisibility = () => {
+      const currentY = window.scrollY || document.documentElement.scrollTop || 0;
+      const diff = currentY - lastDockScrollYRef.current;
+
+      /*
+        Bottom Dock Compact Mode
+        ------------------------------------------
+        Dock의 glass / blur / border / opacity는 유지하고 스크롤 방향에 따라 크기만 조정한다.
+        - 최상단 근처: 기본 크기
+        - 아래로 스크롤: 축소
+        - 위로 스크롤: 기본 크기
+        - Hover 시에는 CSS에서 다시 기본 크기로 확장되어 접근성을 유지한다.
+      */
+      if (currentY < 220) {
+        setIsDockExpanded(true);
+      } else if (diff > 12) {
+        setIsDockExpanded(false);
+      } else if (diff < -12) {
+        setIsDockExpanded(true);
+      }
+
+      lastDockScrollYRef.current = currentY;
+      dockScrollFrameRef.current = null;
+    };
+
+    const handleScroll = () => {
+      if (dockScrollFrameRef.current !== null) return;
+      dockScrollFrameRef.current = window.requestAnimationFrame(updateDockVisibility);
+    };
+
+    lastDockScrollYRef.current = window.scrollY || document.documentElement.scrollTop || 0;
+    setIsDockExpanded(true);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (dockScrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(dockScrollFrameRef.current);
+      }
+    };
+  }, []);
 
   /*
     Recently Viewed
@@ -5133,7 +5191,10 @@ export default function ProductDetail({ products = [] }: ProductDetailProps = {}
       </div>
 
       {/* Bottom Dock Navigation */}
-      <nav className="pd-bottom-dock" aria-label="하단 빠른 이동 및 예약 액션">
+      <nav
+        className={`pd-bottom-dock ${isDockExpanded && !isCartDrawerOpen ? "is-expanded" : "is-compact"}`}
+        aria-label="하단 빠른 이동 및 예약 액션"
+      >
         <div className="pd-dock-tab-group" role="tablist" aria-label="상품 상세 빠른 이동">
           {dockTabs.map((tab, index) => (
             <button
