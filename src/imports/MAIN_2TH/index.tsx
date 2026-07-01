@@ -711,7 +711,7 @@ const [sectionScale, setSectionScale] = useState(() => {
   return (
     <div
       ref={sectionRef}
-      className="absolute left-0 top-0 w-full min-w-[1024px] overflow-hidden bg-white"
+      className="relative left-0 top-0 w-full min-w-[1024px] overflow-hidden bg-white"
       style={{
         height: sectionHeight,
       }}

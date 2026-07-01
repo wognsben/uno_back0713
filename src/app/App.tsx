@@ -39,7 +39,16 @@ import ProductNavigation from "./components/common_navi/ProductNavigation";
   window.location.pathname 값을 기준으로 category / region 값을 읽고
   ProductTemplate에 실제 DB 데이터를 넘기면 된다.
 */
-import ProductTemplate from "../pages/product/ProductTemplate";
+import ProductTemplate, { DAILY_TOUR_DATA, SEMI_PACKAGE_DATA } from "../pages/product/ProductTemplate";
+
+/*
+  ProductDetail 연결
+
+  ProductTemplate(목록)와 분리된 상품 상세페이지.
+  실제 파일 경로:
+  src/pages/product/ProductDetail.tsx
+*/
+import ProductDetail from "../pages/product/ProductDetail";
 
 /* ────────────────────────────────────────────
    Page (sections use 100vw shell + full width content rule)
@@ -378,6 +387,26 @@ useEffect(() => {
 
 const isProductPage = pathname.startsWith("/product/");
 
+/*
+  Product Detail Route
+  ------------------------------------------
+  /product/detail/... 경로는 ProductDetail을 렌더링한다.
+  ProductTemplate 내부 조건부 전환이 아니라 App.tsx에서 목록/상세를 분리한다.
+*/
+const isProductDetail = pathname.startsWith("/product/detail/");
+
+/*
+  Product List Route Data
+  ------------------------------------------
+  /product/daily/... 경로에서는 데일리투어 목록 데이터를 보여준다.
+  /product/semi/... 또는 그 외 /product/... 경로에서는 기존 세미패키지 목록 데이터를 유지한다.
+
+  실제 백엔드 연동 시 pathname에서 category / region 값을 추출해
+  ProductTemplateData 대신 API 응답 데이터를 전달하면 된다.
+*/
+const isDailyProductPage = pathname.startsWith("/product/daily/");
+const productTemplateData = isDailyProductPage ? DAILY_TOUR_DATA : SEMI_PACKAGE_DATA;
+
   const sectionShell = {
     position: "relative" as const,
 
@@ -458,7 +487,15 @@ const isProductPage = pathname.startsWith("/product/");
     <ProductNavigation />
   </div>
 
-  <ProductTemplate />
+  {/*
+    Product Route Split
+    ----------------------------------------------------------
+    /product/semi/... 또는 /product/daily/... 는 상품 목록(ProductTemplate)
+    /product/detail/... 는 상품 상세(ProductDetail)로 분리한다.
+
+    ProductNavigation은 목록/상세 공통으로 유지한다.
+  */}
+  {isProductDetail ? <ProductDetail /> : <ProductTemplate pageData={productTemplateData} />}
 </>
         ) : (
           <>
@@ -466,7 +503,10 @@ const isProductPage = pathname.startsWith("/product/");
             <div
               style={{
                 ...sectionShell,
-                height: 1040,
+
+                /* Desktop Responsive Height
+                   - Hero 내부 ResizeObserver scale 기준으로 실제 높이를 직접 관리한다.
+                   - App에서 고정 height를 주면 화면 폭이 줄어들 때 Hero 아래 공백이 생긴다. */
               }}
             >
               <HeroComponent />
@@ -476,7 +516,10 @@ const isProductPage = pathname.startsWith("/product/");
             <div
               style={{
                 ...sectionShell,
-                height: 1245,
+
+                /* Desktop Responsive Height
+                   - Section2 내부 ResizeObserver scale 기준으로 실제 높이를 직접 관리한다.
+                   - App에서 고정 height를 주면 Notebook 폭에서 세로 공백이 과도하게 남는다. */
               }}
             >
               <Section2Component />
@@ -527,7 +570,7 @@ const isProductPage = pathname.startsWith("/product/");
             overflow: "hidden",
           }}
         >
-          <Footer className="relative h-[760px] w-full min-w-[1024px] overflow-hidden" />
+          <Footer />
         </div>
       </div>
     </>

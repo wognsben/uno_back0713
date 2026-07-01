@@ -432,7 +432,7 @@ function MarqueeSet() {
   );
 }
 
-function Component3() {
+function Component3({ sectionScale }: { sectionScale: number }) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const offsetRef = useRef(0);
   const isPausedRef = useRef(false);
@@ -515,13 +515,35 @@ function Component3() {
   }, []);
 
   return (
-    <div className="absolute bg-white left-1/2 overflow-visible p-0 top-[148px] w-screen -translate-x-1/2" data-name="03 스크롤 기반 슬라이더">
+    <div
+      className="absolute bg-white left-1/2 overflow-hidden p-0 w-full -translate-x-1/2"
+      data-name="03 스크롤 기반 슬라이더"
+      style={{
+        /* Desktop Responsive
+           - 상단 무한 Slider는 가로 폭은 100%로 유지한다.
+           - 카드/간격/세로 위치는 Section3와 동일한 scale을 사용한다.
+           - 100vw 대신 부모 100% 기준으로 scrollbar 폭에 의한 가로 스크롤을 방지한다. */
+        top: 148 * sectionScale,
+        height: 405 * sectionScale,
+      }}
+    >
       <style>{`
         .where-marquee {
           position: relative;
-          width: 100vw;
-          height: 405px;
+          width: 100%;
+          height: ${405 * sectionScale}px;
           overflow: visible;
+        }
+
+        .where-marquee-scale {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: ${100 / sectionScale}%;
+          height: 405px;
+          transform: scale(${sectionScale});
+          transform-origin: top left;
+          will-change: transform;
         }
 
         .where-marquee-track {
@@ -784,9 +806,11 @@ function Component3() {
             <path d="M6 4L28 16L6 28L11.2 17.8H3.5V14.2H11.2L6 4Z" fill="#151515" />
           </svg>
         </button>
-        <div className="where-marquee-track" ref={trackRef}>
-          <MarqueeSet />
-          <MarqueeSet />
+        <div className="where-marquee-scale">
+          <div className="where-marquee-track" ref={trackRef}>
+            <MarqueeSet />
+            <MarqueeSet />
+          </div>
         </div>
       </div>
     </div>
@@ -964,7 +988,18 @@ function Frame() {
     - 상단 무한 이동 슬라이더는 100vw를 유지하고 scale 대상에서 제외한다.
   */
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [sectionScale, setSectionScale] = useState(1);
+  const getSectionScale = (width: number) => {
+    const safeWidth = Math.max(width, 1024);
+    return Math.min(safeWidth / SECTION3_BASE_WIDTH, 1);
+  };
+
+  const [sectionScale, setSectionScale] = useState(() => {
+    if (typeof window === "undefined") {
+      return 1;
+    }
+
+    return getSectionScale(document.documentElement.clientWidth || SECTION3_BASE_WIDTH);
+  });
 
   /*
     Section3 Dynamic Height
@@ -980,8 +1015,7 @@ function Frame() {
     if (!target) return;
 
     const updateScale = (width: number) => {
-      const safeWidth = Math.max(width, 1024);
-      const nextScale = Math.min(safeWidth / SECTION3_BASE_WIDTH, 1);
+      const nextScale = getSectionScale(width);
       setSectionScale(nextScale);
     };
 
@@ -1058,7 +1092,7 @@ function Frame() {
         <Frame3 />
       </div>
 
-      <Component3 />
+      <Component3 sectionScale={sectionScale} />
     </div>
   );
 }

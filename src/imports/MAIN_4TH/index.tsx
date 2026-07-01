@@ -395,15 +395,26 @@ function Component2() {
      - 1600px 이상에서는 원본 표시 기준, 1600px 미만에서는 동일 레이아웃을 비율 축소한다.
      - min-width는 1024px 유지. */
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const [sectionScale, setSectionScale] = useState(1);
+
+  const getSectionScale = (width: number) => {
+    const safeWidth = Math.max(width, 1024);
+    return Math.min(safeWidth / SECTION4_BASE_WIDTH, 1);
+  };
+
+  const [sectionScale, setSectionScale] = useState(() => {
+    if (typeof window === "undefined") {
+      return 1;
+    }
+
+    return getSectionScale(document.documentElement.clientWidth || SECTION4_BASE_WIDTH);
+  });
 
   useEffect(() => {
     const target = sectionRef.current;
     if (!target) return;
 
     const updateScale = (width: number) => {
-      const safeWidth = Math.max(width, 1024);
-      const nextScale = Math.min(safeWidth / SECTION4_BASE_WIDTH, 1);
+      const nextScale = getSectionScale(width);
       setSectionScale(nextScale);
     };
 

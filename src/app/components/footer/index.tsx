@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import svgPaths from "./svg-04rdhdsoo5";
 import img1 from "./8f219b4383084c668b556ed6473ae1a30cc63f76.png";
 import img from "./050e70839c8a865a3bc5bf5529ebbff52dab7a81.png";
@@ -9,21 +10,80 @@ import imgImage43 from "./e1cbe6c063a42f81ec9aab230ab12273b9bce560.png";
    Premium Editorial Footer
 ──────────────────────────────────────────── */
 
+/* Footer Desktop Responsive Base
+   ------------------------------------------
+   - Footer는 기존 1440px Figma stage 구조를 유지한다.
+   - 100vw clamp 대신 부모 실제 width를 ResizeObserver로 읽어 scale한다.
+   - App.tsx에서 height를 강제로 주더라도 inline height가 우선 적용된다. */
+const FOOTER_BASE_WIDTH = 1440;
+const FOOTER_STAGE_WIDTH = 1440;
+const FOOTER_STAGE_HEIGHT = 760;
+const FOOTER_MIN_WIDTH = 1024;
+
+const getFooterScale = (width: number) => {
+  const safeWidth = Math.max(width, FOOTER_MIN_WIDTH);
+  return Math.min(safeWidth / FOOTER_BASE_WIDTH, 1);
+};
+
 export default function Component({ className }: { className?: string }) {
+  const footerRef = useRef<HTMLDivElement | null>(null);
+  const [footerScale, setFooterScale] = useState(() => {
+    if (typeof window === "undefined") {
+      return 1;
+    }
+
+    return getFooterScale(document.documentElement.clientWidth || FOOTER_BASE_WIDTH);
+  });
+
+  useEffect(() => {
+    const target = footerRef.current;
+    if (!target) return;
+
+    const updateScale = (width: number) => {
+      setFooterScale(getFooterScale(width));
+    };
+
+    updateScale(target.clientWidth);
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      updateScale(entry.contentRect.width);
+    });
+
+    resizeObserver.observe(target);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={className || "relative w-full min-w-[1024px] overflow-hidden bg-white unotravel-footer-root"} data-name="공통 푸터">
+    <div
+      ref={footerRef}
+      className={className ? `${className} unotravel-footer-root` : "relative w-full min-w-[1024px] overflow-hidden bg-white unotravel-footer-root"}
+      data-name="공통 푸터"
+      style={{
+        height: FOOTER_STAGE_HEIGHT * footerScale,
+        minWidth: FOOTER_MIN_WIDTH,
+      }}
+    >
       <style>{`
         /* Desktop Responsive
            - Footer root는 100vw 대신 100% 기준 사용
            - 1024~1439 구간은 기존 1440px 레이아웃을 유지한 채 비율만 축소
            - 1023 이하 Tablet Portrait / Mobile은 별도 CSS에서 재구성 */
         .unotravel-footer-root {
-          height: clamp(541px, 52.7778vw, 760px);
+          position: relative;
+          width: 100%;
+          min-width: 1024px;
+          overflow: hidden;
+          background: #ffffff;
         }
 
         .unotravel-footer-stage {
-          transform: scale(clamp(0.711111, calc(100vw / 1440), 1));
           transform-origin: top center;
+          will-change: transform;
         }
 
         .footer-logo-hover {
@@ -134,9 +194,21 @@ export default function Component({ className }: { className?: string }) {
         .footer-contact-row:hover {
           opacity: 0.82;
         }
+
+        .footer-contact-row .footer-contact-link p {
+          white-space: nowrap;
+          word-break: keep-all;
+        }
       `}</style>
       <div className="absolute inset-0 bg-white overflow-hidden" data-name="푸터 정보란">
-        <div className="relative mx-auto h-[760px] w-[1440px] unotravel-footer-stage">
+        <div
+          className="absolute left-1/2 top-0 h-[760px] w-[1440px] unotravel-footer-stage"
+          style={{
+            width: FOOTER_STAGE_WIDTH,
+            height: FOOTER_STAGE_HEIGHT,
+            transform: `translateX(-50%) scale(${footerScale})`,
+          }}
+        >
           <div className="absolute bg-white h-[290px] left-0 top-0 w-[1440px]">
           <div className="content-stretch flex gap-[200px] items-center justify-center overflow-clip px-[20px] py-[10px] relative rounded-[inherit] size-full">
             <div className="footer-logo-hover h-[122px] relative shrink-0 w-[200px]" data-name="큰 로고 1">
@@ -268,7 +340,7 @@ export default function Component({ className }: { className?: string }) {
               </div>
             </div>
           </div>
-          <div className="bg-white content-stretch flex gap-[10px] h-[100px] items-center justify-center overflow-clip p-[10px] relative shrink-0">
+          <div className="bg-white content-stretch flex gap-[10px] h-[100px] items-center justify-center overflow-visible p-[10px] relative shrink-0">
             <div className="h-[74px] relative shrink-0 w-0">
               <div className="absolute inset-[0_-0.5px]">
                 <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 1 74">
@@ -276,8 +348,8 @@ export default function Component({ className }: { className?: string }) {
                 </svg>
               </div>
             </div>
-            <div className="bg-white content-stretch flex flex-col items-start overflow-clip p-[10px] relative shrink-0">
-              <div className="footer-contact-row content-stretch flex h-[40px] items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]" role="link" tabIndex={0} aria-label="전화 문의하기">
+            <div className="bg-white content-stretch flex flex-col items-start overflow-visible p-[10px] relative shrink-0">
+              <div className="footer-contact-row content-stretch flex h-[40px] items-center justify-between overflow-visible py-[10px] relative shrink-0 w-[330px]" role="link" tabIndex={0} aria-label="전화 문의하기">
                 <div className="relative shrink-0 size-[20px]" data-name="TELL">
                   <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
                     <g id="TELL">
@@ -287,17 +359,17 @@ export default function Component({ className }: { className?: string }) {
                     </g>
                   </svg>
                 </div>
-                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[226px]">
+                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[290px]">
                   <p className="leading-[0px]">031-998-2136</p>
                 </div>
               </div>
-              <div className="footer-contact-row content-stretch flex items-center justify-between overflow-clip py-[10px] relative shrink-0 w-[260px]" role="link" tabIndex={0} aria-label="이메일 문의하기">
+              <div className="footer-contact-row content-stretch flex items-center justify-between overflow-visible py-[10px] relative shrink-0 w-[330px]" role="link" tabIndex={0} aria-label="이메일 문의하기">
                 <div className="relative shrink-0 size-[20px]" data-name="Vector">
                   <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 20 20">
                     <path d={svgPaths.p13ac2480} fill="var(--fill-0, #151515)" id="Vector" />
                   </svg>
                 </div>
-                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[226px]">
+                <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[20px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[290px]">
                   <p className="leading-[0px]">unotravel-roma@hotmail.com</p>
                 </div>
               </div>

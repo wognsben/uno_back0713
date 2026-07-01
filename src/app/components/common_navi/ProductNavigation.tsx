@@ -548,13 +548,16 @@ export default function ProductNavigation() {
         */
         .hero-product-nav-shell {
           position: relative;
-          width: 100vw;
+          width: 100%;
+          min-width: 1024px;
           margin-bottom: 22px;
           overflow: visible;
+          box-sizing: border-box;
         }
 
         .hero-product-nav {
-          width: 100vw;
+          width: 100%;
+          min-width: 1024px;
           min-height: 170px;
           margin-bottom: 0;
           border: 1px solid rgba(21, 21, 21, 0.12);
@@ -619,7 +622,7 @@ export default function ProductNavigation() {
           appearance: none;
           border: 0;
           background: transparent;
-          padding: 0 36px;
+          padding: 0 clamp(18px, 2.1vw, 36px);
           min-height: 44px;
           cursor: pointer;
           color: #151515;
@@ -644,19 +647,23 @@ export default function ProductNavigation() {
 
         .hero-nav-country-en {
           font-family: var(--font-en);
-          font-size: 17px;
+          font-size: clamp(13px, 1.1vw, 17px);
           line-height: 1;
           letter-spacing: 0.08em;
           color: #151515;
+          white-space: nowrap;
+          word-break: keep-all;
         }
 
         .hero-nav-country-ko {
           margin-top: 12px;
           font-family: var(--font-ko);
-          font-size: 13px;
+          font-size: clamp(11px, 0.9vw, 13px);
           line-height: 1;
           letter-spacing: -0.02em;
           color: rgba(21, 21, 21, 0.68);
+          white-space: nowrap;
+          word-break: keep-all;
         }
 
         .hero-nav-country::after {
@@ -821,7 +828,7 @@ export default function ProductNavigation() {
         }
 
         .hero-product-nav-shell.is-floating .hero-product-nav {
-          width: 100vw;
+          width: 100%;
           margin-top: 46px;
           pointer-events: auto;
           transform-origin: top left;
@@ -893,7 +900,8 @@ export default function ProductNavigation() {
           position: absolute;
           left: 0;
           top: calc(100% - 1px);
-          width: 100vw;
+          width: 100%;
+          min-width: 1024px;
           height: 0;
           overflow: hidden;
           background: #ffffff;
@@ -938,7 +946,7 @@ export default function ProductNavigation() {
             1번 컬럼과 2번 제품 패널 사이의 빈틈을 제거한다.
             두 영역이 따로 떨어진 카드처럼 보이지 않도록 gap을 0으로 고정한다.
           */
-          grid-template-columns: 260px 1fr;
+          grid-template-columns: clamp(210px, 15.3vw, 260px) 1fr;
           gap: 0;
           padding: 0;
           box-sizing: border-box;
@@ -948,7 +956,7 @@ export default function ProductNavigation() {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          padding: 40px 24px 42px 36px;
+          padding: clamp(30px, 2.35vw, 40px) clamp(18px, 1.4vw, 24px) clamp(32px, 2.47vw, 42px) clamp(24px, 2.1vw, 36px);
           border-right: 1px solid rgba(21, 21, 21, 0.12);
           background: #ffffff;
         }
@@ -963,7 +971,7 @@ export default function ProductNavigation() {
 
         .product-mega-title {
           font-family: var(--font-en);
-          font-size: 52px;
+          font-size: clamp(40px, 3.05vw, 52px);
           line-height: 0.9;
           letter-spacing: -0.055em;
           color: #151515;
@@ -997,7 +1005,7 @@ export default function ProductNavigation() {
           align-items: flex-start;
           justify-content: flex-start;
           min-width: 0;
-          padding: 38px 22px 34px;
+          padding: clamp(30px, 2.23vw, 38px) clamp(14px, 1.3vw, 22px) clamp(28px, 2vw, 34px);
           text-align: left;
           color: #151515;
           opacity: 0.72;
@@ -1028,14 +1036,14 @@ export default function ProductNavigation() {
 
         .product-mega-grid.has-expanded-item .product-mega-column {
           flex: 0.62 1 0;
-          padding-left: 18px;
-          padding-right: 18px;
+          padding-left: clamp(12px, 1.05vw, 18px);
+          padding-right: clamp(12px, 1.05vw, 18px);
         }
 
         .product-mega-grid.has-expanded-item .product-mega-column.is-expanded {
           flex: 3.2 1 0;
-          padding-left: 34px;
-          padding-right: 34px;
+          padding-left: clamp(24px, 2vw, 34px);
+          padding-right: clamp(24px, 2vw, 34px);
         }
 
         @keyframes productMegaItemReveal {
@@ -1059,11 +1067,12 @@ export default function ProductNavigation() {
 
         .product-mega-country-en {
           font-family: var(--font-en);
-          font-size: 24px;
+          font-size: clamp(18px, 1.41vw, 24px);
           line-height: 1;
           letter-spacing: 0.05em;
           color: #151515;
-          white-space: normal;
+          white-space: nowrap;
+          word-break: keep-all;
           transition:
             font-size 0.42s cubic-bezier(0.16, 1, 0.3, 1),
             transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1118,11 +1127,11 @@ export default function ProductNavigation() {
         }
 
         .product-mega-grid.has-expanded-item .product-mega-column.is-compressed .product-mega-country-en {
-          font-size: 18px;
+          font-size: clamp(14px, 1.05vw, 18px);
         }
 
         .product-mega-grid.has-expanded-item .product-mega-column.is-expanded .product-mega-country-en {
-          font-size: 34px;
+          font-size: clamp(26px, 2vw, 34px);
         }
 
         .product-mega-product {
@@ -1146,6 +1155,42 @@ export default function ProductNavigation() {
           content: "·";
           margin-right: 6px;
           color: #fcc800;
+        }
+
+        /*
+          ProductNavigation Desktop Minimum Responsive
+          ----------------------------------------------------------
+          1024~1200px 구간에서 국가명이 줄바꿈되거나 Mega Panel 오른쪽이 잘리는 문제를 줄인다.
+          레이아웃 구조는 유지하고, padding/font-size만 비율 보정한다.
+        */
+        @media (min-width: 1024px) and (max-width: 1200px) {
+          .hero-product-nav {
+            grid-template-columns: minmax(0, 1.08fr) 1px minmax(0, 0.72fr);
+          }
+
+          .hero-nav-block {
+            padding-left: 18px;
+            padding-right: 18px;
+          }
+
+          .hero-nav-title {
+            font-size: 30px;
+            margin-bottom: 24px;
+          }
+
+          .hero-nav-country {
+            padding-left: 14px;
+            padding-right: 14px;
+          }
+
+          .hero-nav-country-en {
+            font-size: 13px;
+            letter-spacing: 0.055em;
+          }
+
+          .product-mega-country-en {
+            letter-spacing: 0.025em;
+          }
         }
 
 

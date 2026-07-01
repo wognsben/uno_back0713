@@ -397,12 +397,13 @@ export default function Frame() {
   const loadedImages = useMemo(() => HERO_ITEMS.map((item) => item.image), []);
 
   return (
-    <div className="absolute left-0 top-0 h-[1040px] w-full min-w-[1024px] overflow-hidden bg-white">
+    <div className="relative left-0 top-0 w-full min-w-[1024px] overflow-hidden bg-white">
       {/* Desktop Responsive
           - Main Hero root는 100vw 대신 100% 기준
-          - Desktop/Tablet Landscape 최소 폭은 1024px 유지 */}
-      <div className="relative h-full w-full min-w-[1024px] overflow-hidden">
-        <div className="bg-white content-stretch flex flex-col items-center justify-start pb-[54px] pt-[88px] px-0 relative size-full overflow-hidden">
+          - Desktop/Tablet Landscape 최소 폭은 1024px 유지
+          - App.tsx 고정 height에 의존하지 않고 내부 content 높이로 section height를 결정 */}
+      <div className="relative w-full min-w-[1024px] overflow-hidden">
+        <div className="bg-white content-stretch flex flex-col items-center justify-start pb-[54px] pt-[88px] px-0 relative w-full overflow-hidden">
       <style>{`
         .hero-product-nav {
           /* Desktop Responsive

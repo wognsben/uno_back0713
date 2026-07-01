@@ -28,9 +28,9 @@ import imgStatue from "../../imports/세미패키지메인히어로리스트/53d
    - 1600px 이하에서는 canvas 전체를 부모 폭에 맞춰 scale 처리 */
 const PRODUCT_LIST_CANVAS_WIDTH = 1700;
 const PRODUCT_LIST_DESKTOP_BASE_WIDTH = 1600;
-const PRODUCT_LIST_GALLERY_HEIGHT = 1300;
+const PRODUCT_LIST_GALLERY_HEIGHT = 1340;
 const PRODUCT_LIST_FILTER_HEIGHT = 120;
-const PRODUCT_LIST_BODY_LIST_HEIGHT = 700;
+const PRODUCT_LIST_BODY_LIST_HEIGHT = 736;
 
 function useProductListScale() {
   const shellRef = useRef<HTMLElement | null>(null);
@@ -41,17 +41,21 @@ function useProductListScale() {
     SPA 방식으로 서브페이지 진입 시 ResizeObserver 실행 전
     canvas가 순간적으로 줄어드는 layout jump를 줄인다.
   */
+  const getProductListScale = (width: number) => {
+    const safeWidth = Math.max(width, 1024);
+    const visibleWidth = Math.min(safeWidth, PRODUCT_LIST_DESKTOP_BASE_WIDTH);
+
+    return visibleWidth / PRODUCT_LIST_CANVAS_WIDTH;
+  };
+
   const [scale, setScale] = useState(() => {
     if (typeof window === "undefined") {
-      return PRODUCT_LIST_DESKTOP_BASE_WIDTH / PRODUCT_LIST_CANVAS_WIDTH;
+      return getProductListScale(PRODUCT_LIST_DESKTOP_BASE_WIDTH);
     }
 
-    const initialWidth = Math.min(
-      document.documentElement.clientWidth || PRODUCT_LIST_DESKTOP_BASE_WIDTH,
-      PRODUCT_LIST_DESKTOP_BASE_WIDTH
+    return getProductListScale(
+      document.documentElement.clientWidth || PRODUCT_LIST_DESKTOP_BASE_WIDTH
     );
-
-    return initialWidth / PRODUCT_LIST_CANVAS_WIDTH;
   });
 
   useEffect(() => {
@@ -65,8 +69,7 @@ function useProductListScale() {
          - 1600px 이상: 1600px를 원본 표시 기준으로 고정
          - 1600px 이하: 부모 폭 기준으로 1700px canvas를 축소
          - 100vw를 쓰지 않아 vertical scrollbar 폭으로 인한 가로 스크롤을 방지 */
-      const visibleWidth = Math.min(shellWidth, PRODUCT_LIST_DESKTOP_BASE_WIDTH);
-      const nextScale = visibleWidth / PRODUCT_LIST_CANVAS_WIDTH;
+      const nextScale = getProductListScale(shellWidth);
 
       setScale(nextScale);
     };
@@ -651,6 +654,61 @@ function runGalleryPageTransition(event: React.MouseEvent<HTMLElement>, href?: s
   overlay.style.background = "rgba(255,255,255,0)";
   overlay.style.transition = "background 0.68s cubic-bezier(0.76, 0, 0.24, 1)";
 
+  /*
+    Detail Transition Title
+    ------------------------------------------
+    Codrops식 thumbnail → article 전환처럼
+    이미지가 커지기 전에 상단에 번호 / 지역 / 상품명을 먼저 노출한다.
+  */
+  const transitionTitle = document.createElement("div");
+  transitionTitle.style.position = "fixed";
+  transitionTitle.style.left = "50%";
+  transitionTitle.style.top = "150px";
+  transitionTitle.style.width = "min(1180px, 72vw)";
+  transitionTitle.style.transform = "translateX(-50%) translateY(12px)";
+  transitionTitle.style.zIndex = "10001";
+  transitionTitle.style.opacity = "0";
+  transitionTitle.style.transition =
+    "opacity 0.42s ease, transform 0.62s cubic-bezier(0.16, 1, 0.3, 1)";
+  transitionTitle.style.color = "#151515";
+  transitionTitle.style.pointerEvents = "none";
+
+  transitionTitle.innerHTML = `
+    <div style="
+      font-family: var(--font-en);
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      margin-bottom: 28px;
+    ">
+      ${source.getAttribute("data-product-number") ?? "01"}
+    </div>
+
+    <div style="
+      font-family: var(--font-en);
+      font-size: 14px;
+      line-height: 1;
+      letter-spacing: 0.16em;
+      color: rgba(21,21,21,0.52);
+      margin-bottom: 22px;
+    ">
+      ${source.getAttribute("data-product-region") ?? "ITALY"}
+    </div>
+
+    <div style="
+      font-family: var(--font-ko);
+      font-size: 64px;
+      line-height: 1.02;
+      letter-spacing: -0.065em;
+      font-weight: 600;
+      word-break: keep-all;
+    ">
+      ${source.getAttribute("data-product-title") ?? ""}
+    </div>
+  `;
+
+  overlay.appendChild(transitionTitle);
+
   const clone = sourceImage?.cloneNode(true) as HTMLImageElement | null;
 
   if (clone) {
@@ -663,7 +721,7 @@ function runGalleryPageTransition(event: React.MouseEvent<HTMLElement>, href?: s
     clone.style.zIndex = "10000";
     clone.style.transformOrigin = "center center";
     clone.style.transition =
-      "left 0.72s cubic-bezier(0.76, 0, 0.24, 1), top 0.72s cubic-bezier(0.76, 0, 0.24, 1), width 0.72s cubic-bezier(0.76, 0, 0.24, 1), height 0.72s cubic-bezier(0.76, 0, 0.24, 1), filter 0.72s ease";
+      "left 0.92s cubic-bezier(0.76, 0, 0.24, 1), top 0.92s cubic-bezier(0.76, 0, 0.24, 1), width 0.92s cubic-bezier(0.76, 0, 0.24, 1), height 0.92s cubic-bezier(0.76, 0, 0.24, 1), filter 0.72s ease";
     clone.style.filter = "brightness(1.02) contrast(1.02)";
     overlay.appendChild(clone);
   }
@@ -671,20 +729,50 @@ function runGalleryPageTransition(event: React.MouseEvent<HTMLElement>, href?: s
   document.body.appendChild(overlay);
 
   requestAnimationFrame(() => {
-    overlay.style.background = "rgba(255,255,255,0.86)";
+    overlay.style.background = "rgba(255,255,255,0.9)";
 
     if (clone) {
-      clone.style.left = "0px";
-      clone.style.top = "0px";
-      clone.style.width = "100vw";
-      clone.style.height = "100vh";
+      /*
+        Detail Hero Transition
+        ------------------------------------------
+        이미지를 과도하게 키우지 않고,
+        상단 타이포 아래의 16:9 article hero 영역으로 확장한다.
+      */
+      const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+      const targetWidth = Math.min(viewportWidth * 0.72, 1180);
+      const targetHeight = targetWidth * 9 / 16;
+      const targetLeft = (viewportWidth - targetWidth) / 2;
+      const targetTop = 320;
+
+      transitionTitle.style.opacity = "1";
+      transitionTitle.style.transform = "translateX(-50%) translateY(0)";
+
+      clone.style.left = `${targetLeft}px`;
+      clone.style.top = `${targetTop}px`;
+      clone.style.width = `${targetWidth}px`;
+      clone.style.height = `${targetHeight}px`;
       clone.style.filter = "brightness(1.08) contrast(1.03)";
     }
   });
 
   window.setTimeout(() => {
-    window.location.href = href;
-  }, 760);
+    /*
+      SPA Detail Navigation
+      ------------------------------------------
+      full reload 없이 상세페이지로 이동한다.
+      SPA 이동에서는 overlay가 자동 제거되지 않으므로
+      route 변경 직후 직접 fade-out 후 제거한다.
+    */
+    window.history.pushState({}, "", href);
+    window.dispatchEvent(new Event("unotravel:navigate"));
+
+    overlay.style.opacity = "0";
+    overlay.style.transition = "opacity 0.22s ease";
+
+    window.setTimeout(() => {
+      overlay.remove();
+    }, 860);
+  }, 1020);
 }
 
 /* ── Gallery Image Card ── */
@@ -711,6 +799,9 @@ function GalleryImageCard({
   return (
     <a
       href={item?.href ?? "#"}
+      data-product-number={item?.number ?? String(index + 1).padStart(2, "0")}
+      data-product-region={item?.region ?? "ITALY"}
+      data-product-title={item?.title ?? "Premium Journey"}
       className={`pl-gallery-image-card is-${variant}${isActive ? " is-active" : ""}${isDimmed ? " is-dimmed" : ""}`}
       onClick={(event) => runGalleryPageTransition(event, item?.href)}
       onMouseEnter={() => onHover(index)}
@@ -832,6 +923,9 @@ function GalleryView({
                 <a
                   key={item.id}
                   href={item.href ?? "#"}
+                  data-product-number={item.number ?? String(index + 1).padStart(2, "0")}
+                  data-product-region={item.region ?? "ITALY"}
+                  data-product-title={item.title}
                   className={`pl-gallery-name-btn${activeProductIndex === index ? " is-active" : ""}`}
                   onClick={(event) => runGalleryPageTransition(event, item.href)}
                   onMouseEnter={() => setActiveProductIndex(index)}
@@ -978,6 +1072,9 @@ function ListView({ items, categories }: { items: ProductItem[]; categories: Pro
               <a
                 key={item.id}
                 href={item.href ?? "#"}
+                data-product-number={item.number ?? String(index + 1).padStart(2, "0")}
+                data-product-region={item.region ?? "ITALY"}
+                data-product-title={item.title}
                 className={`pl-list-name-link${activeListIndex === index ? " is-active" : ""}`}
                 onClick={(event) => runGalleryPageTransition(event, item.href)}
                 onMouseEnter={() => setActiveListIndex(index)}
@@ -1087,7 +1184,10 @@ export default function ProductList({
 
       <div
         className="pl-product-canvas"
-        style={{ transform: `scale(${scale})` }}
+        style={{
+          height: canvasHeight,
+          transform: `scale(${scale})`,
+        }}
       >
         {/* ── FILTER BAR ── */}
         <div className="pl-filter-bar">
