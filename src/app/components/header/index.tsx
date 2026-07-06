@@ -119,12 +119,29 @@ function navigateTo(path: string) {
   if (window.location.pathname === path) {
     window.scrollTo({
       top: 0,
+      left: 0,
       behavior: "smooth",
     });
     return;
   }
 
+  /*
+    SPA Navigation Scroll Reset
+    ----------------------------------------------------------
+    Header에서 INFO / 로그인 / 마이페이지 등으로 이동할 때
+    기존 scrollY가 남아 있는 상태로 새 페이지가 먼저 렌더링되면
+    SplitText, Aside follower, Header scroll state가 동시에 재계산되며
+    페이지가 "쿵" 하고 전환되는 것처럼 보일 수 있다.
+
+    따라서 URL 변경 직후, App route event를 보내기 전에
+    스크롤을 즉시 최상단으로 초기화한다.
+  */
   window.history.pushState({}, "", path);
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "auto",
+  });
   window.dispatchEvent(new Event("unotravel:navigate"));
 }
 
@@ -141,7 +158,18 @@ function formatRecentlyViewedCategory(product: RecentlyViewedProduct) {
 function navigateToRecentlyViewedProduct(href: string) {
   if (!href) return;
 
+  /*
+    SPA Navigation Scroll Reset
+    ----------------------------------------------------------
+    최근 본 상품에서 상세페이지로 이동할 때도 이전 scrollY를 유지하지 않는다.
+    상세페이지가 중간 위치에서 렌더링되는 것을 방지한다.
+  */
   window.history.pushState({}, "", href);
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: "auto",
+  });
   window.dispatchEvent(new Event("unotravel:navigate"));
 }
 
@@ -261,7 +289,18 @@ function Logo() {
           return;
         }
 
+        /*
+          SPA Navigation Scroll Reset
+          ----------------------------------------------------
+          Logo로 메인에 재진입할 때도 route event 이전에
+          스크롤을 최상단으로 즉시 초기화한다.
+        */
         window.history.pushState({}, "", "/");
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto",
+        });
         window.dispatchEvent(new Event("unotravel:navigate"));
       }}
 
@@ -362,8 +401,10 @@ function HeaderButton({
 
 
 const INFO_MENU_ITEMS = [
+  { label: "이용방법", path: "/info/guide_use" },
   { label: "예약 시 주의사항", path: "/info/notice" },
   { label: "취소 및 환불규정", path: "/info/refund" },
+  { label: "여행자 약관", path: "/info/rule" },
 ] as const;
 
 function InfoDropdownPanel({

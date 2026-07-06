@@ -72,7 +72,9 @@ import MyProfile from "../pages/mypage/MyProfile";
 import MyTour from "../pages/mypage/MyTour";
 import InfoPage from "../pages/info/Infopage";
 import NoticePage from "../pages/info/notice";
+import GuideUsePage from "../pages/info/guide_use";
 import RefundPage from "../pages/info/refund";
+import RulePage from "../pages/info/rule";
 
 /* ────────────────────────────────────────────
    Page (sections use 100vw shell + full width content rule)
@@ -299,6 +301,7 @@ const getStoredMainScrollY = () => {
 export default function App() {
   const previousPathnameRef = useRef(window.location.pathname);
   const shouldRestoreMainScrollRef = useRef(false);
+  const routeUpdateFrameRef = useRef<number | null>(null);
 
   /*
   Intro
@@ -367,8 +370,34 @@ export default function App() {
       shouldRestoreMainScrollRef.current =
         event.type === "popstate" && wasProductPage && !willBeProductPage;
 
+      /*
+      SPA Route Commit Timing
+      ------------------------------------------
+      INFO 문서 간 이동처럼 같은 레이아웃 안에서 페이지 컴포넌트가 교체될 때,
+      즉시 setPathname을 실행하면 이전 scrollY 상태에서 새 페이지가 먼저 렌더링되고
+      GSAP SplitText / Aside follower가 동시에 초기화되어 "쿵" 하는 전환처럼 보일 수 있다.
+
+      custom navigation은 먼저 scrollTop을 안정화하고,
+      다음 animation frame에서 페이지 컴포넌트를 교체한다.
+    */
+      if (event.type === "unotravel:navigate" && previousPathname !== nextPathname) {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto",
+        });
+      }
+
       previousPathnameRef.current = nextPathname;
-      setPathname(nextPathname);
+
+      if (routeUpdateFrameRef.current) {
+        window.cancelAnimationFrame(routeUpdateFrameRef.current);
+      }
+
+      routeUpdateFrameRef.current = window.requestAnimationFrame(() => {
+        routeUpdateFrameRef.current = null;
+        setPathname(window.location.pathname);
+      });
     };
 
     window.addEventListener("popstate", handleRouteChange);
@@ -377,6 +406,11 @@ export default function App() {
     return () => {
       window.removeEventListener("popstate", handleRouteChange);
       window.removeEventListener("unotravel:navigate", handleRouteChange);
+
+      if (routeUpdateFrameRef.current) {
+        window.cancelAnimationFrame(routeUpdateFrameRef.current);
+        routeUpdateFrameRef.current = null;
+      }
     };
   }, []);
 
@@ -453,7 +487,9 @@ export default function App() {
   const isMyPageRoute = pathname.startsWith("/mypage");
   const isInfoPage = pathname === "/info";
   const isNoticePage = pathname === "/info/notice";
+  const isGuideUsePage = pathname === "/info/guide_use";
   const isRefundPage = pathname === "/info/refund";
+  const isRulePage = pathname === "/info/rule";
   const isInfoPageRoute = pathname === "/info" || pathname.startsWith("/info/");
 
   /*
@@ -636,8 +672,12 @@ export default function App() {
           <InfoPage />
         ) : isNoticePage ? (
           <NoticePage />
+        ) : isGuideUsePage ? (
+          <GuideUsePage />
         ) : isRefundPage ? (
           <RefundPage />
+        ) : isRulePage ? (
+          <RulePage />
         ) : (
           <>
             {/* Hero */}

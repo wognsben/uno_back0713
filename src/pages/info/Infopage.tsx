@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { INFO_DOCUMENT_ITEMS } from "./infoDocuments";
 
 
 const infoDocumentStyles = `
@@ -113,20 +114,16 @@ const infoDocumentStyles = `
   color: #111111;
   cursor: pointer;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: 48px minmax(0, 1fr) 34px;
   align-items: center;
   text-align: left;
   transition: background 180ms ease;
 }
 
-.uno-info-doc-button:first-child {
-  grid-column: 1 / 7;
-}
-
-.uno-info-doc-button:last-child {
-  grid-column: 7 / 13;
-  border-right: 0;
-}
+.uno-info-doc-button:nth-child(1) { grid-column: 1 / 4; }
+.uno-info-doc-button:nth-child(2) { grid-column: 4 / 7; }
+.uno-info-doc-button:nth-child(3) { grid-column: 7 / 10; }
+.uno-info-doc-button:nth-child(4) { grid-column: 10 / 13; border-right: 0; }
 
 .uno-info-doc-button:hover {
   background: rgba(17, 17, 17, 0.025);
@@ -138,7 +135,6 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-number {
-  grid-column: 1 / 2;
   justify-self: center;
   font-family: var(--font-en);
   font-size: 18px;
@@ -153,7 +149,7 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-text {
-  grid-column: 2 / 6;
+  min-width: 0;
 }
 
 .uno-info-doc-label {
@@ -173,7 +169,7 @@ const infoDocumentStyles = `
 
 .uno-info-doc-title {
   display: block;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.1;
   letter-spacing: -0.045em;
   font-weight: 720;
@@ -181,7 +177,6 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-arrow {
-  grid-column: 6 / 7;
   justify-self: center;
   font-family: var(--font-en);
   font-size: 18px;
@@ -458,15 +453,17 @@ const infoDocumentStyles = `
 }
 
 .uno-info-index-page .uno-info-hero {
-  min-height: 620px;
+  min-height: 460px;
 }
 
 .uno-info-index-page .uno-info-title {
   grid-column: 1 / 7;
+  margin-bottom: 42px;
 }
 
 .uno-info-index-page .uno-info-lead {
   grid-column: 7 / 12;
+  margin-bottom: 44px;
 }
 
 .uno-info-index-list {
@@ -642,8 +639,10 @@ const infoDocumentStyles = `
   }
 
   .uno-info-doc-button,
-  .uno-info-doc-button:first-child,
-  .uno-info-doc-button:last-child {
+  .uno-info-doc-button:nth-child(1),
+  .uno-info-doc-button:nth-child(2),
+  .uno-info-doc-button:nth-child(3),
+  .uno-info-doc-button:nth-child(4) {
     grid-column: 1 / -1;
     min-height: 78px;
     grid-template-columns: 56px minmax(0, 1fr) 40px;
@@ -651,7 +650,7 @@ const infoDocumentStyles = `
     border-bottom: 1px solid rgba(17, 17, 17, 0.14);
   }
 
-  .uno-info-doc-button:last-child {
+  .uno-info-doc-button:nth-child(4) {
     border-bottom: 0;
   }
 
@@ -748,56 +747,20 @@ function navigateTo(path: string) {
   if (typeof window === "undefined") return;
 
   if (window.location.pathname === path) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     return;
   }
 
   window.history.pushState({}, "", path);
+
+  /*
+    INFO Transition Stability
+    ----------------------------------------------------------
+    INFO index에서 문서로 이동할 때 이전 scrollY가 남지 않도록
+    먼저 최상단으로 이동한 뒤 App.tsx에 route 변경을 알린다.
+  */
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   window.dispatchEvent(new Event("unotravel:navigate"));
-}
-
-function InfoDocumentNav({ active }: { active: "notice" | "refund" }) {
-  const items = [
-    {
-      id: "notice",
-      number: "01",
-      label: "NOTICE",
-      title: "예약 시 주의사항",
-      path: "/info/notice",
-    },
-    {
-      id: "refund",
-      number: "02",
-      label: "REFUND",
-      title: "취소 및 환불규정",
-      path: "/info/refund",
-    },
-  ] as const;
-
-  return (
-    <nav className="uno-info-doc-nav" aria-label="INFO 문서 이동">
-      {items.map((item) => {
-        const isActive = active === item.id;
-
-        return (
-          <button
-            key={item.id}
-            type="button"
-            aria-current={isActive ? "page" : undefined}
-            className={`uno-info-doc-button ${isActive ? "is-active" : ""}`}
-            onClick={() => navigateTo(item.path)}
-          >
-            <span className="uno-info-doc-number">{item.number}</span>
-            <span className="uno-info-doc-text">
-              <span className="uno-info-doc-label">{item.label}</span>
-              <strong className="uno-info-doc-title">{item.title}</strong>
-            </span>
-            <span className="uno-info-doc-arrow" aria-hidden="true">→</span>
-          </button>
-        );
-      })}
-    </nav>
-  );
 }
 
 function useInfoDocumentAnimation(scopeRef: React.RefObject<HTMLElement | null>) {
@@ -887,24 +850,21 @@ function useInfoDocumentAnimation(scopeRef: React.RefObject<HTMLElement | null>)
 }
 
 
-const infoItems = [
-  {
-    number: "01",
-    label: "NOTICE",
-    title: "예약 시 주의사항",
-    body:
-      "투어 참여 전 미팅, 일정 변경, 장비, 소지품 관련 주요 안내를 확인합니다.",
-    path: "/info/notice",
-  },
-  {
-    number: "02",
-    label: "REFUND",
-    title: "취소 및 환불규정",
-    body:
-      "취소 시점별 환불 기준과 특별약관, 유의사항을 한 번에 확인합니다.",
-    path: "/info/refund",
-  },
-] as const;
+const INFO_INDEX_DESCRIPTIONS: Record<string, string> = {
+  guide_use:
+    "예약부터 투어 당일까지 필요한 회원가입, 날짜 확인, 결제, 바우처 수령 흐름을 확인합니다.",
+  notice:
+    "투어 참여 전 미팅, 일정 변경, 장비, 소지품 관련 주요 안내를 확인합니다.",
+  refund:
+    "취소 시점별 환불 기준과 특별약관, 유의사항을 한 번에 확인합니다.",
+  rule:
+    "우노트래블과 여행자 사이에 체결되는 여행계약의 세부 이행 기준과 준수사항을 확인합니다.",
+};
+
+const infoItems = INFO_DOCUMENT_ITEMS.map((item) => ({
+  ...item,
+  body: INFO_INDEX_DESCRIPTIONS[item.id] ?? "",
+}));
 
 export default function InfoPage() {
   const scopeRef = useRef<HTMLElement | null>(null);
@@ -917,7 +877,7 @@ export default function InfoPage() {
       <div className="uno-info-shell">
         <section className="uno-info-hero">
           <p className="uno-info-kicker">UNOTRAVEL INFORMATION</p>
-          <p className="uno-info-page-index">INDEX / 00</p>
+          <p className="uno-info-page-index">INDEX / 01 — 04</p>
 
           <h1 className="uno-info-title uno-info-split">
             INFO
@@ -929,6 +889,15 @@ export default function InfoPage() {
         </section>
 
         <section className="uno-info-index-list" aria-label="INFO 문서 목록">
+          {/*
+            INFO Documents Source
+            ----------------------------------------------------------
+            /info 메인 목록은 src/pages/info/infoDocuments.ts의
+            INFO_DOCUMENT_ITEMS를 기준으로 자동 생성한다.
+
+            새 INFO 문서를 추가할 경우 이 페이지를 직접 수정하지 않고
+            infoDocuments.ts만 수정한다.
+          */}
           {infoItems.map((item) => (
             <button
               key={item.path}

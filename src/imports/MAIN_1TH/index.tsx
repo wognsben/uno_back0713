@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import imgImage10 from "./45f0f4367d0864282c8c2c2a4259edb97f283fb8.png";
+import imgSemiItaly from "../세미패키지메인히어로그리드/3f5da2e34aadc41b88babc2cb3cf79d54480fb17.png";
+import imgSemiSpain from "../세미패키지메인히어로그리드/4330107f5001d8438ca2a32856e91d36fc97e09f.png";
+import imgSemiPortugal from "../세미패키지메인히어로그리드/a1bb687947753b4c890d720a1b31402344e5c88d.png";
+import imgSemiGreeceTurkey from "../세미패키지메인히어로그리드/ca8b91484dd437b9300e61e1611bbff92bf1b412.png";
+import imgSemiEgypt from "../세미패키지메인히어로그리드/724c69b9aeb2689cd61d20b56baa17a9093971ca.png";
+import imgDailyItaly from "../세미패키지메인히어로그리드/176f62c60c3978e3ac5e3d4bb41f76b68f88c0b6.png";
 
 /*
   ProductNavigation 공통화
@@ -41,8 +46,8 @@ const HERO_ITEMS: HeroItem[] = [
     title: "SEMI PACKAGE · ITALY",
     subtitle: "남부 · 북부 · 시칠리아 · 돌로미티",
     meta: ["EST.2011", "ITALY", "SEMI PACKAGE", "MEDITERRANEAN"],
-    image: imgImage10,
-    href: "/product/semi/italy?view=gallery",
+    image: imgSemiItaly,
+    href: "/product/detail/italy-11",
   },
   {
     id: "semi-spain",
@@ -52,8 +57,8 @@ const HERO_ITEMS: HeroItem[] = [
     title: "SEMI PACKAGE · SPAIN",
     subtitle: "바르셀로나 · 안달루시아",
     meta: ["EST.2011", "SPAIN", "SEMI PACKAGE", "CURATED ROUTE"],
-    image: imgImage10,
-    href: "/product/semi/spain?view=gallery",
+    image: imgSemiSpain,
+    href: "/product/detail/spain-9",
   },
   {
     id: "semi-portugal",
@@ -63,8 +68,8 @@ const HERO_ITEMS: HeroItem[] = [
     title: "SEMI PACKAGE · PORTUGAL",
     subtitle: "리스본 · 포르투",
     meta: ["EST.2011", "PORTUGAL", "SEMI PACKAGE", "ATLANTIC ROUTE"],
-    image: imgImage10,
-    href: "/product/semi/portugal?view=gallery",
+    image: imgSemiPortugal,
+    href: "/product/detail/portugal-8",
   },
   {
     id: "semi-greece-turkey",
@@ -74,7 +79,7 @@ const HERO_ITEMS: HeroItem[] = [
     title: "SEMI PACKAGE · GREECE / TURKEY",
     subtitle: "산토리니 · 이스탄불",
     meta: ["EST.2011", "GREECE", "TURKEY", "SEMI PACKAGE"],
-    image: imgImage10,
+    image: imgSemiGreeceTurkey,
     href: "/product/semi/greece-turkey?view=gallery",
   },
   {
@@ -85,8 +90,8 @@ const HERO_ITEMS: HeroItem[] = [
     title: "SEMI PACKAGE · EGYPT",
     subtitle: "카이로 · 룩소르",
     meta: ["EST.2011", "EGYPT", "SEMI PACKAGE", "ANCIENT ROUTE"],
-    image: imgImage10,
-    href: "/product/semi/egypt?view=gallery",
+    image: imgSemiEgypt,
+    href: "/product/detail/egypt-8",
   },
   {
     id: "daily-italy",
@@ -96,8 +101,8 @@ const HERO_ITEMS: HeroItem[] = [
     title: "DAILY TOUR · ITALY",
     subtitle: "로마 · 피렌체 · 나폴리 · 베네치아",
     meta: ["EST.2011", "ITALY", "DAILY TOUR", "LOCAL SCENE"],
-    image: imgImage10,
-    href: "/product/daily/italy?view=gallery",
+    image: imgDailyItaly,
+    href: "/product/detail/daily/rome-vatican-daily",
   },
   {
     id: "daily-france",
@@ -107,7 +112,7 @@ const HERO_ITEMS: HeroItem[] = [
     title: "DAILY TOUR · FRANCE",
     subtitle: "파리 · 몽생미셸",
     meta: ["EST.2011", "FRANCE", "DAILY TOUR", "FRENCH ROUTE"],
-    image: imgImage10,
+    image: imgSemiSpain,
     href: "/product/daily/france?view=gallery",
   },
 ];
@@ -198,6 +203,20 @@ function SharedImage({
   );
 }
 
+function navigateToProductDetail(path: string) {
+  if (typeof window === "undefined" || !path) return;
+
+  window.scrollTo({ top: 0, behavior: "auto" });
+
+  if (window.location.pathname + window.location.search === path) {
+    window.dispatchEvent(new Event("unotravel:navigate"));
+    return;
+  }
+
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new Event("unotravel:navigate"));
+}
+
 function Card({ item }: { item: HeroItem }) {
   return (
     <div className="absolute bg-[rgba(0,0,0,0)] border-3 border-solid border-white h-[480px] left-0 overflow-clip rounded-[18px] top-[2px] w-[268px]" data-name="card 1">
@@ -260,7 +279,13 @@ function Card10({ item }: { item: HeroItem }) {
 
 function Card11({ item }: { item: HeroItem }) {
   return (
-    <div className="absolute z-20 bg-[rgba(255,255,255,0.9)] border-3 border-solid border-white h-[256px] left-[276px] overflow-visible rounded-[18px] top-0 w-[417px]" data-name="card 13">
+    <button
+      type="button"
+      className="absolute z-20 bg-[rgba(255,255,255,0.9)] border-3 border-solid border-white h-[256px] left-[276px] overflow-visible rounded-[18px] top-0 w-[417px] cursor-pointer p-0"
+      data-name="card 13"
+      aria-label={`${item.title} 상세페이지로 이동`}
+      onClick={() => navigateToProductDetail(item.href)}
+    >
       <div
         className="[word-break:keep-all] absolute inset-0 box-border flex flex-col items-center justify-center leading-[0] not-italic px-[24px] text-[#151515] text-center hero-title-block"
         style={{ fontVariationSettings: '"wght" 400' }}
@@ -270,7 +295,7 @@ function Card11({ item }: { item: HeroItem }) {
 </p>
         <p className="leading-[23px] text-[15px] tracking-[0.24px] whitespace-pre-wrap">{item.subtitle}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -394,7 +419,7 @@ export default function Frame() {
   const { activeIndex } = useHeroRotation();
   const activeItem = HERO_ITEMS[activeIndex];
 
-  const loadedImages = useMemo(() => HERO_ITEMS.map((item) => item.image), []);
+  const loadedImages = useMemo(() => [...new Set(HERO_ITEMS.map((item) => item.image))], []);
 
   return (
     <div className="relative left-0 top-0 w-full min-w-[1024px] overflow-hidden bg-white">

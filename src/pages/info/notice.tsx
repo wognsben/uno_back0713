@@ -1,5 +1,25 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
+import useInfoAsideScrollFollower from "./hooks/useInfoAsideScrollFollower";
+import useInfoDocumentAnimation from "./hooks/useInfoDocumentAnimation";
+import InfoDocumentNav from "./utils/InfoDocumentNav";
 
+
+/* ==========================================================
+   INFO Hero Title Rule
+   ----------------------------------------------------------
+   디자인 규칙
+
+   - 제목이 짧은 경우(약 5글자 이하) : 1줄
+   - 제목이 긴 경우 : 의미 단위로 2줄
+
+   예)
+   이용방법
+   예약 시 / 주의사항
+   취소 및 / 환불규정
+
+   브라우저 자동 줄바꿈에 맡기지 않고
+   디자인 의도에 맞게 줄바꿈을 명시한다.
+========================================================== */
 
 const infoDocumentStyles = `
 .uno-info-document {
@@ -75,7 +95,7 @@ const infoDocumentStyles = `
   grid-column: 1 / 8;
   align-self: end;
   margin: 0 0 96px;
-  font-size: clamp(58px, 7.4vw, 112px);
+  font-size: clamp(52px, 6.6vw, 96px);
   line-height: 1.02;
   letter-spacing: -0.08em;
   font-weight: 670;
@@ -113,20 +133,16 @@ const infoDocumentStyles = `
   color: #111111;
   cursor: pointer;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: 48px minmax(0, 1fr) 34px;
   align-items: center;
   text-align: left;
   transition: background 180ms ease;
 }
 
-.uno-info-doc-button:first-child {
-  grid-column: 1 / 7;
-}
-
-.uno-info-doc-button:last-child {
-  grid-column: 7 / 13;
-  border-right: 0;
-}
+.uno-info-doc-button:nth-child(1) { grid-column: 1 / 4; }
+.uno-info-doc-button:nth-child(2) { grid-column: 4 / 7; }
+.uno-info-doc-button:nth-child(3) { grid-column: 7 / 10; }
+.uno-info-doc-button:nth-child(4) { grid-column: 10 / 13; border-right: 0; }
 
 .uno-info-doc-button:hover {
   background: rgba(17, 17, 17, 0.025);
@@ -138,7 +154,6 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-number {
-  grid-column: 1 / 2;
   justify-self: center;
   font-family: var(--font-en);
   font-size: 18px;
@@ -153,7 +168,7 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-text {
-  grid-column: 2 / 6;
+  min-width: 0;
 }
 
 .uno-info-doc-label {
@@ -181,7 +196,6 @@ const infoDocumentStyles = `
 }
 
 .uno-info-doc-arrow {
-  grid-column: 6 / 7;
   justify-self: center;
   font-family: var(--font-en);
   font-size: 18px;
@@ -195,19 +209,45 @@ const infoDocumentStyles = `
 .uno-info-body {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: stretch;
   border-bottom: 1px solid rgba(17, 17, 17, 0.14);
+  overflow: visible;
 }
 
 .uno-info-aside {
   grid-column: 1 / 4;
+  align-self: stretch;
+  min-height: 100%;
   padding: 48px 34px;
   border-right: 1px solid rgba(17, 17, 17, 0.14);
+  overflow: visible;
+  position: relative;
 }
 
+/*
+  INFO Aside Scroll Follow
+  ----------------------------------------------------------
+  왼쪽 문서 설명 div(.uno-info-aside-inner)는 스크롤을 내리거나 올릴 때
+  화면 기준으로 따라오도록 처리한다.
+
+  기본은 CSS sticky로 동작하고, Figma Make / 상위 레이아웃에서 sticky가 막히는 경우를 대비해
+  useInfoAsideScrollFollower 훅에서 fixed/absolute 위치를 보정한다.
+
+  다른 INFO 페이지(이용방법, 예약 시 주의사항, 취소 및 환불규정, 여행자 약관)도
+  동일한 .uno-info-aside > .uno-info-aside-inner 구조에 이 규칙을 적용한다.
+*/
 .uno-info-aside-inner {
   position: sticky;
-  top: 136px;
+  top: 112px;
+  max-height: calc(100vh - 132px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  z-index: 1;
+  will-change: top, transform;
 }
+
+.uno-info-aside-inner::-webkit-scrollbar { display: none; }
 
 .uno-info-aside-label {
   margin: 0;
@@ -580,11 +620,14 @@ const infoDocumentStyles = `
   .uno-info-aside {
     border-right: 0;
     border-bottom: 1px solid rgba(17, 17, 17, 0.14);
+    min-height: auto;
   }
 
   .uno-info-aside-inner {
-    position: relative;
+    position: static;
     top: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .uno-info-list,
@@ -642,8 +685,10 @@ const infoDocumentStyles = `
   }
 
   .uno-info-doc-button,
-  .uno-info-doc-button:first-child,
-  .uno-info-doc-button:last-child {
+  .uno-info-doc-button:nth-child(1),
+  .uno-info-doc-button:nth-child(2),
+  .uno-info-doc-button:nth-child(3),
+  .uno-info-doc-button:nth-child(4) {
     grid-column: 1 / -1;
     min-height: 78px;
     grid-template-columns: 56px minmax(0, 1fr) 40px;
@@ -651,7 +696,7 @@ const infoDocumentStyles = `
     border-bottom: 1px solid rgba(17, 17, 17, 0.14);
   }
 
-  .uno-info-doc-button:last-child {
+  .uno-info-doc-button:nth-child(4) {
     border-bottom: 0;
   }
 
@@ -742,151 +787,6 @@ const infoDocumentStyles = `
 }
 `;
 
-
-
-function navigateTo(path: string) {
-  if (typeof window === "undefined") return;
-
-  if (window.location.pathname === path) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  window.history.pushState({}, "", path);
-  window.dispatchEvent(new Event("unotravel:navigate"));
-}
-
-function InfoDocumentNav({ active }: { active: "notice" | "refund" }) {
-  const items = [
-    {
-      id: "notice",
-      number: "01",
-      label: "NOTICE",
-      title: "예약 시 주의사항",
-      path: "/info/notice",
-    },
-    {
-      id: "refund",
-      number: "02",
-      label: "REFUND",
-      title: "취소 및 환불규정",
-      path: "/info/refund",
-    },
-  ] as const;
-
-  return (
-    <nav className="uno-info-doc-nav" aria-label="INFO 문서 이동">
-      {items.map((item) => {
-        const isActive = active === item.id;
-
-        return (
-          <button
-            key={item.id}
-            type="button"
-            aria-current={isActive ? "page" : undefined}
-            className={`uno-info-doc-button ${isActive ? "is-active" : ""}`}
-            onClick={() => navigateTo(item.path)}
-          >
-            <span className="uno-info-doc-number">{item.number}</span>
-            <span className="uno-info-doc-text">
-              <span className="uno-info-doc-label">{item.label}</span>
-              <strong className="uno-info-doc-title">{item.title}</strong>
-            </span>
-            <span className="uno-info-doc-arrow" aria-hidden="true">→</span>
-          </button>
-        );
-      })}
-    </nav>
-  );
-}
-
-function useInfoDocumentAnimation(scopeRef: React.RefObject<HTMLElement | null>) {
-  React.useEffect(() => {
-    let context: { revert: () => void } | undefined;
-    let cancelled = false;
-
-    async function setupAnimation() {
-      if (typeof window === "undefined" || !scopeRef.current) return;
-
-      const [{ gsap }, { ScrollTrigger }, { SplitText }] = await Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-        import("gsap/SplitText"),
-      ]);
-
-      if (cancelled || !scopeRef.current) return;
-
-      gsap.registerPlugin(ScrollTrigger, SplitText);
-
-      const run = () => {
-        if (!scopeRef.current) return;
-
-        context = gsap.context(() => {
-          gsap.set(".uno-info-split", { opacity: 1 });
-
-          const splitTargets = gsap.utils.toArray<HTMLElement>(".uno-info-split");
-
-          splitTargets.forEach((target) => {
-            const trigger =
-              target.closest<HTMLElement>(
-                ".uno-info-hero, .uno-info-row, .uno-refund-row, .uno-special-section, .uno-info-note, .uno-info-aside, .uno-info-index-item",
-              ) ?? target;
-
-            SplitText.create(target, {
-              type: "words,lines",
-              mask: "lines",
-              linesClass: "uno-info-split-line",
-              autoSplit: true,
-              onSplit: (instance) => {
-                return gsap.from(instance.lines, {
-                  yPercent: 112,
-                  opacity: 0.001,
-                  duration: 0.8,
-                  ease: "power3.out",
-                  stagger: 0.05,
-                  scrollTrigger: {
-                    trigger,
-                    start: "clamp(top 84%)",
-                    end: "clamp(bottom 58%)",
-                    toggleActions: "play none none reverse",
-                  },
-                });
-              },
-            });
-          });
-
-          gsap.from(".uno-info-doc-button, .uno-info-index-item, .uno-info-row, .uno-refund-row, .uno-special-section, .uno-info-note", {
-            y: 22,
-            opacity: 0,
-            duration: 0.62,
-            ease: "power3.out",
-            stagger: 0.04,
-            scrollTrigger: {
-              trigger: ".uno-info-shell",
-              start: "top 72%",
-              toggleActions: "play none none reverse",
-            },
-          });
-        }, scopeRef);
-      };
-
-      if (document.fonts?.ready) {
-        document.fonts.ready.then(run);
-      } else {
-        run();
-      }
-    }
-
-    setupAnimation();
-
-    return () => {
-      cancelled = true;
-      context?.revert();
-    };
-  }, [scopeRef]);
-}
-
-
 const noticeItems = [
   {
     title: "미팅 시간과 장소 준수",
@@ -897,6 +797,11 @@ const noticeItems = [
     title: "현지 사정에 따른 일정 변경",
     body:
       "파업, 시위, 교통체증, 현장 통제, 천재지변 등 현지 상황에 따라 투어 동선과 일정 순서가 변경될 수 있습니다.",
+  },
+  {
+    title: "천재지변·현지사고·개인 일정 차질",
+    body:
+      "천재지변, 현지 사고, 항공·열차 지연, 개인 일정 변경 및 차질로 인한 투어 취소에 대해서는 우노트래블이 책임지지 않습니다.",
   },
   {
     title: "개인 일정 차질",
@@ -947,7 +852,10 @@ const noticeItems = [
 
 export default function NoticePage() {
   const scopeRef = useRef<HTMLElement | null>(null);
+  const infoAsideInnerRef = useRef<HTMLDivElement | null>(null);
+
   useInfoDocumentAnimation(scopeRef);
+  useInfoAsideScrollFollower(infoAsideInnerRef);
 
   return (
     <main ref={scopeRef} className="uno-info-document">
@@ -956,7 +864,7 @@ export default function NoticePage() {
       <div className="uno-info-shell">
         <section className="uno-info-hero">
           <p className="uno-info-kicker">UNOTRAVEL INFO</p>
-          <p className="uno-info-page-index">NOTICE / 01</p>
+          <p className="uno-info-page-index">NOTICE / 02</p>
 
           <h1 className="uno-info-title uno-info-split">
             예약 시
@@ -973,7 +881,7 @@ export default function NoticePage() {
 
         <section className="uno-info-body">
           <aside className="uno-info-aside">
-            <div className="uno-info-aside-inner">
+            <div ref={infoAsideInnerRef} className="uno-info-aside-inner">
               <p className="uno-info-aside-label">READING GUIDE</p>
               <h2 className="uno-info-split">투어 참여 전 핵심 안내</h2>
               <p className="uno-info-split">
