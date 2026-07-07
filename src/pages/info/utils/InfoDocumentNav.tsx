@@ -8,7 +8,13 @@ export default function InfoDocumentNav({
   active: InfoDocumentId;
 }) {
   return (
-    <nav className="uno-info-doc-nav" aria-label="INFO 문서 이동">
+    <nav
+      className="uno-info-doc-nav"
+      aria-label="INFO 문서 이동"
+      style={{
+        gridTemplateColumns: `repeat(${INFO_DOCUMENT_ITEMS.length}, minmax(0, 1fr))`,
+      }}
+    >
       {INFO_DOCUMENT_ITEMS.map((item) => {
         const isActive = active === item.id;
 
@@ -18,6 +24,9 @@ export default function InfoDocumentNav({
             type="button"
             aria-current={isActive ? "page" : undefined}
             className={`uno-info-doc-button ${isActive ? "is-active" : ""}`}
+            style={{
+              gridColumn: "auto",
+            }}
             onClick={() => navigateToInfo(item.path)}
           >
             <span className="uno-info-doc-number">{item.number}</span>

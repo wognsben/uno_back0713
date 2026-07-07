@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import Footer from "./components/footer/index";
 import Header from "./components/header/index";
+import PageTransitionFrame from "./transitions/PageTransitionFrame";
+import "./transitions/pageTransition.css";
 
 import Intro from "../imports/INTRO/INTRO";
 
@@ -75,6 +77,19 @@ import NoticePage from "../pages/info/notice";
 import GuideUsePage from "../pages/info/guide_use";
 import RefundPage from "../pages/info/refund";
 import RulePage from "../pages/info/rule";
+import PrivacyPage from "../pages/info/privacy";
+import AboutUnoPage from "../pages/aboutuno/AboutUnoPage";
+import ContactPage from "../pages/contact_page/ContactPage";
+
+/* ==========================================================
+   Community
+========================================================== */
+import CommunityPage from "../pages/Community/CommunityPage";
+import ReviewPage from "../pages/Community/review/ReviewPage";
+import NoticeBoardPage from "../pages/Community/notice/NoticePage";
+import EventPage from "../pages/Community/event/EventPage";
+import FaqPage from "../pages/Community/faq/FaqPage";
+import "../pages/Community/community.css";
 
 /* ────────────────────────────────────────────
    Page (sections use 100vw shell + full width content rule)
@@ -146,6 +161,7 @@ const scrollCards = [
 function CircularText({ text, r = 38 }: { text: string; r?: number }) {
   const cx = 55;
   const cy = 55;
+
   return (
     <svg
       width={110}
@@ -380,7 +396,15 @@ export default function App() {
       custom navigation은 먼저 scrollTop을 안정화하고,
       다음 animation frame에서 페이지 컴포넌트를 교체한다.
     */
-      if (event.type === "unotravel:navigate" && previousPathname !== nextPathname) {
+      const isAboutContactTransition =
+        (previousPathname === "/about-uno" && nextPathname === "/contact") ||
+        (previousPathname === "/contact" && nextPathname === "/about-uno");
+
+      if (
+        event.type === "unotravel:navigate" &&
+        previousPathname !== nextPathname &&
+        !isAboutContactTransition
+      ) {
         window.scrollTo({
           top: 0,
           left: 0,
@@ -491,7 +515,31 @@ export default function App() {
   const isGuideUsePage = pathname === "/info/guide_use";
   const isRefundPage = pathname === "/info/refund";
   const isRulePage = pathname === "/info/rule";
+  const isPrivacyPage = pathname === "/info/privacy";
   const isInfoPageRoute = pathname === "/info" || pathname.startsWith("/info/");
+
+  /*
+  About UNO Route
+  ------------------------------------------
+  Header Dot Menu의 ABOUT UNO 진입 페이지.
+  Community와 분리된 브랜드 소개 페이지로 렌더링한다.
+*/
+  const isAboutUnoPage = pathname === "/about-uno";
+  const isContactPage = pathname === "/contact";
+
+  /*
+  Community Route
+  ------------------------------------------
+  Review / Notice / Event / FAQ 커뮤니티 페이지 라우팅.
+  /community 기본 진입은 ReviewPage로 연결한다.
+*/
+  const isCommunityIndexPage = pathname === "/community";
+  const isCommunityReviewPage = pathname === "/community/review";
+  const isCommunityNoticePage = pathname === "/community/notice";
+  const isCommunityEventPage = pathname === "/community/event";
+  const isCommunityFaqPage = pathname === "/community/faq";
+  const isCommunityRoute =
+    pathname === "/community" || pathname.startsWith("/community/");
 
   /*
   Product Detail Route
@@ -528,62 +576,8 @@ export default function App() {
     overflow: "hidden" as const,
   };
 
-  return (
-    <>
-      {/* Intro */}
-      {!isProductPage &&
-        !isLoginPage &&
-        !isRegisterPage &&
-        !isRegisterAgreementPage &&
-        !isRegisterFormPage &&
-        !isRegisterCompletePage &&
-        !isMyPageRoute &&
-        !isInfoPageRoute &&
-        showIntro && (
-          <Intro
-            onFinish={() => {
-              sessionStorage.setItem("uno_intro_played", "true");
-              setShowIntro(false);
-            }}
-          />
-        )}
-
-      {/* Main */}
-      <div
-        style={{
-          /* Desktop Responsive
-             - App root는 100vw 대신 100% 기준
-             - Desktop/Tablet Landscape 최소 폭은 1024px 유지 */
-          width: "100%",
-          minWidth: 1024,
-
-          background: "#FFFFFF",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          boxSizing: "border-box",
-          overflowX: "hidden",
-        }}
-      >
-        {/* Header */}
-        {!isLoginPage && !isRegisterRoute && (
-          <div
-            style={{
-              /* Desktop Responsive
-                 - Header wrapper도 100vw 대신 부모 기준 100% 사용 */
-              width: "100%",
-              boxSizing: "border-box",
-              padding: "51px 55px 0",
-              display: "flex",
-              justifyContent: "center",
-              overflow: "hidden",
-            }}
-          >
-            <Header />
-          </div>
-        )}
-
-        {isProductPage ? (
+  const pageContent = (
+    isProductPage ? (
           /*
             Product Sub Page
 
@@ -681,6 +675,22 @@ export default function App() {
           <RefundPage />
         ) : isRulePage ? (
           <RulePage />
+        ) : isPrivacyPage ? (
+          <PrivacyPage />
+        ) : isAboutUnoPage ? (
+          <AboutUnoPage />
+        ) : isContactPage ? (
+          <ContactPage />
+        ) : isCommunityIndexPage ? (
+          <CommunityPage />
+        ) : isCommunityReviewPage ? (
+          <ReviewPage />
+        ) : isCommunityNoticePage ? (
+          <NoticeBoardPage />
+        ) : isCommunityEventPage ? (
+          <EventPage />
+        ) : isCommunityFaqPage ? (
+          <FaqPage />
         ) : (
           <>
             {/* Hero */}
@@ -741,10 +751,73 @@ export default function App() {
               <Section4Component />
             </div>
           </>
+        )
+  );
+
+  return (
+    <>
+      {/* Intro */}
+      {!isProductPage &&
+        !isLoginPage &&
+        !isRegisterPage &&
+        !isRegisterAgreementPage &&
+        !isRegisterFormPage &&
+        !isRegisterCompletePage &&
+        !isMyPageRoute &&
+        !isInfoPageRoute &&
+        !isAboutUnoPage &&
+        !isContactPage &&
+        !isCommunityRoute &&
+        showIntro && (
+          <Intro
+            onFinish={() => {
+              sessionStorage.setItem("uno_intro_played", "true");
+              setShowIntro(false);
+            }}
+          />
         )}
 
+      {/* Main */}
+      <div
+        style={{
+          /* Desktop Responsive
+             - App root는 100vw 대신 100% 기준
+             - Desktop/Tablet Landscape 최소 폭은 1024px 유지 */
+          width: "100%",
+          minWidth: 1024,
+
+          background: "#FFFFFF",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "stretch",
+          boxSizing: "border-box",
+          overflowX: "hidden",
+        }}
+      >
+        {/* Header */}
+        {!isLoginPage && !isRegisterRoute && !isContactPage && (
+          <div
+            style={{
+              /* Desktop Responsive
+                 - Header wrapper도 100vw 대신 부모 기준 100% 사용 */
+              width: "100%",
+              boxSizing: "border-box",
+              padding: "51px 55px 0",
+              display: "flex",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+          >
+            <Header />
+          </div>
+        )}
+
+        <PageTransitionFrame pathname={pathname}>
+          {pageContent}
+        </PageTransitionFrame>
+
         {/* Footer */}
-        {!isLoginPage && !isRegisterRoute && (
+        {!isLoginPage && !isRegisterRoute && !isAboutUnoPage && (
           <div
             style={{
               /* Desktop Responsive

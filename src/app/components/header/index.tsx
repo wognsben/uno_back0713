@@ -177,12 +177,25 @@ const FONT_MONO = "var(--font-en)";
 const BLACK = "#151515";
 const BORDER = "#E8E9E9";
 
-const MENU_ITEMS = [
-  { label: "SEMI PACKAGE", href: "/contents/tour_list.php?ca_id=semi" },
-  { label: "DAILY TOUR", href: "/contents/tour_list.php?ca_id=daily" },
-  { label: "NOTICE", href: "/contents/board.php?bo_table=notice" },
-  { label: "ABOUT UNO", href: "/contents/about.php" },
-  { label: "CONTACT", href: "/contents/contact.php" },
+type DotMenuItem = {
+  label: string;
+  labelEn?: string;
+  href: string;
+  variant: "hub" | "link" | "brand";
+  external?: boolean;
+};
+
+const COMMUNITY_MENU_ITEMS: readonly DotMenuItem[] = [
+  { label: "커뮤니티", labelEn: "COMMUNITY", href: "/community", variant: "hub" },
+  { label: "여행후기", labelEn: "REVIEW", href: "/community/review", variant: "link" },
+  { label: "공지사항", labelEn: "NOTICE", href: "/community/notice", variant: "link" },
+  { label: "이벤트", labelEn: "EVENT", href: "/community/event", variant: "link" },
+  { label: "FAQ", labelEn: "FAQ", href: "/community/faq", variant: "link" },
+] as const;
+
+const BRAND_MENU_ITEMS: readonly DotMenuItem[] = [
+  { label: "ABOUT UNO", href: "/about-uno", variant: "brand" },
+  { label: "CONTACT", href: "/contact", variant: "brand" },
 ] as const;
 
 function DotGrid({
@@ -307,12 +320,11 @@ function Logo() {
       aria-label="UNOTRAVEL home"
 
       style={{
-        width: 80,
+        width: 92,
         height: 46,
         display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        justifyContent: "center",
+        alignItems: "center",
+        justifyContent: "flex-start",
         flexShrink: 0,
         background: "none",
         border: "none",
@@ -322,31 +334,16 @@ function Logo() {
         padding: 0,
       }}
     >
-      <span
+      <img
+        src={imgImage21}
+        alt="UNO TRAVEL"
         style={{
-          fontFamily: FONT_MONO,
-          fontWeight: 700,
-          fontSize: 35,
-          color: BLACK,
-          lineHeight: 0.78,
-          letterSpacing: "-0.07em",
+          display: "block",
+          width: 92,
+          height: "auto",
+          objectFit: "contain",
         }}
-      >
-        UNO
-      </span>
-      <span
-        style={{
-          fontFamily: FONT_MONO,
-          fontWeight: 700,
-          fontSize: 10,
-          color: BLACK,
-          letterSpacing: "0.22em",
-          lineHeight: 1,
-          marginTop: 7,
-        }}
-      >
-        T·R·A·V·E·L
-      </span>
+      />
     </button>
   );
 }
@@ -405,6 +402,7 @@ const INFO_MENU_ITEMS = [
   { label: "예약 시 주의사항", path: "/info/notice" },
   { label: "취소 및 환불규정", path: "/info/refund" },
   { label: "여행자 약관", path: "/info/rule" },
+  { label: "개인정보처리방침", path: "/info/privacy" },
 ] as const;
 
 function InfoDropdownPanel({
@@ -792,11 +790,27 @@ function ShortMenuPanel({
   isOpen,
   onClose,
   isScrolled,
+  onNavigate,
 }: {
   isOpen: boolean;
   onClose: () => void;
   isScrolled: boolean;
+  onNavigate: (path: string) => void;
 }) {
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    item: DotMenuItem,
+  ) => {
+    onClose();
+
+    if (item.external) {
+      return;
+    }
+
+    event.preventDefault();
+    onNavigate(item.href);
+  };
+
   return (
     <div
       aria-hidden={!isOpen}
@@ -806,7 +820,7 @@ function ShortMenuPanel({
         left: "50%",
         width: isScrolled ? 1440 : 820,
         maxWidth: "100%",
-        height: isOpen ? 390 : 0,
+        height: isOpen ? 430 : 0,
         transform: isOpen
           ? "translateX(-50%) translateY(0)"
           : "translateX(-50%) translateY(-14px)",
@@ -827,11 +841,13 @@ function ShortMenuPanel({
     >
       <div
         style={{
-          height: 390,
-          padding: "38px 44px 34px",
+          height: 430,
+          padding: "36px 44px 30px",
           display: "grid",
-          gridTemplateColumns: "1fr 220px",
-          gap: 48,
+          gridTemplateColumns: "minmax(0, 1fr) 232px",
+          gridTemplateRows: "1fr auto",
+          columnGap: 54,
+          rowGap: 26,
           boxSizing: "border-box",
         }}
       >
@@ -840,50 +856,150 @@ function ShortMenuPanel({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: 18,
+            gap: 12,
           }}
         >
-          {MENU_ITEMS.map((item, index) => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={onClose}
-              style={{
-                fontFamily: "var(--font-en)",
-                fontSize: 54,
-                lineHeight: 0.92,
-                color: BLACK,
-                textDecoration: "none",
-                letterSpacing: "-0.055em",
-                transform: isOpen ? "translateY(0)" : "translateY(16px)",
-                opacity: isOpen ? 1 : 0,
-                transition: `opacity 0.36s ease ${index * 0.045}s, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.045}s`,
-              }}
-            >
-              {item.label}
-            </a>
-          ))}
+          {COMMUNITY_MENU_ITEMS.map((item, index) => {
+            const isHub = item.variant === "hub";
+
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => handleMenuItemClick(event, item)}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: isHub ? "1fr" : "112px 1fr",
+                  alignItems: "baseline",
+                  gap: 18,
+                  fontFamily: isHub ? "var(--font-en)" : "var(--font-ko)",
+                  fontSize: isHub ? 21 : 36,
+                  fontWeight: isHub ? 800 : 800,
+                  lineHeight: isHub ? 1 : 1.02,
+                  color: BLACK,
+                  textDecoration: "none",
+                  letterSpacing: isHub ? "0.13em" : "-0.065em",
+                  textTransform: isHub ? "uppercase" : "none",
+                  opacity: isOpen ? (isHub ? 0.58 : 1) : 0,
+                  transform: isOpen ? "translateY(0)" : "translateY(16px)",
+                  transition: `opacity 0.36s ease ${index * 0.045}s, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.045}s`,
+                }}
+              >
+                {isHub ? (
+                  <span>{item.labelEn}</span>
+                ) : (
+                  <>
+                    <span
+                      style={{
+                        fontFamily: FONT_MONO,
+                        fontSize: 11,
+                        fontWeight: 800,
+                        letterSpacing: "0.12em",
+                        color: "rgba(21, 21, 21, 0.42)",
+                      }}
+                    >
+                      {item.labelEn}
+                    </span>
+                    <span>{item.label}</span>
+                  </>
+                )}
+              </a>
+            );
+          })}
         </div>
 
         <aside
           style={{
-            alignSelf: "end",
+            alignSelf: "center",
+            justifySelf: "stretch",
+            borderLeft: `1px solid ${BORDER}`,
+            paddingLeft: 30,
             fontFamily: FONT_MONO,
             color: BLACK,
-            fontSize: 12,
-            lineHeight: 1.55,
-            letterSpacing: "-0.02em",
             opacity: isOpen ? 1 : 0,
             transform: isOpen ? "translateY(0)" : "translateY(12px)",
             transition:
-              "opacity 0.36s ease 0.18s, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.18s",
+              "opacity 0.36s ease 0.16s, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.16s",
           }}
         >
-          <div style={{ fontWeight: 700, marginBottom: 14 }}>UNOTRAVEL</div>
-          <div>Premium Semi Package</div>
-          <div>Daily Tour Collection</div>
-          <div style={{ marginTop: 18 }}>Italy · Spain · Portugal · Egypt</div>
+          <div
+            style={{
+              marginBottom: 28,
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: "0.13em",
+              color: "rgba(21, 21, 21, 0.44)",
+            }}
+          >
+            BRAND
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 18,
+            }}
+          >
+            {BRAND_MENU_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => handleMenuItemClick(event, item)}
+                style={{
+                  fontFamily: "var(--font-en)",
+                  fontSize: 26,
+                  fontWeight: 800,
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.055em",
+                  color: BLACK,
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
         </aside>
+
+        <div
+          style={{
+            gridColumn: "1 / -1",
+            borderTop: `1px solid ${BORDER}`,
+            paddingTop: 22,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            opacity: isOpen ? 1 : 0,
+            transform: isOpen ? "translateY(0)" : "translateY(10px)",
+            transition:
+              "opacity 0.36s ease 0.22s, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1) 0.22s",
+          }}
+        >
+          <img
+            src={imgImage21}
+            alt="UNO TRAVEL"
+            style={{
+              display: "block",
+              width: 132,
+              height: "auto",
+              objectFit: "contain",
+            }}
+          />
+
+          <div
+            style={{
+              fontFamily: FONT_MONO,
+              fontSize: 11,
+              fontWeight: 700,
+              lineHeight: 1,
+              letterSpacing: "0.08em",
+              color: "rgba(21, 21, 21, 0.46)",
+            }}
+          >
+            PREMIUM MEDITERRANEAN TRAVEL
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1160,10 +1276,26 @@ function RecentlyViewedPanel({
 function ExpandedMenuCard({
   isOpen,
   onClose,
+  onNavigate,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onNavigate: (path: string) => void;
 }) {
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    item: DotMenuItem,
+  ) => {
+    onClose();
+
+    if (item.external) {
+      return;
+    }
+
+    event.preventDefault();
+    onNavigate(item.href);
+  };
+
   return (
     <div
       aria-hidden={!isOpen}
@@ -1172,7 +1304,7 @@ function ExpandedMenuCard({
         top: 124,
         right: 0,
         width: 625,
-        height: 690,
+        height: 720,
         background: "#FFFFFF",
         borderRadius: 18,
         boxSizing: "border-box",
@@ -1233,46 +1365,164 @@ function ExpandedMenuCard({
       <div
         style={{
           height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          gap: 24,
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1fr) 172px",
+          gridTemplateRows: "1fr auto",
+          columnGap: 34,
+          rowGap: 28,
+          paddingTop: 56,
+          boxSizing: "border-box",
         }}
       >
-        {MENU_ITEMS.map((item, index) => (
-          <a
-            key={item.label}
-            href={item.href}
-            onClick={onClose}
+        <div
+          style={{
+            alignSelf: "center",
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+          }}
+        >
+          {COMMUNITY_MENU_ITEMS.map((item, index) => {
+            const isHub = item.variant === "hub";
+
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => handleMenuItemClick(event, item)}
+                style={{
+                  display: isHub ? "block" : "grid",
+                  gridTemplateColumns: "104px 1fr",
+                  alignItems: "baseline",
+                  gap: 18,
+                  fontFamily: isHub ? "var(--font-en)" : "var(--font-ko)",
+                  fontSize: isHub ? 23 : 43,
+                  fontWeight: 800,
+                  lineHeight: isHub ? 1 : 0.98,
+                  color: BLACK,
+                  textDecoration: "none",
+                  letterSpacing: isHub ? "0.13em" : "-0.07em",
+                  textTransform: isHub ? "uppercase" : "none",
+                  opacity: isOpen ? (isHub ? 0.52 : 1) : 0,
+                  transform: isOpen ? "translateX(0)" : "translateX(18px)",
+                  transition: `opacity 0.38s ease ${index * 0.055}s, transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.055}s`,
+                }}
+              >
+                {isHub ? (
+                  <span>{item.labelEn}</span>
+                ) : (
+                  <>
+                    <span
+                      style={{
+                        fontFamily: FONT_MONO,
+                        fontSize: 11,
+                        fontWeight: 800,
+                        letterSpacing: "0.12em",
+                        color: "rgba(21, 21, 21, 0.42)",
+                      }}
+                    >
+                      {item.labelEn}
+                    </span>
+                    <span>{item.label}</span>
+                  </>
+                )}
+              </a>
+            );
+          })}
+        </div>
+
+        <aside
+          style={{
+            alignSelf: "center",
+            borderLeft: `1px solid ${BORDER}`,
+            paddingLeft: 24,
+            paddingTop: 10,
+            paddingBottom: 10,
+            opacity: isOpen ? 1 : 0,
+            transform: isOpen ? "translateX(0)" : "translateX(14px)",
+            transition:
+              "opacity 0.38s ease 0.18s, transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.18s",
+          }}
+        >
+          <div
             style={{
-              fontFamily: "var(--font-en)",
-              fontSize: 76,
-              lineHeight: 0.88,
-              color: BLACK,
-              textDecoration: "none",
-              letterSpacing: "-0.06em",
-              opacity: isOpen ? 1 : 0,
-              transform: isOpen ? "translateX(0)" : "translateX(18px)",
-              transition: `opacity 0.38s ease ${index * 0.055}s, transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.055}s`,
+              marginBottom: 28,
+              fontFamily: FONT_MONO,
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: "0.13em",
+              color: "rgba(21, 21, 21, 0.44)",
             }}
           >
-            {item.label}
-          </a>
-        ))}
-      </div>
+            BRAND
+          </div>
 
-      <div
-        style={{
-          position: "absolute",
-          left: 44,
-          bottom: 34,
-          fontFamily: FONT_MONO,
-          fontSize: 12,
-          lineHeight: 1.45,
-          color: BLACK,
-        }}
-      >
-        Italy · Spain · Portugal · Egypt
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 20,
+            }}
+          >
+            {BRAND_MENU_ITEMS.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => handleMenuItemClick(event, item)}
+                style={{
+                  fontFamily: "var(--font-en)",
+                  fontSize: 28,
+                  fontWeight: 800,
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.055em",
+                  color: BLACK,
+                  textDecoration: "none",
+                }}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </aside>
+
+        <div
+          style={{
+            gridColumn: "1 / -1",
+            borderTop: `1px solid ${BORDER}`,
+            paddingTop: 24,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            opacity: isOpen ? 1 : 0,
+            transform: isOpen ? "translateY(0)" : "translateY(10px)",
+            transition:
+              "opacity 0.38s ease 0.24s, transform 0.48s cubic-bezier(0.16, 1, 0.3, 1) 0.24s",
+          }}
+        >
+          <img
+            src={imgImage21}
+            alt="UNO TRAVEL"
+            style={{
+              display: "block",
+              width: 132,
+              height: "auto",
+              objectFit: "contain",
+            }}
+          />
+
+          <div
+            style={{
+              fontFamily: FONT_MONO,
+              fontSize: 11,
+              fontWeight: 700,
+              lineHeight: 1,
+              letterSpacing: "0.08em",
+              color: "rgba(21, 21, 21, 0.46)",
+            }}
+          >
+            SINCE 2011
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1572,6 +1822,7 @@ export default function Header({
     const isViewedButton = item === "VIEWED";
     const isLoginButton = item === "LOGIN";
     const isInfoButton = item === "INFO";
+    const isContactButton = item === "CONTACT";
     const isMyPageButton = item === "MY PAGE";
     const hasRecentlyViewed = recentlyViewedProducts.length > 0;
 
@@ -1607,13 +1858,20 @@ export default function Header({
                     setIsInfoOpen(false);
                     navigateTo("/info");
                   }
-                : isMyPageButton
+                : isContactButton
                   ? () => {
                       setIsMenuOpen(false);
                       setIsViewedOpen(false);
                       setIsInfoOpen(false);
-                      navigateTo("/mypage");
+                      navigateTo("/contact");
                     }
+                  : isMyPageButton
+                    ? () => {
+                        setIsMenuOpen(false);
+                        setIsViewedOpen(false);
+                        setIsInfoOpen(false);
+                        navigateTo("/mypage");
+                      }
                   : undefined
         }
         onMouseEnter={(event) => {
@@ -1892,10 +2150,12 @@ export default function Header({
           isOpen={isMenuOpen && !isScrolled}
           onClose={() => setIsMenuOpen(false)}
           isScrolled={isScrolled}
+          onNavigate={navigateTo}
         />
         <ExpandedMenuCard
           isOpen={isMenuOpen && isScrolled}
           onClose={() => setIsMenuOpen(false)}
+          onNavigate={navigateTo}
         />
       </div>
     </div>

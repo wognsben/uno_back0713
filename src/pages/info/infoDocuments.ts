@@ -8,7 +8,12 @@
    - InfoDocumentNav 컴포넌트는 InfoDocumentNav.tsx에서만 관리한다.
 ========================================================== */
 
-export type InfoDocumentId = "guide_use" | "notice" | "refund" | "rule";
+export type InfoDocumentId =
+  | "guide_use"
+  | "notice"
+  | "refund"
+  | "rule"
+  | "privacy";
 
 export type InfoDocumentItem = {
   id: InfoDocumentId;
@@ -45,13 +50,21 @@ export const INFO_DOCUMENT_ITEMS: InfoDocumentItem[] = [
     path: "/info/refund",
   },
   {
-    id: "rule",
-    number: "04",
-    label: "TRAVEL TERMS",
-    title: "여행자 약관",
-    description: "여행자 약관과 이용 조건을 확인합니다.",
-    path: "/info/rule",
-  },
+  id: "rule",
+  number: "04",
+  label: "TRAVEL TERMS",
+  title: "여행자 약관",
+  description: "여행자 약관과 이용 조건을 확인합니다.",
+  path: "/info/rule",
+},
+{
+  id: "privacy",
+  number: "05",
+  label: "PRIVACY POLICY",
+  title: "개인정보처리방침",
+  description: "개인정보 처리방침을 확인합니다.",
+  path: "/info/privacy",
+},
 ];
 
 export function getInfoDocument(id: InfoDocumentId) {

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import svgPaths from "./svg-04rdhdsoo5";
 import img1 from "./8f219b4383084c668b556ed6473ae1a30cc63f76.png";
-import img from "./050e70839c8a865a3bc5bf5529ebbff52dab7a81.png";
+import imgKakaoChannel from "../assests/kakao_channel.png";
 import img2 from "./aa36fe66f91d4d474a7c3e64585689a25e85b055.png";
 import imgImage43 from "./e1cbe6c063a42f81ec9aab230ab12273b9bce560.png";
 
@@ -24,6 +24,51 @@ const getFooterScale = (width: number) => {
   const safeWidth = Math.max(width, FOOTER_MIN_WIDTH);
   return Math.min(safeWidth / FOOTER_BASE_WIDTH, 1);
 };
+
+/*
+==========================================================
+
+Backend Hook
+
+관리자에서 수정 가능
+
+- Kakao Channel URL
+
+추후 그누보드 관리자 설정값과 연동
+
+==========================================================
+*/
+const KAKAO_CHANNEL_URL = "http://pf.kakao.com/_fxbTxnd/chat";
+const GUARANTEE_INSURANCE_URL = "https://tourinfo.or.kr/v2/";
+
+const FOOTER_NAVIGATION_PATHS = {
+  aboutUno: "/about-uno",
+  guideUse: "/info/guide_use",
+  privacy: "/info/privacy",
+  rule: "/info/rule",
+  refund: "/info/refund",
+  notice: "/info/notice",
+};
+
+function navigateFooter(path: string) {
+  if (typeof window === "undefined") return;
+
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new Event("unotravel:navigate"));
+}
+
+function openFooterExternal(url: string) {
+  if (typeof window === "undefined") return;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function handleFooterKeyDown(event: KeyboardEvent<HTMLElement>, action: () => void) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+
+  event.preventDefault();
+  action();
+}
 
 export default function Component({ className }: { className?: string }) {
   const footerRef = useRef<HTMLDivElement | null>(null);
@@ -215,7 +260,15 @@ export default function Component({ className }: { className?: string }) {
               <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img1} />
             </div>
             <div className="bg-white content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0">
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="회사소개 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.aboutUno)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.aboutUno))}
+              >
                 <p className="leading-[0px]">회사소개</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -225,7 +278,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[80px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="이용안내 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.guideUse)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.guideUse))}
+              >
                 <p className="leading-[0px]">이용안내</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -235,7 +296,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="개인정보처리방침 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.privacy)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.privacy))}
+              >
                 <p className="leading-[0px]">개인정보처리방침</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -245,7 +314,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[90px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[90px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="여행자약관 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.rule)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.rule))}
+              >
                 <p className="leading-[0px] mb-0">여행자약관</p>
                 <p className="leading-[0px]">​</p>
               </div>
@@ -256,7 +333,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="취소 및 환불 규정 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.refund)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.refund))}
+              >
                 <p className="leading-[0px] mb-0">취소 및 환불 규정</p>
                 <p className="leading-[0px]">​</p>
               </div>
@@ -267,7 +352,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="예약시 주의사항 페이지로 이동"
+                onClick={() => navigateFooter(FOOTER_NAVIGATION_PATHS.notice)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => navigateFooter(FOOTER_NAVIGATION_PATHS.notice))}
+              >
                 <p className="leading-[0px]">예약시 주의사항</p>
               </div>
               <div className="h-[20px] relative shrink-0 w-0">
@@ -277,7 +370,15 @@ export default function Component({ className }: { className?: string }) {
                   </svg>
                 </div>
               </div>
-              <div className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]" style={{ fontVariationSettings: '"wght" 700' }}>
+              <div
+                className="footer-text-link [word-break:break-word] flex flex-col font-['Crimson_Text:Bold','Noto_Sans_KR:Bold',sans-serif] h-[30px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[130px]"
+                style={{ fontVariationSettings: '"wght" 700' }}
+                role="link"
+                tabIndex={0}
+                aria-label="보증보험확인 새 창으로 열기"
+                onClick={() => openFooterExternal(GUARANTEE_INSURANCE_URL)}
+                onKeyDown={(event) => handleFooterKeyDown(event, () => openFooterExternal(GUARANTEE_INSURANCE_URL))}
+              >
                 <p className="leading-[0px]">보증보험확인</p>
               </div>
               <div className="footer-share-link relative shrink-0 size-[24px]" data-name="icon-park-outline:share" role="button" tabIndex={0} aria-label="공유하기">
@@ -293,12 +394,20 @@ export default function Component({ className }: { className?: string }) {
         </div>
         <div className="absolute bg-white content-stretch flex items-center justify-between left-0 overflow-clip px-[20px] py-[10px] top-[290px] w-[1440px]">
           <div className="content-stretch flex gap-[21px] items-center relative shrink-0" data-name="SNS 로고">
-            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="카톡" role="link" tabIndex={0} aria-label="카카오톡 문의하기">
-              <div className="relative shrink-0 size-[40px]" data-name="카톡 로고">
-                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img} />
+            <div
+              className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]"
+              data-name="카카오톡 채널"
+              role="link"
+              tabIndex={0}
+              aria-label="카카오톡 채널 새 창으로 열기"
+              onClick={() => openFooterExternal(KAKAO_CHANNEL_URL)}
+              onKeyDown={(event) => handleFooterKeyDown(event, () => openFooterExternal(KAKAO_CHANNEL_URL))}
+            >
+              <div className="relative shrink-0 size-[40px]" data-name="카카오톡 채널 로고">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgKakaoChannel} />
               </div>
-              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[30px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.48px] w-[120px]">
-                <p className="leading-[0px]">KAKAO TALK</p>
+              <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:Bold',sans-serif] h-[30px] justify-center leading-[0] not-italic relative shrink-0 text-[#151515] text-[16px] text-center tracking-[0.2px] w-[150px]">
+                <p className="leading-none whitespace-nowrap">카카오톡 채널</p>
               </div>
             </div>
             <div className="h-[74px] relative shrink-0 w-0">

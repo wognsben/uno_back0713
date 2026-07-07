@@ -1,0 +1,91 @@
+/* ==========================================================
+   pageTransition.css
+
+   UNO TRAVEL 자체 SPA 전환 레이어
+
+   목적
+   - React Router 없이 window.history.pushState + unotravel:navigate 유지
+   - About UNO ↔ Contact 전환 시 current/next 페이지를 동시에 렌더링
+   - fixed layer + transform 기반으로 뚝 끊기는 route 교체감을 완화
+========================================================== */
+
+.unotravel-transition-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 1024px;
+  background: #ffffff;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.unotravel-transition-container {
+  position: relative;
+  width: 100%;
+  min-width: 1024px;
+  background: #ffffff;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.unotravel-transition-wrapper.is-transitioning {
+  overflow: hidden;
+}
+
+.unotravel-transition-placeholder {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.unotravel-transition-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  width: 100%;
+  min-width: 1024px;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #ffffff;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
+  transition: transform 0.82s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.unotravel-transition-layer-inner {
+  width: 100%;
+  min-width: 1024px;
+  min-height: 100vh;
+  background: #ffffff;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.unotravel-transition-layer-current {
+  transform: translate3d(0, 0, 0);
+}
+
+.unotravel-transition-layer-next.is-down {
+  transform: translate3d(0, 100%, 0);
+}
+
+.unotravel-transition-layer-next.is-up {
+  transform: translate3d(0, -100%, 0);
+}
+
+.unotravel-transition-layer-current.is-down.is-active {
+  transform: translate3d(0, -22%, 0);
+}
+
+.unotravel-transition-layer-current.is-up.is-active {
+  transform: translate3d(0, 22%, 0);
+}
+
+.unotravel-transition-layer-next.is-active {
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unotravel-transition-layer {
+    transition-duration: 0.01ms;
+  }
+}

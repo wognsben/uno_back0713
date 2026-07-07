@@ -12,6 +12,7 @@ import React from "react";
    - notice
    - refund
    - rule
+   - policy
 
    목적
    ----------------------------------------------------------

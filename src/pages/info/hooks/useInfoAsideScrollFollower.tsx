@@ -21,6 +21,7 @@ import { RefObject, useEffect } from "react";
    - notice
    - refund
    - rule
+   - privacy
 
    중요
    ----------------------------------------------------------
@@ -59,10 +60,17 @@ export default function useInfoAsideScrollFollower(
 
     if (!parent) return;
 
+    const boundary =
+      (parent.closest(".uno-info-body") as HTMLElement | null) ||
+      (parent.closest(".uno-info-shell") as HTMLElement | null) ||
+      parent;
+
     const HEADER_OFFSET = 112;
     const MOBILE_BREAKPOINT = 1024;
+    const BOTTOM_GAP = 20;
 
-    let ticking = false;
+    let frameId = 0;
+    let resizeObserver: ResizeObserver | null = null;
 
     const resetInlineStyles = () => {
       aside.style.position = "";
@@ -74,39 +82,61 @@ export default function useInfoAsideScrollFollower(
       aside.style.maxHeight = "";
       aside.style.overflowY = "";
       aside.style.overflowX = "";
+      aside.style.transform = "";
+      aside.style.willChange = "";
+      parent.style.position = "";
+    };
+
+    const getParentPadding = () => {
+      const parentStyle = window.getComputedStyle(parent);
+
+      return {
+        top: Number.parseFloat(parentStyle.paddingTop) || 0,
+        right: Number.parseFloat(parentStyle.paddingRight) || 0,
+        bottom: Number.parseFloat(parentStyle.paddingBottom) || 0,
+        left: Number.parseFloat(parentStyle.paddingLeft) || 0,
+      };
     };
 
     const getInnerWidth = () => {
-      const parentStyle = window.getComputedStyle(parent);
-      const paddingLeft = Number.parseFloat(parentStyle.paddingLeft) || 0;
-      const paddingRight = Number.parseFloat(parentStyle.paddingRight) || 0;
+      const padding = getParentPadding();
       const parentRect = parent.getBoundingClientRect();
 
-      return Math.max(0, parentRect.width - paddingLeft - paddingRight);
+      return Math.max(0, parentRect.width - padding.left - padding.right);
     };
 
     const getInnerLeft = () => {
-      const parentStyle = window.getComputedStyle(parent);
-      const paddingLeft = Number.parseFloat(parentStyle.paddingLeft) || 0;
+      const padding = getParentPadding();
       const parentRect = parent.getBoundingClientRect();
 
-      return parentRect.left + paddingLeft;
+      return parentRect.left + padding.left;
     };
 
-    const update = () => {
-      ticking = false;
+    const hasTransformedAncestor = () => {
+      let node = aside.parentElement;
 
-      if (window.innerWidth <= MOBILE_BREAKPOINT) {
-        resetInlineStyles();
-        return;
+      while (node && node !== document.body) {
+        const style = window.getComputedStyle(node);
+
+        if (
+          style.transform !== "none" ||
+          style.perspective !== "none" ||
+          style.filter !== "none" ||
+          style.backdropFilter !== "none" ||
+          style.contain.includes("paint") ||
+          style.contain.includes("layout")
+        ) {
+          return true;
+        }
+
+        node = node.parentElement;
       }
 
-      const parentRect = parent.getBoundingClientRect();
-      const parentStyle = window.getComputedStyle(parent);
-      const paddingTop = Number.parseFloat(parentStyle.paddingTop) || 0;
-      const paddingBottom = Number.parseFloat(parentStyle.paddingBottom) || 0;
-      const asideHeight = aside.offsetHeight;
-      const availableHeight = window.innerHeight - HEADER_OFFSET - 20;
+      return false;
+    };
+
+    const applyBaseStyles = () => {
+      const availableHeight = window.innerHeight - HEADER_OFFSET - BOTTOM_GAP;
       const innerWidth = getInnerWidth();
 
       /*
@@ -118,75 +148,146 @@ export default function useInfoAsideScrollFollower(
       aside.style.boxSizing = "border-box";
       aside.style.width = `${innerWidth}px`;
       aside.style.maxWidth = `${innerWidth}px`;
-      aside.style.maxHeight = `${availableHeight}px`;
+      aside.style.maxHeight = `${Math.max(0, availableHeight)}px`;
       aside.style.overflowY = "auto";
       aside.style.overflowX = "hidden";
+      aside.style.willChange = "transform, top, left";
+    };
+
+    const update = () => {
+      if (window.innerWidth <= MOBILE_BREAKPOINT) {
+        resetInlineStyles();
+        return;
+      }
+
+      const padding = getParentPadding();
+
+      parent.style.position = "relative";
+
+      applyBaseStyles();
+
+      const parentRect = parent.getBoundingClientRect();
+      const boundaryRect = boundary.getBoundingClientRect();
+      const asideHeight = aside.offsetHeight;
+
+      const parentPageTop = parentRect.top + window.scrollY;
+      const boundaryPageTop = boundaryRect.top + window.scrollY;
+      const currentY = window.scrollY;
+
+      const startY = boundaryPageTop + padding.top - HEADER_OFFSET;
+      const endY =
+        boundaryPageTop +
+        boundary.offsetHeight -
+        padding.bottom -
+        asideHeight -
+        HEADER_OFFSET;
+
+      const absoluteTopFromPageY = (pageY: number) => {
+        return pageY - parentPageTop;
+      };
 
       /*
         Before Sticky Zone
         ------------------------------------------------------
         INFO body가 Header offset 지점에 도달하기 전에는
-        일반 문서 흐름을 유지한다.
+        aside 컬럼 내부의 시작 위치에 고정한다.
       */
-      if (parentRect.top + paddingTop > HEADER_OFFSET) {
-        aside.style.position = "relative";
-        aside.style.top = "0";
-        aside.style.left = "0";
-        return;
-      }
-
-      /*
-        Follow Scroll
-        ------------------------------------------------------
-        본문 영역 안에서는 fixed로 전환해
-        왼쪽 aside-inner가 스크롤을 따라오게 한다.
-      */
-      if (parentRect.bottom - paddingBottom > asideHeight + HEADER_OFFSET) {
-        aside.style.position = "fixed";
-        aside.style.top = `${HEADER_OFFSET}px`;
-        aside.style.left = `${getInnerLeft()}px`;
+      if (currentY < startY) {
+        aside.style.position = "absolute";
+        aside.style.top = `${padding.top}px`;
+        aside.style.left = `${padding.left}px`;
+        aside.style.transform = "translate3d(0, 0, 0)";
         return;
       }
 
       /*
         Stop At Bottom
         ------------------------------------------------------
-        문서 끝에 도달하면 aside 컬럼 하단에서 멈춘다.
+        문서 끝에 도달하면 INFO body 하단에서 멈춘다.
+        absolute 기준은 .uno-info-aside(parent)로 다시 환산한다.
       */
-      aside.style.position = "absolute";
-      aside.style.top = `${Math.max(
-        paddingTop,
-        parent.scrollHeight - asideHeight - paddingBottom,
-      )}px`;
-      aside.style.left = `${Number.parseFloat(parentStyle.paddingLeft) || 0}px`;
+      if (currentY > endY) {
+        const stopPageY =
+          boundaryPageTop +
+          boundary.offsetHeight -
+          padding.bottom -
+          asideHeight;
+
+        aside.style.position = "absolute";
+        aside.style.top = `${Math.max(
+          padding.top,
+          absoluteTopFromPageY(stopPageY),
+        )}px`;
+        aside.style.left = `${padding.left}px`;
+        aside.style.transform = "translate3d(0, 0, 0)";
+        return;
+      }
+
+      /*
+        Follow Scroll
+        ------------------------------------------------------
+        일반 환경에서는 fixed로 따라오게 한다.
+
+        단, PageTransitionFrame처럼 상위 요소에 transform이 있으면
+        fixed가 viewport 기준으로 동작하지 않을 수 있으므로
+        absolute follow 방식으로 우회한다.
+      */
+      if (hasTransformedAncestor()) {
+        const followPageY = currentY + HEADER_OFFSET;
+
+        aside.style.position = "absolute";
+        aside.style.top = `${Math.max(
+          padding.top,
+          absoluteTopFromPageY(followPageY),
+        )}px`;
+        aside.style.left = `${padding.left}px`;
+        aside.style.transform = "translate3d(0, 0, 0)";
+        return;
+      }
+
+      aside.style.position = "fixed";
+      aside.style.top = `${HEADER_OFFSET}px`;
+      aside.style.left = `${getInnerLeft()}px`;
+      aside.style.transform = "translate3d(0, 0, 0)";
     };
 
-    const onScroll = () => {
-      if (ticking) return;
-
-      ticking = true;
-      requestAnimationFrame(update);
+    const requestUpdate = () => {
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(update);
     };
 
-    update();
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", update);
     const onNavigate = () => {
-  requestAnimationFrame(update);
-};
+      requestUpdate();
+      window.setTimeout(requestUpdate, 80);
+    };
 
-update();
+    requestUpdate();
 
-window.addEventListener("scroll", onScroll, { passive: true });
-window.addEventListener("resize", update);
-window.addEventListener("unotravel:navigate", onNavigate);
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    window.addEventListener("unotravel:navigate", onNavigate);
 
-return () => {
-  window.removeEventListener("scroll", onScroll);
-  window.removeEventListener("resize", update);
-  window.removeEventListener("unotravel:navigate", onNavigate);
-  resetInlineStyles();
-};
+    if ("ResizeObserver" in window) {
+      resizeObserver = new ResizeObserver(() => {
+        requestUpdate();
+      });
+
+      resizeObserver.observe(parent);
+      resizeObserver.observe(boundary);
+      resizeObserver.observe(aside);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("unotravel:navigate", onNavigate);
+
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+
+      resetInlineStyles();
+    };
   }, [asideRef]);
 }
