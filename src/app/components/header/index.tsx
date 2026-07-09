@@ -1612,18 +1612,6 @@ export default function Header({
     });
   }
 
-  function openInfoPanel(element?: HTMLElement | null) {
-    if (infoCloseTimerRef.current) {
-      window.clearTimeout(infoCloseTimerRef.current);
-      infoCloseTimerRef.current = null;
-    }
-
-    updateInfoPanelAnchorFromElement(element);
-    setIsMenuOpen(false);
-    setIsViewedOpen(false);
-    setIsInfoOpen(true);
-  }
-
   function scheduleCloseInfoPanel() {
     if (infoCloseTimerRef.current) {
       window.clearTimeout(infoCloseTimerRef.current);
@@ -1862,12 +1850,12 @@ export default function Header({
         }
         onClick={
           isViewedButton
-  ? () => {
-      updateViewedPanelAnchorFromElement(viewedButtonRef.current);
-      setIsMenuOpen(false);
-      setIsInfoOpen(false);
-      setIsViewedOpen((prev) => !prev);
-    }
+            ? () => {
+                updateViewedPanelAnchorFromElement(viewedButtonRef.current);
+                setIsMenuOpen(false);
+                setIsInfoOpen(false);
+                setIsViewedOpen((prev) => !prev);
+              }
             : isLoginButton
               ? () => {
                   setIsMenuOpen(false);
@@ -1876,10 +1864,10 @@ export default function Header({
                 }
               : isInfoButton
                 ? () => {
+                    updateInfoPanelAnchorFromElement(infoButtonRef.current);
                     setIsMenuOpen(false);
                     setIsViewedOpen(false);
-                    setIsInfoOpen(false);
-                    navigateTo("/info");
+                    setIsInfoOpen((prev) => !prev);
                   }
                 : isContactButton
                   ? () => {
@@ -1899,17 +1887,6 @@ export default function Header({
         }
         onMouseEnter={(event) => {
           moveLanternToButton(event, item);
-
-          if (isViewedButton) {
-            updateViewedPanelAnchorFromElement(event.currentTarget);
-            setIsMenuOpen(false);
-            setIsInfoOpen(false);
-            setIsViewedOpen(true);
-          }
-
-          if (isInfoButton) {
-            openInfoPanel(event.currentTarget);
-          }
         }}
       >
         <span

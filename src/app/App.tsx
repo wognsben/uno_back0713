@@ -588,6 +588,9 @@ export default function App() {
             즉, ProductTemplate 내부 Hero보다 먼저 노출되는 공통 Sub Page Navigation이다.
           */
           <>
+            <div style={{ paddingTop: 132, width: "100%", minWidth: 1024 }}>
+              <ProductNavigation />
+            </div>
             {isProductDetail ? (
               <ProductDetail />
             ) : (
@@ -794,16 +797,14 @@ export default function App() {
         )}
 
         {/*
-          ProductNavigation — 공통 글로벌 네비게이션
+          ProductNavigation — 비상품 페이지 전용 floating 핸들
           ------------------------------------------
-          모든 페이지에서 Header 바로 아래 노출.
-          PageTransitionFrame 바깥에 배치해야 position:fixed가 정상 작동한다.
-          (PageTransitionFrame이 전환 중 transform을 사용하면 fixed 기준이 viewport가 아닌 부모로 바뀜)
+          상품 페이지가 아닌 모든 페이지에서 스크롤 핸들로만 표시.
+          forceFloating=true → document flow를 점유하지 않고 처음부터 fixed 핸들 상태.
+          상품 페이지는 pageContent 안에서 document flow로 렌더링한다.
         */}
-        {!isLoginPage && !isRegisterRoute && !isContactPage && (
-          <div style={{ paddingTop: 132, width: "100%", minWidth: 1024 }}>
-            <ProductNavigation />
-          </div>
+        {!isLoginPage && !isRegisterRoute && !isContactPage && !isProductPage && (
+          <ProductNavigation forceFloating />
         )}
 
         <PageTransitionFrame pathname={pathname}>

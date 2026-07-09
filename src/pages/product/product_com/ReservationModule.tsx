@@ -73,9 +73,7 @@ const navigateInternal = (href: string) => {
 
 const RESERVATION_MODULE_STYLE = `
   .pd-book-drawer {
-  position: sticky;
-  top: 104px;
-  z-index: 35;
+  position: relative;
   width: min(1760px, calc(100vw - 0.01px));
   margin: 0 auto 72px;
   border-top: 1px solid rgba(21, 21, 21, 0.16);

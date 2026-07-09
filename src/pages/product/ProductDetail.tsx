@@ -57,7 +57,6 @@ import imgDetailC from "../../imports/세미패키지메인히어로그리드/ca
    - 1600px 이하에서는 canvas 전체를 부모 폭에 맞춰 scale 처리 */
 const DETAIL_CANVAS_WIDTH = 1700;
 const DETAIL_DESKTOP_BASE_WIDTH = 1600;
-const DETAIL_CANVAS_HEIGHT = 5600;
 
 /*
   Recently Viewed Storage
@@ -737,7 +736,13 @@ const STYLE = `
     width: 100%;
     min-width: 1024px;
     background: #ffffff;
-    overflow: hidden;
+    /*
+      Sticky descendants must use the document as their scroll container.
+      overflow: hidden here made .uno-booking-side stick relative to this
+      non-scrolling shell, so the booking panel moved away with the page.
+      Horizontal clipping is already handled by the outer app layout.
+    */
+    overflow: visible;
     display: flex;
     justify-content: center;
   }
@@ -751,7 +756,6 @@ const STYLE = `
     color: #151515;
     position: relative;
     transform-origin: top center;
-    will-change: transform;
   }
 
   .pd-hero {
@@ -1917,11 +1921,13 @@ const STYLE = `
     position: relative;
     min-width: 0;
     align-self: stretch;
+    height: auto;
+    overflow: visible;
   }
 
   .pd-booking-aside-sticky {
     position: sticky;
-    top: 44px;
+    top: 126px;
     width: 100%;
     z-index: 3;
   }
@@ -1961,28 +1967,6 @@ export default function ProductDetail({
   products = [],
 }: ProductDetailProps = {}) {
   const { shellRef, scale } = useProductDetailScale();
-  const canvasRef = useRef<HTMLDivElement | null>(null);
-  const [canvasHeight, setCanvasHeight] = useState(DETAIL_CANVAS_HEIGHT);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const updateCanvasHeight = () => {
-      setCanvasHeight(canvas.scrollHeight || DETAIL_CANVAS_HEIGHT);
-    };
-
-    updateCanvasHeight();
-
-    const resizeObserver = new ResizeObserver(updateCanvasHeight);
-    resizeObserver.observe(canvas);
-    window.addEventListener("resize", updateCanvasHeight);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updateCanvasHeight);
-    };
-  }, []);
 
   useEffect(() => {
     /*
@@ -2188,10 +2172,9 @@ export default function ProductDetail({
         ref={shellRef}
         className="pd-shell"
         aria-label={`${DETAIL_DATA.title} 상품 상세페이지`}
-        style={{ height: `${canvasHeight * scale}px` }}
       >
         <style>{STYLE}</style>
-      <div ref={canvasRef} className="pd-canvas" style={{ transform: `scale(${scale})` }}>
+      <div className="pd-canvas" style={{ zoom: scale }}>
         {/* Detail Hero */}
         <header className="pd-hero">
           <div className="pd-hero-editorial">
@@ -2298,21 +2281,23 @@ export default function ProductDetail({
                데일리투어는 미니 캘린더로 분기한다.
             */}
             <aside className="pd-booking-aside" aria-label="간소 예약 패널">
-              <BookingSide
-                product={{
-                  id: DETAIL_DATA.id,
-                  productType: DETAIL_DATA.productType,
-                  title: DETAIL_DATA.title,
-                  currency: DETAIL_DATA.currency,
-                  basePrice: DETAIL_DATA.basePrice,
-                  duration: DETAIL_DATA.duration,
-                  routeCode: DETAIL_DATA.routeCode,
-                }}
-                availableDates={availableDateSource}
-                cartHref="/mypage/cart"
-                reservationHref="/mypage/reservation"
-                kakaoChannelUrl="https://pf.kakao.com/_YOUR_CHANNEL_ID/chat"
-              />
+              <div className="pd-booking-aside-sticky">
+                <BookingSide
+                  product={{
+                    id: DETAIL_DATA.id,
+                    productType: DETAIL_DATA.productType,
+                    title: DETAIL_DATA.title,
+                    currency: DETAIL_DATA.currency,
+                    basePrice: DETAIL_DATA.basePrice,
+                    duration: DETAIL_DATA.duration,
+                    routeCode: DETAIL_DATA.routeCode,
+                  }}
+                  availableDates={availableDateSource}
+                  cartHref="/mypage/cart"
+                  reservationHref="/mypage/reservation"
+                  kakaoChannelUrl="https://pf.kakao.com/_YOUR_CHANNEL_ID/chat"
+                />
+              </div>
             </aside>
           </div>
         </section>

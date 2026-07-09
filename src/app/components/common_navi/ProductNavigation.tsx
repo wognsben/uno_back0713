@@ -381,7 +381,7 @@ function ProductMegaPanel({
   );
 }
 
-export default function ProductNavigation() {
+export default function ProductNavigation({ forceFloating = false }: { forceFloating?: boolean }) {
   const activeItemId = getActiveItemId();
   const navShellRef = useRef<HTMLDivElement | null>(null);
   const megaCloseTimerRef = useRef<number | null>(null);
@@ -395,10 +395,10 @@ export default function ProductNavigation() {
     Header 아래에 작은 handle만 남긴다.
     handle 클릭 시 기존 ProductNavigation 전체가 다시 펼쳐진다.
 
-    Mobile에서는 이 방식을 사용하지 않고,
-    별도 Mobile Navigation UX로 분리할 예정이다.
+    forceFloating=true: 비상품 페이지에서 처음부터 fixed 핸들 상태로만 표시.
+    document flow를 점유하지 않고 항상 floating 모드로 시작한다.
   */
-  const [isScrolledAway, setIsScrolledAway] = useState(false);
+  const [isScrolledAway, setIsScrolledAway] = useState(forceFloating);
   const [isHandleExpanded, setIsHandleExpanded] = useState(false);
 
   /*
@@ -420,6 +420,12 @@ export default function ProductNavigation() {
   const [activeMegaItemId, setActiveMegaItemId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (forceFloating) {
+      /* forceFloating 모드: 항상 floating 상태 고정, 스크롤 리스너 불필요 */
+      setIsScrolledAway(true);
+      return;
+    }
+
     const handleScroll = () => {
       const shouldCollapse = window.scrollY > 220;
 
@@ -438,7 +444,7 @@ export default function ProductNavigation() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [forceFloating]);
 
   useEffect(() => {
     if (!isHandleExpanded) return;
