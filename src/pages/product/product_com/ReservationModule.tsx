@@ -18,6 +18,7 @@ import {
 import {
   DEFAULT_MY_CART_PAGE_URL,
   DEFAULT_RESERVATION_PAGE_URL,
+  ensureReservationUserLoggedIn,
   type ReservationProductContext,
   createReservationPayload,
   isReservationUserLoggedIn,
@@ -390,10 +391,10 @@ const canIncrease = safePeople < safeMaxPeople;
     navigateInternal(DEFAULT_MY_CART_PAGE_URL);
   };
 
-  const handleReserve = () => {
+  const handleReserve = async () => {
     if (isReservationDisabled) return;
 
-    if (!isReservationUserLoggedIn()) {
+    if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
       setIsLoginModalOpen(true);
       return;
     }

@@ -4,6 +4,10 @@
 // ReservationModule과 Booking_side가 각자 저장 로직을 갖지 않도록 중복과 상태 충돌을 막는 파일이다.
 
 import type { AvailableDate } from "./reservationUtils";
+import {
+  isLocalAuthSessionActive,
+  refreshAuthSession,
+} from "../../../api/authSession";
 
 export const CART_STORAGE_KEY = "unotravel_cart_items";
 export const CART_COUNT_STORAGE_KEY = "unotravel_cart_count";
@@ -18,6 +22,8 @@ export type ReservationProductKind = "semi" | "daily";
 export type ReservationProductContext = {
   id: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   productType: ReservationProductKind;
   title: string;
   href: string;
@@ -28,6 +34,8 @@ export type ReservationProductContext = {
 export type ReservationStoragePayload = {
   productId: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   productType: ReservationProductKind;
   title: string;
   href: string;
@@ -87,6 +95,8 @@ export const createReservationPayload = ({
   return {
     productId: product.id,
     legacyProductId: product.legacyProductId,
+    legacyFeeOptionId: product.legacyFeeOptionId,
+    legacyPackageScheduleId: product.legacyPackageScheduleId,
     productType: product.productType,
     title: product.title,
     href: product.href,
@@ -241,22 +251,10 @@ export const navigateInternal = (href: string) => {
 };
 
 export const isReservationUserLoggedIn = () => {
-  if (typeof window === "undefined") return false;
-
-  if (window.sessionStorage.getItem("unotravel:auth") === "true") return true;
-
-  const registerAuth = window.sessionStorage.getItem("unotravel_auth");
-  if (registerAuth) {
-    try {
-      const parsed = JSON.parse(registerAuth) as { isLoggedIn?: boolean };
-      if (parsed?.isLoggedIn) return true;
-    } catch {
-      return false;
-    }
-  }
-
-  return Boolean(window.sessionStorage.getItem("unotravel:user"));
+  return isLocalAuthSessionActive();
 };
+
+export const ensureReservationUserLoggedIn = () => refreshAuthSession();
 
 export const navigateToLoginForReservation = (
   redirectHref = DEFAULT_RESERVATION_PAGE_URL,

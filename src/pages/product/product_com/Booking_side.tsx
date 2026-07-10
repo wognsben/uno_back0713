@@ -16,6 +16,7 @@ import {
 import {
   DEFAULT_MY_CART_PAGE_URL,
   DEFAULT_RESERVATION_PAGE_URL,
+  ensureReservationUserLoggedIn,
   createReservationPayload,
   isReservationUserLoggedIn,
   navigateInternal,
@@ -29,6 +30,8 @@ type ProductKind = "semi" | "daily";
 type BookingSideProduct = {
   id: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   title: string;
   productType: ProductKind;
   basePrice: number;
@@ -1253,6 +1256,8 @@ export default function BookingSide({
       product: {
         id: product.id,
         legacyProductId: product.legacyProductId,
+        legacyFeeOptionId: product.legacyFeeOptionId,
+        legacyPackageScheduleId: product.legacyPackageScheduleId,
         productType: product.productType,
         title: product.title,
         href:
@@ -1280,10 +1285,10 @@ export default function BookingSide({
     setIsCartAdded(true);
   };
 
-  const handleReservation = () => {
+  const handleReservation = async () => {
     if (isSelectedSoldOut) return;
 
-    if (!isReservationUserLoggedIn()) {
+    if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
       setIsLoginModalOpen(true);
       return;
     }

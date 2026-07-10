@@ -4,6 +4,11 @@
 // 현재 UI의 sessionStorage 예약 흐름과 실제 서버 연동 흐름이 섞이지 않도록 API 경계를 분리한다.
 
 import { unoApiData } from "./apiClient";
+import {
+  DEFAULT_PRODUCT_DETAIL_MODE,
+  clampAvailabilityQuery,
+  type ProductDetailMode,
+} from "./apiPerformance";
 import type { ReservationStoragePayload } from "../pages/product/product_com/reservationStore";
 
 export type ProductKind = "semi" | "daily";
@@ -31,6 +36,8 @@ export type ProductPrice = {
 export type ProductSummary = {
   id: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   productType: ProductKind;
   title: string;
   category?: string;
@@ -52,6 +59,21 @@ export type ProductFeeOption = {
   isDefault?: boolean;
 };
 
+export type PackageScheduleOption = {
+  id: number | string;
+  label: string;
+  startDate: string;
+  endDate?: string;
+  deposit: number;
+  middlePayment?: number;
+  finalPayment?: number;
+  airfare?: number;
+  totalPrice?: number;
+  seat?: number;
+  status?: string;
+  isDefault?: boolean;
+};
+
 export type ProductDetailResponse = ProductSummary & {
   reservationDefaults?: {
     requiresPassport?: boolean;
@@ -60,6 +82,8 @@ export type ProductDetailResponse = ProductSummary & {
     defaultFinalStatus?: string;
   };
   feeOptions: ProductFeeOption[];
+  packageSchedules?: PackageScheduleOption[];
+  detailHtml?: string;
 };
 
 export type ProductListResponse = {
@@ -73,11 +97,15 @@ export type AvailabilityDateResponse = {
   status: AvailabilityStatus;
   displayLabel: string;
   remainingSeats?: number;
+  legacyPackageScheduleId?: number | string;
 };
 
 export type ProductAvailabilityResponse = {
   productId: string;
   legacyProductId?: number | string;
+  legacyPackageScheduleId?: number | string;
+  from?: string;
+  to?: string;
   dates: AvailabilityDateResponse[];
 };
 
@@ -89,6 +117,7 @@ export type ReservationOptionRequest = {
 export type ReservationDraftRequest = {
   productId: string;
   legacyProductId?: number | string;
+  legacyPackageScheduleId?: number | string;
   tourDate: string;
   tourTime?: string;
   items: ReservationOptionRequest[];
@@ -201,9 +230,11 @@ export const createReservationDraftRequest = (
 ): ReservationDraftRequest => ({
   productId: payload.productId,
   legacyProductId: payload.legacyProductId,
+  legacyPackageScheduleId: payload.legacyPackageScheduleId,
   tourDate: payload.selectedDateId,
   items: [
     {
+      feeId: payload.legacyFeeOptionId,
       personCount: payload.personCount,
     },
   ],
@@ -218,8 +249,15 @@ export const getProducts = (query?: {
   legacyCategory?: string;
 }) => unoApiData<ProductListResponse>("/products", { query });
 
-export const getProductDetail = (productId: string) =>
-  unoApiData<ProductDetailResponse>(`/products/${encodeURIComponent(productId)}`);
+export const getProductDetail = (
+  productId: string,
+  query: { mode?: ProductDetailMode } = {},
+) =>
+  unoApiData<ProductDetailResponse>(`/products/${encodeURIComponent(productId)}`, {
+    query: {
+      mode: query.mode ?? DEFAULT_PRODUCT_DETAIL_MODE,
+    },
+  });
 
 export const getProductAvailability = (
   productId: string,
@@ -227,7 +265,7 @@ export const getProductAvailability = (
 ) =>
   unoApiData<ProductAvailabilityResponse>(
     `/products/${encodeURIComponent(productId)}/availability`,
-    { query },
+    { query: clampAvailabilityQuery(query) },
   );
 
 export const getCart = () => unoApiData<CartResponse>("/cart");

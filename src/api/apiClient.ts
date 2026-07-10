@@ -3,6 +3,8 @@
 // API base URL, JSON 직렬화, credentials 포함, 공통 성공/실패 응답 타입을 관리한다.
 // 상품/예약 도메인별 API 파일이 fetch 세부 구현을 중복하지 않도록 하는 기반 역할이다.
 
+import { createApiSecurityHeaders } from "./apiSecurity";
+
 export type UnoApiErrorCode =
   | "LOGIN_REQUIRED"
   | "PRODUCT_NOT_FOUND"
@@ -90,6 +92,7 @@ export async function unoApiRequest<T>(
 ): Promise<UnoApiResponse<T>> {
   const { body, query, headers, ...requestInit } = options;
   const hasBody = body !== undefined;
+  const method = requestInit.method;
 
   try {
     const response = await fetch(createApiUrl(path, query), {
@@ -98,6 +101,7 @@ export async function unoApiRequest<T>(
       headers: {
         Accept: "application/json",
         ...(hasBody ? { "Content-Type": "application/json" } : {}),
+        ...createApiSecurityHeaders(method),
         ...headers,
       },
       body: hasBody ? JSON.stringify(body) : undefined,

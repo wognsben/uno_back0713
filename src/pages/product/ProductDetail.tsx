@@ -39,7 +39,11 @@ import type {
   InfiniteOtherSourceProduct,
 } from "./Infiniteother";
 import ProductDocument from "./product_com/product_document";
-import { getLegacyProductId } from "./productLegacyIds";
+import {
+  getLegacyFeeOptionId,
+  getLegacyPackageScheduleId,
+  getLegacyProductId,
+} from "./productLegacyIds";
 import type {
   DetailNotice,
   DetailScheduleDay,
@@ -77,6 +81,7 @@ type ProductDetailProps = {
 const SEMI_DETAIL_DATA = {
   id: "italy-11",
   legacyProductId: getLegacyProductId("italy-11"),
+  legacyPackageScheduleId: getLegacyPackageScheduleId("italy-11"),
   href: "/product/detail/italy-11",
 
   /*
@@ -482,6 +487,8 @@ const DAILY_DETAIL_DATA = {
   ...SEMI_DETAIL_DATA,
   id: "rome-vatican-daily",
   legacyProductId: getLegacyProductId("rome-vatican-daily"),
+  legacyFeeOptionId: getLegacyFeeOptionId("rome-vatican-daily"),
+  legacyPackageScheduleId: getLegacyPackageScheduleId("rome-vatican-daily"),
   href: "/product/detail/daily/rome-vatican-daily",
   productType: "daily" as ProductKind,
   eyebrow: "DAILY TOUR · ROME",
@@ -2059,6 +2066,11 @@ export default function ProductDetail({
         id: productId || baseDetailData.id,
         legacyProductId:
           getLegacyProductId(productId) ?? baseDetailData.legacyProductId,
+        legacyFeeOptionId:
+          getLegacyFeeOptionId(productId) ?? baseDetailData.legacyFeeOptionId,
+        legacyPackageScheduleId:
+          getLegacyPackageScheduleId(productId) ??
+          baseDetailData.legacyPackageScheduleId,
         href: pathname || baseDetailData.href,
       };
     }
@@ -2077,6 +2089,14 @@ export default function ProductDetail({
         sourceProduct.legacyProductId ??
         getLegacyProductId(sourceProduct.id) ??
         baseDetailData.legacyProductId,
+      legacyFeeOptionId:
+        sourceProduct.legacyFeeOptionId ??
+        getLegacyFeeOptionId(sourceProduct.id) ??
+        baseDetailData.legacyFeeOptionId,
+      legacyPackageScheduleId:
+        sourceProduct.legacyPackageScheduleId ??
+        getLegacyPackageScheduleId(sourceProduct.id) ??
+        baseDetailData.legacyPackageScheduleId,
       href: sourceProduct.href ?? pathname ?? baseDetailData.href,
       productType: productListType ?? baseDetailData.productType,
       eyebrow: sourceProduct.eyebrow ?? sourceRegion ?? baseDetailData.eyebrow,
@@ -2239,6 +2259,8 @@ export default function ProductDetail({
           product={{
             id: DETAIL_DATA.id,
             legacyProductId: DETAIL_DATA.legacyProductId,
+            legacyFeeOptionId: DETAIL_DATA.legacyFeeOptionId,
+            legacyPackageScheduleId: DETAIL_DATA.legacyPackageScheduleId,
             productType: DETAIL_DATA.productType,
             title: DETAIL_DATA.title,
             href: DETAIL_DATA.href,
@@ -2296,6 +2318,8 @@ export default function ProductDetail({
                   product={{
                     id: DETAIL_DATA.id,
                     legacyProductId: DETAIL_DATA.legacyProductId,
+                    legacyFeeOptionId: DETAIL_DATA.legacyFeeOptionId,
+                    legacyPackageScheduleId: DETAIL_DATA.legacyPackageScheduleId,
                     productType: DETAIL_DATA.productType,
                     title: DETAIL_DATA.title,
                     currency: DETAIL_DATA.currency,

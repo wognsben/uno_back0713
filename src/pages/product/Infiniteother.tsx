@@ -32,6 +32,8 @@ export type InfiniteOtherProduct = {
 export type InfiniteOtherSourceProduct = Partial<InfiniteOtherProduct> & {
   id: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   title: string;
   href?: string;
   image?: string;

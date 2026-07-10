@@ -19,7 +19,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import CategoryFilter from "./CategoryFilter";
 import ProductList from "./ProductList";
-import { PRODUCT_LEGACY_ID_CANDIDATES } from "./productLegacyIds";
+import {
+  PRODUCT_LEGACY_ID_CANDIDATES,
+  getLegacyFeeOptionId,
+  getLegacyPackageScheduleId,
+} from "./productLegacyIds";
 
 export type ProductViewMode = "gallery" | "list";
 export type ProductKind = "semi" | "daily";
@@ -33,6 +37,8 @@ export type ProductCategory = {
 export type ProductItem = {
   id: string;
   legacyProductId?: number | string;
+  legacyFeeOptionId?: number | string;
+  legacyPackageScheduleId?: number | string;
   number: string;
   title: string;
   region?: string;
@@ -101,6 +107,7 @@ export const SEMI_PACKAGE_DATA: ProductTemplateData = {
     {
       id: "italy-11",
       legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["italy-11"],
+      legacyPackageScheduleId: getLegacyPackageScheduleId("italy-11"),
       number: "01",
       title: "이탈리아 일주 9박 11일",
       region: "ITALY",
@@ -114,6 +121,8 @@ export const SEMI_PACKAGE_DATA: ProductTemplateData = {
     },
     {
       id: "italy-9",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["italy-9"],
+      legacyPackageScheduleId: getLegacyPackageScheduleId("italy-9"),
       number: "02",
       title: "이탈리아 일주 7박 9일",
       region: "ITALY",
@@ -127,6 +136,8 @@ export const SEMI_PACKAGE_DATA: ProductTemplateData = {
     },
     {
       id: "dolomiti-11",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["dolomiti-11"],
+      legacyPackageScheduleId: getLegacyPackageScheduleId("dolomiti-11"),
       number: "03",
       title: "[8-9]월 한정 이탈리아일주+돌로미티 11",
       region: "DOLOMITI",
@@ -140,6 +151,8 @@ export const SEMI_PACKAGE_DATA: ProductTemplateData = {
     },
     {
       id: "sicilia-9",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["sicilia-9"],
+      legacyPackageScheduleId: getLegacyPackageScheduleId("sicilia-9"),
       number: "04",
       title: "나의 두번째 이탈리아, 지중해의 황금빛 시칠리아 일주 9일",
       region: "SICILIA",
@@ -153,6 +166,8 @@ export const SEMI_PACKAGE_DATA: ProductTemplateData = {
     },
     {
       id: "art-tour-11",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["art-tour-11"],
+      legacyPackageScheduleId: getLegacyPackageScheduleId("art-tour-11"),
       number: "05",
       title: "이탈리아 아트투어 일주 9박 11일",
       region: "ITALY",
@@ -194,6 +209,7 @@ export const DAILY_TOUR_DATA: ProductTemplateData = {
     {
       id: "rome-vatican-daily",
       legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["rome-vatican-daily"],
+      legacyFeeOptionId: getLegacyFeeOptionId("rome-vatican-daily"),
       number: "01",
       title: "로마 바티칸 집중 투어",
       region: "ROME",
@@ -207,6 +223,8 @@ export const DAILY_TOUR_DATA: ProductTemplateData = {
     },
     {
       id: "rome-city-walk",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["rome-city-walk"],
+      legacyFeeOptionId: getLegacyFeeOptionId("rome-city-walk"),
       number: "02",
       title: "로마 시내 워킹 투어",
       region: "ROME",
@@ -220,6 +238,8 @@ export const DAILY_TOUR_DATA: ProductTemplateData = {
     },
     {
       id: "firenze-uffizi-daily",
+      legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["firenze-uffizi-daily"],
+      legacyFeeOptionId: getLegacyFeeOptionId("firenze-uffizi-daily"),
       number: "03",
       title: "피렌체 우피치 미술관 투어",
       region: "FIRENZE",
@@ -234,6 +254,7 @@ export const DAILY_TOUR_DATA: ProductTemplateData = {
     {
       id: "venezia-walk-daily",
       legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["venezia-walk-daily"],
+      legacyFeeOptionId: getLegacyFeeOptionId("venezia-walk-daily"),
       number: "04",
       title: "베네치아 수상 도시 산책",
       region: "VENEZIA",
@@ -248,6 +269,7 @@ export const DAILY_TOUR_DATA: ProductTemplateData = {
     {
       id: "napoli-pompei-daily",
       legacyProductId: PRODUCT_LEGACY_ID_CANDIDATES["napoli-pompei-daily"],
+      legacyFeeOptionId: getLegacyFeeOptionId("napoli-pompei-daily"),
       number: "05",
       title: "나폴리 · 폼페이 데일리 투어",
       region: "NAPOLI",
