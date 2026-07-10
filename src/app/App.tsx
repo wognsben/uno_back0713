@@ -72,6 +72,7 @@ import MyReservation from "../pages/mypage/MyReservation";
 import MyInquiry from "../pages/mypage/MyInquiry";
 import MyProfile from "../pages/mypage/MyProfile";
 import MyTour from "../pages/mypage/MyTour";
+import ReservationPage from "../pages/reservation/ReservationPage";
 import InfoPage from "../pages/info/Infopage";
 import NoticePage from "../pages/info/notice";
 import GuideUsePage from "../pages/info/guide_use";
@@ -573,6 +574,7 @@ export default function App() {
   const isMyProfilePage = pathname === "/mypage/profile";
   const isMyTourPage = pathname === "/mypage/tour";
   const isMyPageRoute = pathname.startsWith("/mypage");
+  const isReservationPage = pathname === "/reservation";
   const isInfoPage = pathname === "/info";
   const isNoticePage = pathname === "/info/notice";
   const isGuideUsePage = pathname === "/info/guide_use";
@@ -629,6 +631,7 @@ export default function App() {
     !isLoginPage &&
     !isRegisterRoute &&
     !isContactPage &&
+    !isReservationPage &&
     !isProductPage &&
     !isMainPage;
   const shouldShowScrollOnlyProductNavigation =
@@ -724,6 +727,8 @@ export default function App() {
           <MyProfile />
         ) : isMyTourPage ? (
           <MyTour />
+        ) : isReservationPage ? (
+          <ReservationPage />
         ) : isInfoPage ? (
           <InfoPage />
         ) : isNoticePage ? (

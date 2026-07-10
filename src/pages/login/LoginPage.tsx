@@ -111,7 +111,16 @@ export default function LoginPage() {
       window.dispatchEvent(new Event("unotravel:auth-change"));
     }
 
-    navigateTo("/");
+    const redirectAfterLogin =
+      typeof window !== "undefined"
+        ? window.sessionStorage.getItem("unotravel:redirect-after-login")
+        : null;
+
+    if (typeof window !== "undefined" && redirectAfterLogin) {
+      window.sessionStorage.removeItem("unotravel:redirect-after-login");
+    }
+
+    navigateTo(redirectAfterLogin || "/");
   }
 
   return (

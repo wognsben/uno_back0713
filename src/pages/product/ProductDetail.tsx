@@ -2294,7 +2294,7 @@ export default function ProductDetail({
                   }}
                   availableDates={availableDateSource}
                   cartHref="/mypage/cart"
-                  reservationHref="/mypage/reservation"
+                  reservationHref="/reservation"
                   kakaoChannelUrl="https://pf.kakao.com/_YOUR_CHANNEL_ID/chat"
                 />
               </div>

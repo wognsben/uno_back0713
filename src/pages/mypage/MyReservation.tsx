@@ -1,5 +1,13 @@
-import type { ReactNode } from "react";
+// MyReservation.tsx
+// 마이페이지의 예약목록 화면으로, 예약 신청 완료 데이터를 목록으로 보여준다.
+// reservationStore의 완료 예약 목록을 읽어 예약일, 상품명, 투어일, 상태를 표시한다.
+// 새 예약 작성 페이지와 달리 이미 접수된 예약을 확인하는 역할만 담당한다.
 
+import { useMemo } from "react";
+import {
+  type SubmittedReservation,
+  getSubmittedReservations,
+} from "../product/product_com/reservationStore";
 
 const FONT_EN = "var(--font-en)";
 const FONT_KO = "var(--font-ko)";
@@ -43,64 +51,25 @@ const MY_MENU = [
   { label: "예약목록", path: "/mypage/reservations" },
   { label: "1:1 문의하기", path: "/mypage/inquiry" },
   { label: "개인정보 수정", path: "/mypage/profile" },
-  { label: "투어 신청 / 예약 전환", path: "/mypage/tour" },
+  { label: "투어 신청 / 예약 현황", path: "/mypage/tour" },
 ];
 
-function MyPageLayout({
-  title,
-  eyebrow,
-  description,
-  activePath,
-  children,
-}: {
-  title: string;
-  eyebrow: string;
-  description: string;
-  activePath: string;
-  children: React.ReactNode;
-}) {
-  const userName = getUserName();
-
-  return (
-    <main className="mypage-shell">
-      <style>{STYLE}</style>
-      <section className="mypage-inner" aria-label={title}>
-        <aside className="mypage-side">
-          <div className="mypage-side-kicker">MY PAGE</div>
-          <h1>{userName}님</h1>
-          <p>예약과 문의, 회원 정보를 한 곳에서 관리합니다.</p>
-
-          <nav className="mypage-nav" aria-label="마이페이지 메뉴">
-            {MY_MENU.map((item) => (
-              <button
-                key={item.path}
-                type="button"
-                className={activePath === item.path ? "is-active" : ""}
-                onClick={() => navigateTo(item.path)}
-              >
-                <span>{item.label}</span>
-                <span aria-hidden="true">→</span>
-              </button>
-            ))}
-          </nav>
-
-          <button type="button" className="mypage-logout" onClick={logout}>
-            로그아웃
-          </button>
-        </aside>
-
-        <div className="mypage-content">
-          <div className="mypage-heading">
-            <span>{eyebrow}</span>
-            <h2>{title}</h2>
-            <p>{description}</p>
-          </div>
-          {children}
-        </div>
-      </section>
-    </main>
-  );
-}
+const FALLBACK_RESERVATIONS = [
+  {
+    id: "R-2406-001",
+    reservedAt: "2026.07.18",
+    product: "나폴리 아말피 코스트 투어",
+    tourDay: "2026.08.12",
+    status: "예약 확인",
+  },
+  {
+    id: "R-2406-002",
+    reservedAt: "2026.07.20",
+    product: "로마 바티칸 프리미엄 투어",
+    tourDay: "2026.08.15",
+    status: "예약 완료",
+  },
+];
 
 const STYLE = `
   .mypage-shell {
@@ -134,8 +103,7 @@ const STYLE = `
   }
 
   .mypage-side-kicker,
-  .mypage-heading span,
-  .card-kicker {
+  .mypage-heading span {
     font-family: ${FONT_EN};
     font-size: 11px;
     font-weight: 800;
@@ -151,15 +119,21 @@ const STYLE = `
     letter-spacing: -0.06em;
   }
 
-  .mypage-side p {
-    margin: 0 0 28px;
+  .mypage-side p,
+  .notice-box p {
+    margin: 0;
     font-family: ${FONT_KO};
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     line-height: 1.55;
     letter-spacing: -0.04em;
-    color: rgba(21,21,21,.58);
+    color: rgba(21,21,21,.62);
     word-break: keep-all;
+  }
+
+  .mypage-side p {
+    margin-bottom: 28px;
+    font-size: 13px;
   }
 
   .mypage-nav {
@@ -169,10 +143,7 @@ const STYLE = `
   }
 
   .mypage-nav button,
-  .mypage-logout,
-  .card-link,
-  .primary-action,
-  .ghost-action {
+  .mypage-logout {
     border: none;
     background: transparent;
     cursor: pointer;
@@ -213,10 +184,6 @@ const STYLE = `
     text-align: left;
   }
 
-  .mypage-logout:hover { color: ${BLACK}; }
-
-  .mypage-content { min-width: 0; }
-
   .mypage-heading {
     min-height: 186px;
     border-bottom: 2px solid ${BLACK};
@@ -248,28 +215,21 @@ const STYLE = `
     word-break: keep-all;
   }
 
-  .grid { display: grid; gap: 16px; margin-top: 30px; }
-  .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
-
-  .card {
-    border: 1px solid ${BORDER};
-    border-radius: 22px;
-    background: #fff;
-    padding: 24px;
-    box-sizing: border-box;
-    min-height: 150px;
+  .list {
+    margin-top: 30px;
+    border-top: 1px solid ${BORDER};
   }
 
-  .card h3 {
-    margin: 14px 0 10px;
-    font-family: ${FONT_KO};
-    font-size: 22px;
-    line-height: 1.15;
-    letter-spacing: -0.06em;
+  .list-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 140px;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 0;
+    border-bottom: 1px solid ${BORDER};
   }
 
-  .card p, .list-row p, .notice-box p, .field label {
+  .list-row p {
     margin: 0;
     font-family: ${FONT_KO};
     font-size: 14px;
@@ -278,32 +238,6 @@ const STYLE = `
     letter-spacing: -0.04em;
     color: rgba(21,21,21,.62);
     word-break: keep-all;
-  }
-
-  .card-link, .primary-action, .ghost-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-    border-radius: 999px;
-    padding: 0 18px;
-    font-size: 13px;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-  }
-
-  .card-link { margin-top: 20px; background: rgba(21,21,21,.045); color: ${BLACK}; }
-  .primary-action { background: ${YELLOW}; color: ${BLACK}; }
-  .ghost-action { border: 1px solid ${BORDER}; color: ${BLACK}; }
-
-  .list { margin-top: 30px; border-top: 1px solid ${BORDER}; }
-  .list-row {
-    display: grid;
-    grid-template-columns: 150px 1fr 140px;
-    gap: 24px;
-    align-items: center;
-    padding: 22px 0;
-    border-bottom: 1px solid ${BORDER};
   }
 
   .list-row strong {
@@ -333,52 +267,121 @@ const STYLE = `
     background: rgba(21,21,21,.035);
   }
 
-  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 30px; }
-  .field { display: flex; flex-direction: column; gap: 9px; }
-  .field input, .field textarea {
-    width: 100%;
-    border: 1px solid rgba(21,21,21,.16);
-    border-radius: 16px;
-    background: #fff;
-    padding: 0 16px;
-    box-sizing: border-box;
-    font-family: ${FONT_KO};
-    font-size: 14px;
-    font-weight: 650;
-    outline: none;
-  }
-  .field input { height: 52px; }
-  .field textarea { min-height: 150px; padding-top: 16px; resize: vertical; }
-  .field.full { grid-column: 1 / -1; }
-
-  .actions { display: flex; gap: 10px; margin-top: 24px; }
-
   @media (max-width: 1180px) {
-    .mypage-inner { grid-template-columns: 260px minmax(0,1fr); gap: 32px; padding-left: 38px; padding-right: 38px; }
-    .mypage-heading h2 { font-size: 72px; }
+    .mypage-inner {
+      grid-template-columns: 260px minmax(0,1fr);
+      gap: 32px;
+      padding-left: 38px;
+      padding-right: 38px;
+    }
+
+    .mypage-heading h2 {
+      font-size: 72px;
+    }
   }
 `;
 
+function MyPageLayout({ children }: { children: React.ReactNode }) {
+  const userName = getUserName();
 
+  return (
+    <main className="mypage-shell">
+      <style>{STYLE}</style>
+      <section className="mypage-inner" aria-label="예약목록">
+        <aside className="mypage-side">
+          <div className="mypage-side-kicker">MY PAGE</div>
+          <h1>{userName}님</h1>
+          <p>예약과 문의, 회원 정보를 한곳에서 관리합니다.</p>
 
-const RESERVATIONS = [
-  { id: "R-2406-001", reservedAt: "2026.07.18", product: "남부 아말피 코스트 투어", tourDay: "2026.08.12", status: "예약 확인 중" },
-  { id: "R-2406-002", reservedAt: "2026.07.20", product: "로마 바티칸 프리미엄 투어", tourDay: "2026.08.15", status: "예약 완료" },
-];
+          <nav className="mypage-nav" aria-label="마이페이지 메뉴">
+            {MY_MENU.map((item) => (
+              <button
+                key={item.path}
+                type="button"
+                className={item.path === "/mypage/reservations" ? "is-active" : ""}
+                onClick={() => navigateTo(item.path)}
+              >
+                <span>{item.label}</span>
+                <span aria-hidden="true">›</span>
+              </button>
+            ))}
+          </nav>
+
+          <button type="button" className="mypage-logout" onClick={logout}>
+            로그아웃
+          </button>
+        </aside>
+
+        <div className="mypage-content">
+          <div className="mypage-heading">
+            <span>RESERVATION</span>
+            <h2>예약목록</h2>
+            <p>예약일, 예약상품, 투어일, 현재 상태를 확인합니다.</p>
+          </div>
+          {children}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+const formatDate = (value: number | string) => {
+  const date = typeof value === "number" ? new Date(value) : new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(date)
+    .replace(/\. /g, ".")
+    .replace(/\.$/, "");
+};
+
+const formatTourDate = (item: SubmittedReservation) =>
+  item.selectedDateLabel || item.selectedDateId || "예약 확정 시 안내";
+
+const getDisplayReservations = () => {
+  const submittedItems = getSubmittedReservations();
+  if (!submittedItems.length) return FALLBACK_RESERVATIONS;
+
+  return submittedItems.map((item) => ({
+    id: item.reservationId,
+    reservedAt: formatDate(item.submittedAt),
+    product: item.title,
+    tourDay: formatTourDate(item),
+    status: item.status,
+  }));
+};
 
 export default function MyReservation() {
+  const reservations = useMemo(() => getDisplayReservations(), []);
+
   return (
-    <MyPageLayout title="예약목록" eyebrow="RESERVATION" description="예약일, 예약상품, 투어일, 현재 상태를 확인합니다." activePath="/mypage/reservations">
+    <MyPageLayout>
       <div className="list">
-        {RESERVATIONS.map((item) => (
+        {reservations.map((item) => (
           <div className="list-row" key={item.id}>
-            <p>{item.reservedAt}<br />{item.id}</p>
-            <div><strong>{item.product}</strong><p>투어일 {item.tourDay}</p></div>
+            <p>
+              {item.reservedAt}
+              <br />
+              {item.id}
+            </p>
+            <div>
+              <strong>{item.product}</strong>
+              <p>투어일 {item.tourDay}</p>
+            </div>
             <span className="tag">{item.status}</span>
           </div>
         ))}
       </div>
-      <div className="notice-box"><p>예약취소 요청, 무이자 할부안내, 예약금 입금 유의사항은 기존 my_reser.php 데이터와 연결할 예정입니다.</p></div>
+      <div className="notice-box">
+        <p>
+          예약금 결제, 취소 요청, 바우처 출력은 백엔드 예약 데이터 연결 후 기존
+          my_reser.php 흐름과 이어질 예정입니다.
+        </p>
+      </div>
     </MyPageLayout>
   );
 }

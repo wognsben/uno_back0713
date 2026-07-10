@@ -20,7 +20,9 @@ import {
   DEFAULT_RESERVATION_PAGE_URL,
   type ReservationProductContext,
   createReservationPayload,
+  isReservationUserLoggedIn,
   navigateInternal,
+  navigateToLoginForReservation,
   saveCartReservation,
   savePendingReservation,
 } from "./reservationStore";
@@ -217,6 +219,81 @@ const RESERVATION_MODULE_STYLE = `
     opacity: 0.36;
   }
 
+  .pd-reservation-login-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(21, 21, 21, 0.22);
+    backdrop-filter: blur(14px);
+  }
+
+  .pd-reservation-login-modal {
+    width: min(420px, 100%);
+    border: 1px solid rgba(21, 21, 21, 0.16);
+    background: #ffffff;
+    padding: 28px;
+    box-sizing: border-box;
+    color: #151515;
+  }
+
+  .pd-reservation-login-modal span {
+    display: block;
+    font-family: var(--font-en);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    font-weight: 900;
+    color: rgba(21, 21, 21, 0.46);
+  }
+
+  .pd-reservation-login-modal h2 {
+    margin: 18px 0 12px;
+    font-family: var(--font-ko);
+    font-size: 30px;
+    line-height: 1.08;
+    letter-spacing: -0.06em;
+    font-weight: 860;
+  }
+
+  .pd-reservation-login-modal p {
+    margin: 0;
+    font-family: var(--font-ko);
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: -0.04em;
+    color: rgba(21, 21, 21, 0.62);
+    word-break: keep-all;
+  }
+
+  .pd-reservation-login-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .pd-reservation-login-actions button {
+    appearance: none;
+    min-height: 48px;
+    border: 1px solid rgba(21, 21, 21, 0.18);
+    background: #ffffff;
+    color: #151515;
+    cursor: pointer;
+    font-family: var(--font-ko);
+    font-size: 14px;
+    letter-spacing: -0.035em;
+    font-weight: 760;
+  }
+
+  .pd-reservation-login-actions button.is-primary {
+    border-color: #151515;
+    background: #151515;
+    color: #ffffff;
+  }
+
 @media (max-width: 1280px) {
   .pd-book-drawer {
     width: calc(100vw - 32px);
@@ -257,6 +334,7 @@ function ReservationModule({
   maxPeople,
 }: ReservationModuleProps) {
   const [people, setPeople] = useState(initialPeople);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
 const [dailySelectedDateId, setDailySelectedDateId] = useState(() =>
   selectedDateId || getInitialDailyDateId(dates),
@@ -315,13 +393,48 @@ const canIncrease = safePeople < safeMaxPeople;
   const handleReserve = () => {
     if (isReservationDisabled) return;
 
+    if (!isReservationUserLoggedIn()) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     savePendingReservation(getReservationPayload());
     navigateInternal(DEFAULT_RESERVATION_PAGE_URL);
+  };
+
+  const handleLoginMove = () => {
+    savePendingReservation(getReservationPayload());
+    navigateToLoginForReservation(DEFAULT_RESERVATION_PAGE_URL);
   };
 
   return (
     <>
       <ReservationModuleStyles />
+      {isLoginModalOpen ? (
+        <div
+          className="pd-reservation-login-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="로그인 안내"
+        >
+          <div className="pd-reservation-login-modal">
+            <span>LOGIN REQUIRED</span>
+            <h2>예약을 위해 로그인이 필요합니다</h2>
+            <p>
+              예약 정보 저장과 마이페이지 확인을 위해 로그인 후 예약을 진행해
+              주세요.
+            </p>
+            <div className="pd-reservation-login-actions">
+              <button type="button" onClick={() => setIsLoginModalOpen(false)}>
+                계속 보기
+              </button>
+              <button type="button" className="is-primary" onClick={handleLoginMove}>
+                로그인 화면으로 이동
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <section className="pd-book-drawer" aria-label="세미패키지 예약 모듈">
   <div className="pd-book-surface">
 
