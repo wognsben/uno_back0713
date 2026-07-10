@@ -1,3 +1,8 @@
+/*
+  ProductNavigation 공통 상품 네비게이션 컴포넌트.
+  메인 히어로와 상품 페이지 상단의 SEMI/DAILY 펼침형 탭, 스크롤 후 헤더에 붙는 축약 탭, hover mega panel 상태를 관리한다.
+  Header의 글로벌 메뉴나 상품 상세 본문 예약 UI와 겹치지 않도록 상품 카테고리 이동과 상품 링크 확장만 담당한다.
+*/
 import { useEffect, useRef, useState } from "react";
 
 /* ==========================================================
@@ -381,7 +386,15 @@ function ProductMegaPanel({
   );
 }
 
-export default function ProductNavigation({ forceFloating = false }: { forceFloating?: boolean }) {
+export default function ProductNavigation({
+  forceFloating = false,
+  showFloatingAfterScroll = false,
+  disableScrollHandle = false,
+}: {
+  forceFloating?: boolean;
+  showFloatingAfterScroll?: boolean;
+  disableScrollHandle?: boolean;
+}) {
   const activeItemId = getActiveItemId();
   const navShellRef = useRef<HTMLDivElement | null>(null);
   const megaCloseTimerRef = useRef<number | null>(null);
@@ -398,7 +411,9 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
     forceFloating=true: 비상품 페이지에서 처음부터 fixed 핸들 상태로만 표시.
     document flow를 점유하지 않고 항상 floating 모드로 시작한다.
   */
-  const [isScrolledAway, setIsScrolledAway] = useState(forceFloating);
+  const [isScrolledAway, setIsScrolledAway] = useState(
+    forceFloating && !showFloatingAfterScroll,
+  );
   const [isHandleExpanded, setIsHandleExpanded] = useState(false);
 
   /*
@@ -420,7 +435,15 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
   const [activeMegaItemId, setActiveMegaItemId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (forceFloating) {
+    if (disableScrollHandle) {
+      setIsScrolledAway(false);
+      setIsHandleExpanded(false);
+      setActiveMegaCategory(null);
+      setActiveMegaItemId(null);
+      return;
+    }
+
+    if (forceFloating && !showFloatingAfterScroll) {
       /* forceFloating 모드: 항상 floating 상태 고정, 스크롤 리스너 불필요 */
       setIsScrolledAway(true);
       return;
@@ -444,7 +467,7 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [forceFloating]);
+  }, [disableScrollHandle, forceFloating, showFloatingAfterScroll]);
 
   useEffect(() => {
     if (!isHandleExpanded) return;
@@ -489,6 +512,8 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
 
   const isFloatingNavigation = isScrolledAway;
   const isCollapsed = isScrolledAway && !isHandleExpanded;
+  const shouldHideDeferredFloating =
+    forceFloating && showFloatingAfterScroll && !isScrolledAway;
 
   /*
     Product Mega Hover Stability
@@ -566,6 +591,10 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
       </button>
     );
   };
+
+  if (shouldHideDeferredFloating) {
+    return null;
+  }
 
   return (
     <>
@@ -840,6 +869,12 @@ export default function ProductNavigation({ forceFloating = false }: { forceFloa
 
         .hero-product-nav-shell.is-floating .product-nav-handle:hover {
           transform: translateY(2px);
+        }
+
+        .hero-product-nav-shell.is-expanded-from-handle .product-nav-handle {
+          opacity: 0;
+          pointer-events: none;
+          transform: translateY(-8px);
         }
 
         .product-nav-handle-main {

@@ -716,7 +716,7 @@ export default function Frame() {
         메인페이지와 서브페이지에 동일하게 반영된다.
       */}
       <div className="main-hero-product-navigation">
-        <ProductNavigation />
+        <ProductNavigation disableScrollHandle />
       </div>
 
       <div aria-hidden="true" className="hidden">

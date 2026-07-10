@@ -1,3 +1,8 @@
+// index.tsx
+// UNO TRAVEL 공통 Footer 컴포넌트다.
+// 상단 정책 링크, SNS/문의 링크, 회사 정보, 저작권, 하단 비주얼 이미지를 렌더링한다.
+// Footer 전용 hover/scale/외부 링크 상태를 관리하며 Header나 상품 예약 UI와 역할이 겹치지 않는다.
+
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import svgPaths from "./svg-04rdhdsoo5";
 import img1 from "./8f219b4383084c668b556ed6473ae1a30cc63f76.png";
@@ -39,6 +44,8 @@ Backend Hook
 ==========================================================
 */
 const KAKAO_CHANNEL_URL = "http://pf.kakao.com/_fxbTxnd/chat";
+const INSTAGRAM_URL = "https://www.instagram.com/unotravel_kr/";
+const NAVER_BLOG_URL = "https://blog.naver.com/ysb0301";
 const GUARANTEE_INSURANCE_URL = "https://tourinfo.or.kr/v2/";
 
 const FOOTER_NAVIGATION_PATHS = {
@@ -63,6 +70,28 @@ function openFooterExternal(url: string) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
+async function shareFooterHomeUrl() {
+  if (typeof window === "undefined") return;
+
+  const homeUrl = `${window.location.origin}/`;
+  const shareData = {
+    title: "UNO TRAVEL",
+    text: "우노트래블 공식 홈페이지",
+    url: homeUrl,
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    }
+  }
+
+  await navigator.clipboard?.writeText(homeUrl);
+}
+
 function handleFooterKeyDown(event: KeyboardEvent<HTMLElement>, action: () => void) {
   if (event.key !== "Enter" && event.key !== " ") return;
 
@@ -72,6 +101,7 @@ function handleFooterKeyDown(event: KeyboardEvent<HTMLElement>, action: () => vo
 
 export default function Component({ className }: { className?: string }) {
   const footerRef = useRef<HTMLDivElement | null>(null);
+  const [isShareCopied, setIsShareCopied] = useState(false);
   const [footerScale, setFooterScale] = useState(() => {
     if (typeof window === "undefined") {
       return 1;
@@ -102,6 +132,16 @@ export default function Component({ className }: { className?: string }) {
       resizeObserver.disconnect();
     };
   }, []);
+
+  const handleFooterShare = async () => {
+    try {
+      await shareFooterHomeUrl();
+      setIsShareCopied(true);
+      window.setTimeout(() => setIsShareCopied(false), 1800);
+    } catch {
+      setIsShareCopied(false);
+    }
+  };
 
   return (
     <div
@@ -244,6 +284,41 @@ export default function Component({ className }: { className?: string }) {
           white-space: nowrap;
           word-break: keep-all;
         }
+
+        .footer-company-panel,
+        .footer-company-row,
+        .footer-company-row > div,
+        .footer-company-row .content-stretch {
+          overflow: visible !important;
+        }
+
+        .footer-company-panel {
+          gap: 10px;
+          justify-content: flex-start;
+        }
+
+        .footer-company-row {
+          min-height: 26px;
+        }
+
+        .footer-company-row .content-stretch {
+          padding-bottom: 6px !important;
+          padding-top: 6px !important;
+        }
+
+        .footer-company-row p {
+          line-height: 1.35 !important;
+          margin: 0;
+          white-space: nowrap;
+          word-break: keep-all;
+        }
+
+        .footer-company-text {
+          height: auto !important;
+          min-height: 22px;
+          justify-content: center;
+          overflow: visible !important;
+        }
       `}</style>
       <div className="absolute inset-0 bg-white overflow-hidden" data-name="푸터 정보란">
         <div
@@ -381,7 +456,16 @@ export default function Component({ className }: { className?: string }) {
               >
                 <p className="leading-[0px]">보증보험확인</p>
               </div>
-              <div className="footer-share-link relative shrink-0 size-[24px]" data-name="icon-park-outline:share" role="button" tabIndex={0} aria-label="공유하기">
+              <div
+                className="footer-share-link relative shrink-0 size-[24px]"
+                data-name="icon-park-outline:share"
+                role="button"
+                tabIndex={0}
+                aria-label={isShareCopied ? "홈페이지 링크 복사됨" : "우노트래블 홈페이지 공유하기"}
+                title={isShareCopied ? "링크 복사됨" : "홈페이지 공유"}
+                onClick={handleFooterShare}
+                onKeyDown={(event) => handleFooterKeyDown(event, handleFooterShare)}
+              >
                 <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
                   <g id="icon-park-outline:share">
                     <path d={svgPaths.pf895a00} id="Vector" stroke="var(--stroke-0, #151515)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
@@ -417,7 +501,15 @@ export default function Component({ className }: { className?: string }) {
                 </svg>
               </div>
             </div>
-            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="인스타" role="link" tabIndex={0} aria-label="인스타그램 보기">
+            <div
+              className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]"
+              data-name="인스타"
+              role="link"
+              tabIndex={0}
+              aria-label="인스타그램 새 창으로 열기"
+              onClick={() => openFooterExternal(INSTAGRAM_URL)}
+              onKeyDown={(event) => handleFooterKeyDown(event, () => openFooterExternal(INSTAGRAM_URL))}
+            >
               <div className="relative shrink-0 size-[40px]" data-name="인스타그램 로고">
                 <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img2} />
               </div>
@@ -432,7 +524,15 @@ export default function Component({ className }: { className?: string }) {
                 </svg>
               </div>
             </div>
-            <div className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]" data-name="블로그" role="link" tabIndex={0} aria-label="블로그 보기">
+            <div
+              className="footer-social-link content-stretch flex gap-[10px] items-center justify-center overflow-clip p-[10px] relative shrink-0 w-[220px]"
+              data-name="블로그"
+              role="link"
+              tabIndex={0}
+              aria-label="블로그 새 창으로 열기"
+              onClick={() => openFooterExternal(NAVER_BLOG_URL)}
+              onKeyDown={(event) => handleFooterKeyDown(event, () => openFooterExternal(NAVER_BLOG_URL))}
+            >
               <div className="overflow-clip relative shrink-0 size-[40px]" data-name="네이버 블로그 로고">
                 <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 40 40">
                   <g id="Group">
@@ -487,12 +587,12 @@ export default function Component({ className }: { className?: string }) {
         </div>
         <div className="absolute bg-white h-[290px] left-0 top-[410px] w-[1440px]">
           <div className="content-stretch flex items-start overflow-clip px-[20px] py-[10px] relative rounded-[inherit] size-full">
-            <div className="bg-white content-stretch flex flex-col h-[280px] items-start justify-between overflow-clip py-[10px] relative shrink-0 w-[620px]">
-              <div className="bg-white relative shrink-0 w-full">
-                <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+            <div className="footer-company-panel bg-white content-stretch flex flex-col h-[280px] items-start justify-between overflow-visible py-[10px] relative shrink-0 w-[680px]">
+              <div className="footer-company-row bg-white relative shrink-0 w-full">
+                <div className="flex flex-row items-center overflow-visible rounded-[inherit] size-full">
                   <div className="content-stretch flex gap-[10px] items-center p-[10px] relative size-full">
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[102px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px]">(주)우노컴패니</p>
+                    <div className="footer-company-text [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[112px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>(주)우노컴패니</p>
                     </div>
                     <div className="h-[24px] relative shrink-0 w-0">
                       <div className="absolute inset-[0_-0.5px]">
@@ -501,8 +601,8 @@ export default function Component({ className }: { className?: string }) {
                         </svg>
                       </div>
                     </div>
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[94px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px]">대표 : 염승범</p>
+                    <div className="footer-company-text [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[112px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>대표 : 염승범</p>
                     </div>
                     <div className="h-[24px] relative shrink-0 w-0">
                       <div className="absolute inset-[0_-0.5px]">
@@ -511,17 +611,17 @@ export default function Component({ className }: { className?: string }) {
                         </svg>
                       </div>
                     </div>
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[316px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px]">개인정보 책임자: 염승범</p>
+                    <div className="footer-company-text [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[220px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>개인정보 책임자: 염승범</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white relative shrink-0 w-full">
-                <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+              <div className="footer-company-row bg-white relative shrink-0 w-full">
+                <div className="flex flex-row items-center overflow-visible rounded-[inherit] size-full">
                   <div className="content-stretch flex gap-[10px] items-center p-[10px] relative size-full">
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[216px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px] whitespace-pre-wrap">{`사업자 등록번호: 105-88-12788  `}</p>
+                    <div className="footer-company-text [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[260px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>{`사업자 등록번호: 105-88-12788`}</p>
                     </div>
                     <div className="h-[24px] relative shrink-0 w-0">
                       <div className="absolute inset-[0_-0.5px]">
@@ -530,41 +630,41 @@ export default function Component({ className }: { className?: string }) {
                         </svg>
                       </div>
                     </div>
-                    <div className="[word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[316px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px] whitespace-pre-wrap">{` 통신판매업신고번호 : 2015-서울마포-0315   `}</p>
+                    <div className="footer-company-text [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[330px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>{`통신판매업신고번호 : 2015-서울마포-0315`}</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white relative shrink-0 w-full">
-                <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+              <div className="footer-company-row bg-white relative shrink-0 w-full">
+                <div className="flex flex-row items-center overflow-visible rounded-[inherit] size-full">
                   <div className="content-stretch flex items-center p-[10px] relative size-full">
-                    <div className="footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[286px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px]">대표메일 : unotravel-roma@hotmail.com</p>
+                    <div className="footer-company-text footer-contact-link [word-break:break-word] flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[16px] tracking-[0.48px] w-[430px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>대표메일 : unotravel-roma@hotmail.com</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white relative shrink-0 w-full">
-                <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+              <div className="footer-company-row bg-white relative shrink-0 w-full">
+                <div className="flex flex-row items-center overflow-visible rounded-[inherit] size-full">
                   <div className="[word-break:break-word] content-stretch flex gap-[10px] items-center leading-[0] p-[10px] relative size-full text-[#151515] text-[16px] tracking-[0.48px]">
-                    <div className="flex flex-col font-['Crimson_Text:SemiBold',sans-serif] h-[20px] justify-center not-italic relative shrink-0 w-[102px]">
-                      <p className="leading-[0px]">KOREA</p>
+                    <div className="footer-company-text flex flex-col font-['Crimson_Text:SemiBold',sans-serif] h-[20px] justify-center not-italic relative shrink-0 w-[102px]">
+                      <p>KOREA</p>
                     </div>
-                    <div className="flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center relative shrink-0 w-[386px]" style={{ fontVariationSettings: '"wght" 700' }}>
-                      <p className="leading-[0px]">경기도 김포시 김포대로 709 (풍무동) 퍼스트블루 1008호</p>
+                    <div className="footer-company-text flex flex-col font-['Crimson_Text:SemiBold','Noto_Sans_KR:Bold',sans-serif] h-[20px] justify-center relative shrink-0 w-[520px]" style={{ fontVariationSettings: '"wght" 700' }}>
+                      <p>경기도 김포시 김포대로 709 (풍무동) 퍼스트블루 1008호</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white relative shrink-0 w-full">
-                <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+              <div className="footer-company-row bg-white relative shrink-0 w-full">
+                <div className="flex flex-row items-center overflow-visible rounded-[inherit] size-full">
                   <div className="[word-break:break-word] content-stretch flex font-['Crimson_Text:SemiBold',sans-serif] gap-[10px] items-center leading-[0] not-italic p-[10px] relative size-full text-[#151515] text-[16px] tracking-[0.48px]">
-                    <div className="flex flex-col h-[20px] justify-center relative shrink-0 w-[102px]">
-                      <p className="leading-[0px]">ITALY</p>
+                    <div className="footer-company-text flex flex-col h-[20px] justify-center relative shrink-0 w-[102px]">
+                      <p>ITALY</p>
                     </div>
-                    <div className="flex flex-col h-[20px] justify-center relative shrink-0 w-[386px]">
-                      <p className="leading-[0px]">VIA DEL CIGLIOLO 23 VELLETRI (RM) CAP 00049</p>
+                    <div className="footer-company-text flex flex-col h-[20px] justify-center relative shrink-0 w-[520px]">
+                      <p>VIA DEL CIGLIOLO 23 VELLETRI (RM) CAP 00049</p>
                     </div>
                   </div>
                 </div>

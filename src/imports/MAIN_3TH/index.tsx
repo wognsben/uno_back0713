@@ -1,4 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+/*
+  Main page third section.
+  Handles the WHAT NEXT editorial slider, bottom CTA cards, and responsive canvas scaling.
+  Review and notice cards route into Community detail hubs while this file stays focused on the main-page bridge UI, not the Community board itself.
+*/
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import svgPaths from "./svg-nu881w2do7";
 import img1 from "./82946044a68c061ee150f4ee5fd02f4ec778c1b7.png";
 import imgImage32 from "./83f6e07e44eb6a5c6fed9fff909db3be08a145b9.png";
@@ -17,6 +22,28 @@ import imgImage30 from "./214fd7a095ebc0cb67d4f2373bbd229b6cc3cac6.png";
 const SECTION3_BASE_WIDTH = 1600;
 const SECTION3_CANVAS_WIDTH = 1700;
 const SECTION3_CANVAS_HEIGHT = 1421;
+const COMMUNITY_REVIEW_PATH = "/community/review";
+const COMMUNITY_NOTICE_PATH = "/community/notice";
+
+function navigateInternal(href: string) {
+  if (typeof window === "undefined") return;
+
+  if (window.location.pathname === href) {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    return;
+  }
+
+  window.history.pushState({}, "", href);
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  window.dispatchEvent(new Event("unotravel:navigate"));
+}
+
+function handleCardKeyDown(event: KeyboardEvent<HTMLDivElement>, action: () => void) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+
+  event.preventDefault();
+  action();
+}
 
 
 function Group() {
@@ -921,8 +948,10 @@ function Frame2() {
 }
 
 function Frame9() {
+  const openNotice = () => navigateInternal(COMMUNITY_NOTICE_PATH);
+
   return (
-    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="공지사항 보기" className="bottom-cta-card bg-[#dad5d5] content-stretch flex flex-col h-[122px] items-center justify-center overflow-clip py-[10px] relative rounded-br-[100px] shrink-0 w-full">
+    <div role="button" tabIndex={0} onClick={openNotice} onKeyDown={(event) => handleCardKeyDown(event, openNotice)} aria-label="공지사항 보기" className="bottom-cta-card bg-[#dad5d5] content-stretch flex flex-col h-[122px] items-center justify-center overflow-clip py-[10px] relative rounded-br-[100px] shrink-0 w-full">
       <div className="bottom-open-label is-dark">OPEN ↗</div>
       <div className="[word-break:break-word] flex flex-col font-ko-bold h-[80px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[0px] text-center tracking-[-1.62px] w-[296px]" style={{ fontVariationSettings: '"wght" 700' }}>
         <p className="leading-[54px] mb-[10px] text-[54px]">NOTICE</p>
@@ -943,8 +972,10 @@ function Frame8() {
 }
 
 function Frame7() {
+  const openReview = () => navigateInternal(COMMUNITY_REVIEW_PATH);
+
   return (
-    <div role="button" tabIndex={0} onClick={() => {}} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.currentTarget.click(); }} aria-label="여행후기 보기" className="bottom-cta-card review-card bg-[#dad5d5] content-stretch flex flex-col h-[306px] items-center overflow-clip pb-[10px] pt-[20px] relative rounded-tr-[100px] shrink-0 w-full">
+    <div role="button" tabIndex={0} onClick={openReview} onKeyDown={(event) => handleCardKeyDown(event, openReview)} aria-label="여행후기 보기" className="bottom-cta-card review-card bg-[#dad5d5] content-stretch flex flex-col h-[306px] items-center overflow-clip pb-[10px] pt-[20px] relative rounded-tr-[100px] shrink-0 w-full">
       <div className="review-story-label">LATEST STORY ↗</div>
       <div className="[word-break:break-word] flex flex-col font-ko-bold h-[80px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[0px] text-center tracking-[-1.62px] w-[296px]" style={{ fontVariationSettings: '"wght" 700' }}>
         <p className="leading-[54px] mb-[10px] text-[54px]">REVIEW</p>

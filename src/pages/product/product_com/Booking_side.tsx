@@ -1,7 +1,26 @@
+// Booking_side.tsx
+// 상품 상세 본문과 하단에서 노출되는 fixed 플로팅 예약 도크와 선택 패널을 담당한다.
+// 스크롤 compact 상태, 날짜/인원 패널, blur backdrop, 도트 그리드 메뉴, CTA 상태를 관리한다.
+// 히어로 아래 ReservationModule과 저장 로직이 충돌하지 않도록 reservationStore의 공통 함수만 사용한다.
+
 import { useEffect, useRef, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { PriceText, type AvailableDate } from "./reservationUtils";
+import {
+  PriceText,
+  type AvailableDate,
+  getAvailabilityDisplayLabel,
+  getAvailabilityStatus,
+  isDateSoldOut,
+} from "./reservationUtils";
+import {
+  DEFAULT_MY_CART_PAGE_URL,
+  DEFAULT_RESERVATION_PAGE_URL,
+  createReservationPayload,
+  navigateInternal,
+  saveCartReservation,
+  savePendingReservation,
+} from "./reservationStore";
 
 type ProductKind = "semi" | "daily";
 
@@ -24,8 +43,6 @@ type BookingSideProps = {
 };
 
 const DEFAULT_KAKAO_CHANNEL_URL = "https://pf.kakao.com/_YOUR_CHANNEL_ID/chat";
-const DEFAULT_CART_HREF = "/mypage/cart";
-const DEFAULT_RESERVATION_HREF = "/mypage/reservation";
 const STYLE_ID = "uno-booking-side-style";
 
 function formatCompactDateLabel(value: string) {
@@ -37,15 +54,6 @@ function formatCompactDateLabel(value: string) {
 
 function normalizeDateKey(value: string) {
   return value.replaceAll(".", "-");
-}
-
-function getAvailableLabel(date: AvailableDate) {
-  if (date.seats <= 0 || date.status.includes("마감")) return "마감";
-  return date.status;
-}
-
-function isSoldOut(date: AvailableDate) {
-  return date.seats <= 0 || date.status === "마감";
 }
 
 function getBookingSideStyle() {
@@ -919,6 +927,17 @@ function getBookingSideStyle() {
     color: #151515;
   }
 
+  .uno-booking-toolbar__btn:disabled,
+  .uno-booking-toolbar__btn:disabled:hover,
+  .uno-booking-toolbar__btn:disabled:active {
+    cursor: not-allowed;
+    opacity: 0.38;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.62);
+    box-shadow: none;
+    transform: none;
+  }
+
   .uno-booking-toolbar__dock-toggle,
   .uno-booking-toolbar.is-compact .uno-booking-toolbar__dock-toggle {
     width: 60px;
@@ -1045,14 +1064,14 @@ export default function BookingSide({
   product,
   availableDates,
   kakaoChannelUrl = DEFAULT_KAKAO_CHANNEL_URL,
-  cartHref = DEFAULT_CART_HREF,
-  reservationHref = DEFAULT_RESERVATION_HREF,
+  cartHref = DEFAULT_MY_CART_PAGE_URL,
+  reservationHref = DEFAULT_RESERVATION_PAGE_URL,
 }: BookingSideProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   const selectableDates = useMemo(
-    () => availableDates.filter((date) => !isSoldOut(date)),
+    () => availableDates.filter((date) => !isDateSoldOut(date)),
     [availableDates],
   );
 
@@ -1097,6 +1116,7 @@ export default function BookingSide({
   const selectedPrice = selectedDate?.price ?? product.basePrice ?? 0;
   const totalPrice = selectedPrice * peopleCount;
   const maxPeople = Math.max(1, selectedDate?.seats ?? 99);
+  const isSelectedSoldOut = !selectedDate || isDateSoldOut(selectedDate);
 
   const calendarMeta = useMemo(() => {
     const firstDate = availableDates[0];
@@ -1149,42 +1169,42 @@ export default function BookingSide({
     };
   }, [isPanelOpen]);
 
-  const persistBookingPayload = () => {
-    if (typeof window === "undefined") return;
-    const payload = {
-      id: `${product.id}-${selectedDate?.id ?? "date"}`,
-      productId: product.id,
-      title: product.title,
-      productType: product.productType,
-      dateId: selectedDate?.id ?? "",
-      dateLabel: selectedDate?.label ?? "",
-      peopleCount,
+  const getReservationPayload = () =>
+    createReservationPayload({
+      product: {
+        id: product.id,
+        productType: product.productType,
+        title: product.title,
+        href:
+          typeof window === "undefined"
+            ? ""
+            : `${window.location.pathname}${window.location.search}`,
+        currency: product.currency,
+        basePrice: product.basePrice,
+      },
+      selectedDate,
+      personCount: peopleCount,
       unitPrice: selectedPrice,
       totalPrice,
-      currency: product.currency ?? "KRW",
-      createdAt: new Date().toISOString(),
-    };
-    try {
-      window.localStorage.setItem("unotravel:booking-side:latest", JSON.stringify(payload));
-    } catch {}
-  };
+    });
 
   const handleCart = () => {
+    if (isSelectedSoldOut) return;
+
     if (isCartAdded) {
-      if (typeof window !== "undefined") {
-        window.history.pushState({}, "", cartHref);
-        window.dispatchEvent(new PopStateEvent("popstate"));
-        window.dispatchEvent(new Event("unotravel:navigate"));
-      }
+      navigateInternal(cartHref);
       return;
     }
-    persistBookingPayload();
+
+    saveCartReservation(getReservationPayload());
     setIsCartAdded(true);
   };
 
   const handleReservation = () => {
-    persistBookingPayload();
-    if (typeof window !== "undefined") window.location.href = reservationHref;
+    if (isSelectedSoldOut) return;
+
+    savePendingReservation(getReservationPayload());
+    navigateInternal(reservationHref);
   };
 
   /* 툴바 요약 표시용 날짜 레이블 */
@@ -1246,8 +1266,11 @@ export default function BookingSide({
                     {Array.from({ length: calendarMeta.daysInMonth }).map((_, i) => {
                       const dayNumber = i + 1;
                       const date = datesByDay.get(dayNumber);
-                      const disabled = !date || isSoldOut(date);
+                      const disabled = !date || isDateSoldOut(date);
                       const isSelected = !!date && date.id === selectedDate?.id;
+                      const dateStatusLabel = date
+                        ? getAvailabilityDisplayLabel(getAvailabilityStatus(date))
+                        : "";
                       return (
                         <button
                           key={dayNumber}
@@ -1257,17 +1280,17 @@ export default function BookingSide({
                           onClick={() => {
                             if (date) { setSelectedDateId(date.id); setPeopleCount(1); setIsCartAdded(false); }
                           }}
-                          aria-label={date ? `${date.label} ${date.status}` : `${dayNumber}일 예약 불가`}
+                          aria-label={date ? `${date.label} ${dateStatusLabel}` : `${dayNumber}일 예약 불가`}
                         >
                           <span className="uno-booking-side__day-num">{dayNumber}</span>
-                          <span className="uno-booking-side__day-status">{date ? getAvailableLabel(date) : ""}</span>
+                          <span className="uno-booking-side__day-status">{dateStatusLabel}</span>
                         </button>
                       );
                     })}
                   </div>
                   {selectedDate && (
                     <p className="uno-booking-side__selected-date">
-                      선택: {selectedDate.label} ({selectedDate.day}) · {selectedDate.status} · 잔여 {selectedDate.seats}석
+                      선택: {selectedDate.label} ({selectedDate.day}) · {getAvailabilityDisplayLabel(getAvailabilityStatus(selectedDate))} · 잔여 {selectedDate.seats}석
                     </p>
                   )}
                 </>
@@ -1283,8 +1306,8 @@ export default function BookingSide({
                     onChange={(e) => { setSelectedDateId(e.target.value); setPeopleCount(1); setIsCartAdded(false); }}
                   >
                     {availableDates.map((date) => (
-                      <option key={date.id} value={date.id} disabled={isSoldOut(date)}>
-                        {formatCompactDateLabel(date.label)} ({date.day}) · {date.status} · 잔여 {date.seats}석
+                      <option key={date.id} value={date.id} disabled={isDateSoldOut(date)}>
+                        {formatCompactDateLabel(date.label)} ({date.day}) · {getAvailabilityDisplayLabel(getAvailabilityStatus(date))} · 잔여 {date.seats}석
                       </option>
                     ))}
                   </select>
@@ -1333,6 +1356,7 @@ export default function BookingSide({
               <button
                 type="button"
                 className={`uno-booking-toolbar__btn is-cart${isCartAdded ? " is-added" : ""}`}
+                disabled={isSelectedSoldOut}
                 onClick={handleCart}
               >
                 {isCartAdded ? "장바구니 보기" : "장바구니 담기"}
@@ -1340,6 +1364,7 @@ export default function BookingSide({
               <button
                 type="button"
                 className="uno-booking-toolbar__btn is-primary"
+                disabled={isSelectedSoldOut}
                 onClick={() => { setIsPanelOpen(false); handleReservation(); }}
               >
                 예약 진행하기
@@ -1389,6 +1414,7 @@ export default function BookingSide({
             <button
               type="button"
               className={`uno-booking-toolbar__btn is-cart${isCartAdded ? " is-added" : ""}`}
+              disabled={isSelectedSoldOut}
               onClick={handleCart}
             >
               {isCartAdded ? "장바구니 보기" : "장바구니 담기"}
@@ -1404,6 +1430,7 @@ export default function BookingSide({
             <button
               type="button"
               className="uno-booking-toolbar__btn is-primary"
+              disabled={isSelectedSoldOut}
               onClick={() => { setIsPanelOpen(false); handleReservation(); }}
             >
               예약 진행하기

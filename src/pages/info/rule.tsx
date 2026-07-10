@@ -106,7 +106,7 @@ const infoDocumentStyles = `
 
 .uno-info-doc-nav {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border-bottom: 1px solid rgba(17, 17, 17, 0.14);
 }
 
@@ -125,10 +125,17 @@ const infoDocumentStyles = `
   transition: background 180ms ease;
 }
 
-.uno-info-doc-button:nth-child(1) { grid-column: 1 / 4; }
-.uno-info-doc-button:nth-child(2) { grid-column: 4 / 7; }
-.uno-info-doc-button:nth-child(3) { grid-column: 7 / 10; }
-.uno-info-doc-button:nth-child(4) { grid-column: 10 / 13; border-right: 0; }
+.uno-info-doc-button:nth-child(1),
+.uno-info-doc-button:nth-child(2),
+.uno-info-doc-button:nth-child(3),
+.uno-info-doc-button:nth-child(4),
+.uno-info-doc-button:nth-child(5) {
+  grid-column: auto;
+}
+
+.uno-info-doc-button:nth-child(5) {
+  border-right: 0;
+}
 .uno-info-doc-button:hover { background: rgba(17, 17, 17, 0.025); }
 .uno-info-doc-button.is-active { background: #111111; color: #ffffff; }
 

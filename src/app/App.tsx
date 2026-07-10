@@ -299,6 +299,7 @@ function ScrollCard({ card }: { card: (typeof scrollCards)[number] }) {
   사용자가 보고 있던 메인페이지 위치를 복원한다.
 */
 const MAIN_SCROLL_STORAGE_KEY = "unotravel_main_scroll_y";
+const HISTORY_SCROLL_STATE_KEY = "__unotravelScrollY";
 
 const getStoredMainScrollY = () => {
   if (typeof window === "undefined") {
@@ -311,12 +312,43 @@ const getStoredMainScrollY = () => {
   return Number.isFinite(parsedValue) ? parsedValue : 0;
 };
 
+const getHistoryScrollY = (state: unknown) => {
+  if (!state || typeof state !== "object") {
+    return null;
+  }
+
+  const value = (state as Record<string, unknown>)[HISTORY_SCROLL_STATE_KEY];
+
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+};
+
+const saveCurrentHistoryScrollY = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const currentState =
+    window.history.state && typeof window.history.state === "object"
+      ? window.history.state
+      : {};
+
+  window.history.replaceState(
+    {
+      ...currentState,
+      [HISTORY_SCROLL_STATE_KEY]: window.scrollY || 0,
+    },
+    "",
+    window.location.href,
+  );
+};
+
 /* ────────────────────────────────────────────
    Page
 ──────────────────────────────────────────── */
 export default function App() {
   const previousPathnameRef = useRef(window.location.pathname);
   const shouldRestoreMainScrollRef = useRef(false);
+  const pendingHistoryScrollYRef = useRef<number | null>(null);
   const routeUpdateFrameRef = useRef<number | null>(null);
 
   /*
@@ -356,9 +388,14 @@ export default function App() {
       window.history.scrollRestoration = "manual";
     }
 
+    saveCurrentHistoryScrollY();
+
     const handleRouteChange = (event: Event) => {
       const previousPathname = previousPathnameRef.current;
       const nextPathname = window.location.pathname;
+      const isPopState = event.type === "popstate";
+      const popStateScrollY =
+        event instanceof PopStateEvent ? getHistoryScrollY(event.state) : null;
 
       const wasProductPage = previousPathname.startsWith("/product/");
       const willBeProductPage = nextPathname.startsWith("/product/");
@@ -384,7 +421,8 @@ export default function App() {
       스크롤 복원 대상에서 제외한다.
     */
       shouldRestoreMainScrollRef.current =
-        event.type === "popstate" && wasProductPage && !willBeProductPage;
+        isPopState && wasProductPage && !willBeProductPage && popStateScrollY === null;
+      pendingHistoryScrollYRef.current = isPopState ? popStateScrollY : null;
 
       /*
       SPA Route Commit Timing
@@ -427,9 +465,29 @@ export default function App() {
     window.addEventListener("popstate", handleRouteChange);
     window.addEventListener("unotravel:navigate", handleRouteChange);
 
+    let scrollSaveFrame: number | null = null;
+
+    const handleScrollSave = () => {
+      if (scrollSaveFrame !== null) {
+        return;
+      }
+
+      scrollSaveFrame = window.requestAnimationFrame(() => {
+        scrollSaveFrame = null;
+        saveCurrentHistoryScrollY();
+      });
+    };
+
+    window.addEventListener("scroll", handleScrollSave, { passive: true });
+
     return () => {
       window.removeEventListener("popstate", handleRouteChange);
       window.removeEventListener("unotravel:navigate", handleRouteChange);
+      window.removeEventListener("scroll", handleScrollSave);
+
+      if (scrollSaveFrame !== null) {
+        window.cancelAnimationFrame(scrollSaveFrame);
+      }
 
       if (routeUpdateFrameRef.current) {
         window.cancelAnimationFrame(routeUpdateFrameRef.current);
@@ -467,14 +525,16 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (pathname.startsWith("/product/")) {
+    const historyScrollY = pendingHistoryScrollYRef.current;
+    const shouldRestoreHistoryScroll = historyScrollY !== null;
+    const shouldRestoreMainScroll =
+      !pathname.startsWith("/product/") && shouldRestoreMainScrollRef.current;
+
+    if (!shouldRestoreHistoryScroll && !shouldRestoreMainScroll) {
       return;
     }
 
-    if (!shouldRestoreMainScrollRef.current) {
-      return;
-    }
-
+    pendingHistoryScrollYRef.current = null;
     shouldRestoreMainScrollRef.current = false;
 
     /*
@@ -483,7 +543,9 @@ export default function App() {
     메인페이지 섹션들이 다시 렌더링되고 각 섹션의 Dynamic Height가 잡힌 뒤
     저장된 위치로 복원한다.
   */
-    const restoreScrollY = getStoredMainScrollY();
+    const restoreScrollY = shouldRestoreHistoryScroll
+      ? historyScrollY
+      : getStoredMainScrollY();
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -497,6 +559,7 @@ export default function App() {
   }, [pathname]);
 
   const isProductPage = pathname.startsWith("/product/");
+  const isMainPage = pathname === "/";
   const isLoginPage = pathname === "/login";
   const isRegisterPage = pathname === "/register";
   const isRegisterAgreementPage = pathname === "/register/agreement";
@@ -562,6 +625,18 @@ export default function App() {
   const productTemplateData = isDailyProductPage
     ? DAILY_TOUR_DATA
     : SEMI_PACKAGE_DATA;
+  const shouldShowGlobalProductNavigation =
+    !isLoginPage &&
+    !isRegisterRoute &&
+    !isContactPage &&
+    !isProductPage &&
+    !isMainPage;
+  const shouldShowScrollOnlyProductNavigation =
+    !isLoginPage &&
+    !isRegisterRoute &&
+    !isContactPage &&
+    !isProductPage &&
+    isMainPage;
 
   const sectionShell = {
     position: "relative" as const,
@@ -803,8 +878,17 @@ export default function App() {
           forceFloating=true → document flow를 점유하지 않고 처음부터 fixed 핸들 상태.
           상품 페이지는 pageContent 안에서 document flow로 렌더링한다.
         */}
-        {!isLoginPage && !isRegisterRoute && !isContactPage && !isProductPage && (
-          <ProductNavigation forceFloating />
+        {shouldShowGlobalProductNavigation && (
+          <div style={{ paddingTop: 132, width: "100%", minWidth: 1024 }}>
+            <ProductNavigation />
+          </div>
+        )}
+
+        {shouldShowScrollOnlyProductNavigation && (
+          <ProductNavigation
+            forceFloating
+            showFloatingAfterScroll
+          />
         )}
 
         <PageTransitionFrame pathname={pathname}>

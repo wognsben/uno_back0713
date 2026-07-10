@@ -1,10 +1,36 @@
-import { useEffect, useRef, useState } from "react";
-import svgPaths from "./svg-vaq8d9b51g";
-import img from "./050e70839c8a865a3bc5bf5529ebbff52dab7a81.png";
-import img1 from "./aa36fe66f91d4d474a7c3e64585689a25e85b055.png";
+// index.tsx
+// 메인페이지 4번째 CONTACT CTA 섹션 컴포넌트다.
+// 카카오톡 문의 CTA, 홈페이지 문의 이동, 국가별 연락처와 반응형 섹션 스케일을 관리한다.
+// Header/Footer의 공통 링크와 별개로 메인 하단 전환 CTA 역할만 담당한다.
 
-const KAKAO_TALK_URL = "#";
-const INSTAGRAM_URL = "#";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { MessageCircleQuestion } from "lucide-react";
+import svgPaths from "./svg-vaq8d9b51g";
+import kakaoChannelIcon from "../../app/components/assests/kakao_channel.png";
+
+const KAKAO_TALK_URL = "http://pf.kakao.com/_fxbTxnd/chat";
+const CONTACT_PAGE_URL = "/contact";
+
+function openExternalLink(url: string) {
+  if (typeof window === "undefined") return;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function navigateInternal(path: string) {
+  if (typeof window === "undefined") return;
+
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new Event("unotravel:navigate"));
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+}
+
+function handleSectionKeyDown(event: KeyboardEvent<HTMLElement>, action: () => void) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+
+  event.preventDefault();
+  action();
+}
 
 /* Desktop Responsive Scale System
    ------------------------------------------
@@ -291,24 +317,44 @@ function Group6() {
 }
 
 function Group8() {
+  const handleContactClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    navigateInternal(CONTACT_PAGE_URL);
+  };
+
+  const handleKakaoClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.stopPropagation();
+  };
+
   return (
     <div className="absolute contents left-[380px] top-[152px]">
       <a
-        aria-label="카카오톡 문의하기"
+        aria-label="카카오톡 채널 새 창으로 문의하기"
+        title="카카오톡 채널"
         className="absolute cursor-pointer left-[535px] size-[40px] top-[153px] z-10 transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-105"
-        data-name="카톡 로고"
+        data-name="카카오톡 채널"
         href={KAKAO_TALK_URL}
+        onClick={handleKakaoClick}
+        onKeyDown={(event) => event.stopPropagation()}
+        target="_blank"
+        rel="noreferrer"
       >
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img} />
+        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={kakaoChannelIcon} />
       </a>
       <Group6 />
       <a
-        aria-label="인스타그램 문의하기"
+        aria-label="홈페이지 1:1 문의 페이지로 이동"
+        title="홈페이지 1:1 문의"
         className="absolute cursor-pointer left-[585px] size-[40px] top-[153px] z-10 transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-105"
-        data-name="인스타그램 로고"
-        href={INSTAGRAM_URL}
+        data-name="홈페이지 문의 임시 아이콘"
+        href={CONTACT_PAGE_URL}
+        onClick={handleContactClick}
+        onKeyDown={(event) => event.stopPropagation()}
       >
-        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={img1} />
+        <span className="absolute inset-0 flex items-center justify-center rounded-[10px] bg-[#151515] text-white">
+          <MessageCircleQuestion aria-hidden="true" size={27} strokeWidth={1.8} />
+        </span>
       </a>
     </div>
   );
@@ -317,8 +363,11 @@ function Group8() {
 function Frame19() {
   return (
     <div
-      aria-label="우노트래블 문의하기"
+      aria-label="카카오톡 채널로 문의하기"
+      title="카카오톡 채널로 문의하기"
       className="group border border-[rgba(182,166,154,0.4)] border-solid col-1 cursor-pointer h-[200px] ml-0 mt-0 overflow-clip relative rounded-[15px] row-1 transition-colors duration-300 ease-out hover:border-[rgba(182,166,154,0.7)] w-[640px]"
+      onClick={() => openExternalLink(KAKAO_TALK_URL)}
+      onKeyDown={(event) => handleSectionKeyDown(event, () => openExternalLink(KAKAO_TALK_URL))}
       role="link"
       tabIndex={0}
     >

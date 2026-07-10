@@ -864,7 +864,7 @@ export default function NoticePage() {
       <div className="uno-info-shell">
         <section className="uno-info-hero">
           <p className="uno-info-kicker">UNOTRAVEL INFO</p>
-          <p className="uno-info-page-index">NOTICE / 02</p>
+          <p className="uno-info-page-index">CAUTION / 02</p>
 
           <h1 className="uno-info-title uno-info-split">
             예약 시
@@ -908,7 +908,7 @@ export default function NoticePage() {
         </section>
 
         <div className="uno-info-note">
-          <strong>NOTICE</strong>
+          <strong>주의사항</strong>
           <p className="uno-info-split">
             상품별 세부 조건은 각 상품 상세페이지의 안내가 우선 적용될 수 있습니다. 예약 전 포함사항, 불포함사항, 준비물, 환불규정을 함께 확인해 주세요.
           </p>

@@ -1,7 +1,7 @@
 // reservationUtils.ts
 // 예약 관련 공통 타입과 유틸 함수를 관리한다.
-// 가격 표기, 날짜 id 변환, 달력 날짜 생성, 예약 가능 여부, 예약 상태 className 계산을 담당한다.
-// ProductDetail, resmodule, DailyTourCalendar에서 중복으로 만들지 않고 이 파일의 공통 함수를 사용한다.
+// 가격 표기, 날짜 id 변환, 달력 날짜 생성, 예약 가능 여부, 예약 상태 코드와 className 계산을 담당한다.
+// 화면 문구와 내부 상태값을 분리해 ProductDetail, ReservationModule, DailyTourCalendar의 중복/오해를 막는다.
 // JSX를 쓰지 않는 .ts 파일이므로 PriceText는 React.createElement 기반으로 작성한다.
 
 import { createElement } from "react";
@@ -17,8 +17,8 @@ export type AvailableDate = {
   guide: string;
 };
 
-export type AvailabilityStatus = "예약 가능" | "마감 임박" | "마감";
-export type AvailabilityTone = "available" | "soon" | "soldout";
+export type AvailabilityStatus = "available" | "soon" | "soldout";
+export type AvailabilityTone = AvailabilityStatus;
 
 export type PriceTextProps = {
   price: number;
@@ -33,7 +33,24 @@ const CURRENCY_SYMBOL_MAP: Record<string, string> = {
   JPY: "¥",
 };
 
-const CLOSED_STATUS_SET = new Set(["마감", "예약 마감"]);
+const STATUS_LABEL_MAP: Record<AvailabilityStatus, string> = {
+  available: "예약 가능",
+  soon: "마감 임박",
+  soldout: "마감",
+};
+
+const STATUS_ALIAS_MAP: Record<string, AvailabilityStatus> = {
+  available: "available",
+  soon: "soon",
+  soldout: "soldout",
+  "예약 가능": "available",
+  예약가능: "available",
+  "마감 임박": "soon",
+  마감임박: "soon",
+  마감: "soldout",
+  "예약 마감": "soldout",
+  예약마감: "soldout",
+};
 
 export const getCurrencySymbol = (currency = "KRW") => {
   return CURRENCY_SYMBOL_MAP[currency] ?? currency;
@@ -99,8 +116,21 @@ export const getDateIdFromDate = (date: Date) => {
 
 export const isSundayDate = (date: Date) => date.getDay() === 0;
 
+export const normalizeAvailabilityStatus = (
+  status?: string | AvailabilityStatus,
+): AvailabilityStatus => {
+  const normalizedStatus = String(status ?? "").trim();
+  return STATUS_ALIAS_MAP[normalizedStatus] ?? "available";
+};
+
+export const getAvailabilityDisplayLabel = (
+  status?: string | AvailabilityStatus,
+) => {
+  return STATUS_LABEL_MAP[normalizeAvailabilityStatus(status)];
+};
+
 export const isDateClosedStatus = (status?: string) => {
-  return CLOSED_STATUS_SET.has(status ?? "");
+  return normalizeAvailabilityStatus(status) === "soldout";
 };
 
 export const createDailyCalendarDate = (
@@ -118,7 +148,7 @@ export const createDailyCalendarDate = (
     seats: isSunday ? 0 : fallbackCapacity,
     capacity: fallbackCapacity,
     price: referenceDate?.price ?? 89000,
-    status: isSunday ? "마감" : "예약 가능",
+    status: isSunday ? "soldout" : "available",
     guide: referenceDate?.guide ?? "UNO GUIDE",
   };
 };
@@ -142,7 +172,7 @@ export const getDailyDateOption = (date: Date, dates: AvailableDate[]) => {
       seats: 0,
       capacity: storedDate?.capacity ?? fallbackDate.capacity,
       price: storedDate?.price ?? fallbackDate.price,
-      status: "마감",
+      status: "soldout",
     };
   }
 
@@ -150,7 +180,7 @@ export const getDailyDateOption = (date: Date, dates: AvailableDate[]) => {
     return {
       ...fallbackDate,
       ...storedDate,
-      status: "마감",
+      status: "soldout",
     };
   }
 
@@ -158,7 +188,10 @@ export const getDailyDateOption = (date: Date, dates: AvailableDate[]) => {
     ...fallbackDate,
     ...storedDate,
     seats: storedDate?.seats ?? fallbackDate.seats,
-    status: storedDate?.status === "마감 임박" ? "마감 임박" : "예약 가능",
+    status:
+      normalizeAvailabilityStatus(storedDate?.status) === "soon"
+        ? "soon"
+        : "available",
   };
 };
 
@@ -193,21 +226,19 @@ export const getAvailabilityStatus = (
   date?: AvailableDate,
 ): AvailabilityStatus => {
   if (!date || date.seats <= 0 || isDateClosedStatus(date.status)) {
-    return "마감";
+    return "soldout";
   }
 
   const remainingRatio = date.capacity > 0 ? date.seats / date.capacity : 0;
-  if (remainingRatio <= 0.3) return "마감 임박";
+  if (remainingRatio <= 0.3) return "soon";
 
-  return "예약 가능";
+  return normalizeAvailabilityStatus(date.status);
 };
 
 export const getAvailabilityTone = (
   status: AvailabilityStatus,
 ): AvailabilityTone => {
-  if (status === "마감 임박") return "soon";
-  if (status === "마감") return "soldout";
-  return "available";
+  return normalizeAvailabilityStatus(status);
 };
 
 export const getAvailabilityClassName = (date?: AvailableDate) => {

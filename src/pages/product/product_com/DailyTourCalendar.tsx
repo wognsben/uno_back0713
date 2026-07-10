@@ -11,6 +11,7 @@ import {
   formatAvailablePeople,
   formatPriceValue,
   getAvailabilityClassName,
+  getAvailabilityDisplayLabel,
   getAvailabilityStatus,
   getDailyDateOption,
   getMonthLabel,
@@ -510,8 +511,10 @@ function DailyTourCalendar({
             const isSelected = selectedDateId === cell.dateId;
             const status = getAvailabilityStatus(cell.option);
             const statusClassName = getAvailabilityClassName(cell.option);
-            const isClosed = status === "마감";
-            const statusLabel = cell.isPast ? "지난 날짜" : status;
+            const isClosed = status === "soldout";
+            const statusLabel = cell.isPast
+              ? "지난 날짜"
+              : getAvailabilityDisplayLabel(status);
             const priceLabel = formatPriceValue(cell.option.price);
             const peopleLabel = formatAvailablePeople(cell.option.seats);
 

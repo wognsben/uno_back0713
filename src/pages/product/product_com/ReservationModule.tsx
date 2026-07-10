@@ -1,6 +1,7 @@
 // ReservationModule.tsx
 // 상품 상세 예약 모듈 전체를 담당한다.
-// 세미패키지 예약 UI의 보딩패스 표시, 인원 선택, 총액 계산, 장바구니 저장, 예약 페이지 이동을 처리한다.
+// 세미패키지 예약 UI의 보딩패스 표시, 인원 선택, 총액 계산, 예약 CTA 상태를 처리한다.
+// 장바구니 저장과 예약 페이지 이동은 reservationStore.ts에 위임해 하단 예약 바와 충돌하지 않게 한다.
 // 좌측 설명 컬럼(Boarding Pass / 접기)과 검은 BOOK 탭은 사용하지 않는다.
 // 예약 모듈은 항상 열린 상태로 노출한다.
 
@@ -9,67 +10,20 @@ import BookingBoardingPass from "./BoardingPass";
 import DailyTourCalendar from "./DailyTourCalendar";
 import {
   type AvailableDate,
-  PriceText,
   formatAvailablePeople,
   getAvailabilityClassName,
   getAvailabilityStatus,
   getInitialDailyDateId,
 } from "./reservationUtils";
-
-const CART_STORAGE_KEY = "unotravel_cart_items";
-const CART_COUNT_STORAGE_KEY = "unotravel_cart_count";
-const PENDING_RESERVATION_STORAGE_KEY = "unotravel_pending_reservation";
-const RESERVATION_PAGE_URL = "/reservation";
-const MY_CART_PAGE_URL = "/mypage/cart";
-
-type ProductKind = "semi" | "daily";
-
-type ReservationProductContext = {
-  id: string;
-  productType: ProductKind;
-  title: string;
-  href: string;
-  currency?: string;
-  basePrice?: number;
-};
-
-type ReservationStoragePayload = {
-  productId: string;
-  productType: ProductKind;
-  title: string;
-  href: string;
-  selectedDateId: string;
-  selectedDateLabel: string;
-  selectedWeekday: string;
-  personCount: number;
-  unitPrice: number;
-  totalPrice: number;
-  currency: string;
-  seatsBeforeSelection: number;
-  remainingSeatsAfterSelection: number;
-  guide: string;
-  createdAt: number;
-};
-
-const parseCartItems = (value: string | null): ReservationStoragePayload[] => {
-  if (!value) return [];
-
-  try {
-    const parsedValue = JSON.parse(value);
-    return Array.isArray(parsedValue) ? parsedValue : [];
-  } catch {
-    return [];
-  }
-};
-
-const navigateInternal = (href: string) => {
-  if (typeof window === "undefined") return;
-
-  window.history.pushState({}, "", href);
-  window.dispatchEvent(new PopStateEvent("popstate"));
-  window.dispatchEvent(new Event("unotravel:navigate"));
-  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-};
+import {
+  DEFAULT_MY_CART_PAGE_URL,
+  DEFAULT_RESERVATION_PAGE_URL,
+  type ReservationProductContext,
+  createReservationPayload,
+  navigateInternal,
+  saveCartReservation,
+  savePendingReservation,
+} from "./reservationStore";
 
 const RESERVATION_MODULE_STYLE = `
   .pd-book-drawer {
@@ -319,7 +273,7 @@ const activeDateId =
 
 const status = getAvailabilityStatus(activeDate);
 const statusClassName = getAvailabilityClassName(activeDate);
-const isReservationDisabled = !activeDate || status === "마감";
+const isReservationDisabled = !activeDate || status === "soldout";
 
 /*
   Backend Seats
@@ -342,63 +296,27 @@ const canIncrease = safePeople < safeMaxPeople;
     setPeople((value) => Math.max(minPeople, Math.min(value, safeMaxPeople)));
   }, [minPeople, safeMaxPeople]);
 
-  const getReservationPayload = (): ReservationStoragePayload => {
-    const seatsBeforeSelection = activeDate?.seats ?? 0;
-
-    return {
-      productId: product.id,
-      productType: product.productType,
-      title: product.title,
-      href: product.href,
-      selectedDateId: activeDate?.id ?? "",
-      selectedDateLabel: activeDate?.label ?? "",
-      selectedWeekday: activeDate?.day ?? "",
+  const getReservationPayload = () =>
+    createReservationPayload({
+      product,
+      selectedDate: activeDate,
       personCount: safePeople,
       unitPrice,
       totalPrice,
-      currency: product.currency ?? "KRW",
-      seatsBeforeSelection,
-      remainingSeatsAfterSelection: Math.max(0, seatsBeforeSelection - safePeople),
-      guide: activeDate?.guide ?? "",
-      createdAt: Date.now(),
-    };
-  };
+    });
 
   const handleCart = () => {
-    if (typeof window === "undefined" || isReservationDisabled) return;
+    if (isReservationDisabled) return;
 
-    const payload = getReservationPayload();
-    const previousItems = parseCartItems(sessionStorage.getItem(CART_STORAGE_KEY));
-    const existingIndex = previousItems.findIndex(
-      (item) =>
-        item.productId === payload.productId &&
-        item.selectedDateId === payload.selectedDateId,
-    );
-    const nextItems =
-      existingIndex >= 0
-        ? previousItems.map((item, index) =>
-            index === existingIndex ? payload : item,
-          )
-        : [payload, ...previousItems];
-
-    sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(nextItems));
-    sessionStorage.setItem(CART_COUNT_STORAGE_KEY, String(nextItems.length));
-    window.dispatchEvent(
-      new CustomEvent("unotravel:cart-updated", {
-        detail: { count: nextItems.length, items: nextItems },
-      }),
-    );
-    navigateInternal(MY_CART_PAGE_URL);
+    saveCartReservation(getReservationPayload());
+    navigateInternal(DEFAULT_MY_CART_PAGE_URL);
   };
 
   const handleReserve = () => {
-    if (typeof window === "undefined" || isReservationDisabled) return;
+    if (isReservationDisabled) return;
 
-    sessionStorage.setItem(
-      PENDING_RESERVATION_STORAGE_KEY,
-      JSON.stringify(getReservationPayload()),
-    );
-    navigateInternal(RESERVATION_PAGE_URL);
+    savePendingReservation(getReservationPayload());
+    navigateInternal(DEFAULT_RESERVATION_PAGE_URL);
   };
 
   return (
@@ -458,7 +376,7 @@ const canIncrease = safePeople < safeMaxPeople;
   </strong>
 </div>
 
-            <p>{remainingSeats}명 예약 가능</p>
+            <p>{formatAvailablePeople(remainingSeats)}</p>
 
             <div className="pd-book-actions">
               <button

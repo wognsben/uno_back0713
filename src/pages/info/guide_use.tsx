@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import useInfoAsideScrollFollower from "./hooks/useInfoAsideScrollFollower";
 import useInfoDocumentAnimation from "./hooks/useInfoDocumentAnimation";
 import InfoDocumentNav from "./utils/InfoDocumentNav";
@@ -361,12 +361,13 @@ const infoDocumentStyles = `
   border-radius: 999px;
   background: #111111;
   color: #ffffff;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   font-family: var(--font-ko);
-  font-size: 14px;
+  font-size: 0;
   line-height: 1;
   letter-spacing: -0.035em;
   font-weight: 760;
@@ -374,7 +375,8 @@ const infoDocumentStyles = `
   transition: transform 180ms ease, background 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
-.uno-info-register-cta:hover {
+.uno-info-register-cta:hover,
+.uno-info-register-cta:focus-visible {
   transform: translateY(-1px);
   background: #fcc800;
   border-color: #fcc800;
@@ -382,10 +384,34 @@ const infoDocumentStyles = `
   box-shadow: 0 16px 34px rgba(252, 200, 0, 0.2);
 }
 
+.uno-info-register-message {
+  width: fit-content;
+  max-width: min(460px, 100%);
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-left: 2px solid #fcc800;
+  background: rgba(252, 200, 0, 0.12);
+  font-family: var(--font-ko);
+  font-size: 13px;
+  line-height: 1.56;
+  letter-spacing: -0.035em;
+  color: rgba(17, 17, 17, 0.72);
+}
+
 .uno-info-register-cta span {
   font-family: var(--font-en);
   font-size: 15px;
   line-height: 1;
+}
+
+.uno-info-register-cta > span:not(.uno-info-register-cta-label) {
+  display: none;
+}
+
+.uno-info-register-cta-label {
+  font-family: var(--font-ko) !important;
+  font-size: 14px !important;
+  letter-spacing: -0.035em;
 }
 
 .uno-payment-check-list {
@@ -898,9 +924,33 @@ const infoDocumentStyles = `
    if(empty($member['mb_id']))
 ========================================================== */
 
-const shouldShowRegisterCta =
-  typeof window !== "undefined" &&
-  window.sessionStorage.getItem("unotravel:auth") !== "true";
+function navigateTo(path: string) {
+  if (typeof window === "undefined") return;
+
+  window.history.pushState({}, "", path);
+  window.dispatchEvent(new Event("unotravel:navigate"));
+}
+
+function isUnoTravelLoggedIn() {
+  if (typeof window === "undefined") return false;
+
+  if (window.sessionStorage.getItem("unotravel:auth") === "true") {
+    return true;
+  }
+
+  const registerAuth = window.sessionStorage.getItem("unotravel_auth");
+
+  if (!registerAuth) {
+    return false;
+  }
+
+  try {
+    const parsed = JSON.parse(registerAuth) as { isLoggedIn?: boolean };
+    return Boolean(parsed?.isLoggedIn);
+  } catch {
+    return false;
+  }
+}
 
 const guideUseItems = [
   {
@@ -939,9 +989,19 @@ const paymentNoticeItems = [
 export default function GuideUsePage() {
   const scopeRef = useRef<HTMLElement | null>(null);
   const asideRef = useRef<HTMLDivElement | null>(null);
+  const [registerMessage, setRegisterMessage] = useState("");
 
   useInfoDocumentAnimation(scopeRef);
   useInfoAsideScrollFollower(asideRef);
+
+  const handleRegisterCta = () => {
+    if (isUnoTravelLoggedIn()) {
+      setRegisterMessage("이미 가입하셨습니다. 예약과 문의는 마이페이지에서 계속 확인하실 수 있습니다.");
+      return;
+    }
+
+    navigateTo("/login");
+  };
 
   return (
     <main ref={scopeRef} className="uno-info-document">
@@ -992,7 +1052,7 @@ export default function GuideUsePage() {
                     <p className="uno-info-help-text">{item.help}</p>
                   )}
 
-                  {index === 0 && shouldShowRegisterCta && (
+                  {index === 0 && (
                     <>
                       {/*
                         Backend Hook: Register CTA
@@ -1009,12 +1069,19 @@ export default function GuideUsePage() {
                         현재 링크:
                         /contents/regis_agree.php
                       */}
-                      <a
-                        href="/contents/regis_agree.php"
+                      <button
+                        type="button"
                         className="uno-info-register-cta"
+                        onClick={handleRegisterCta}
                       >
+                        <span className="uno-info-register-cta-label">회원가입하기 →</span>
                         회원가입하기 <span aria-hidden="true">→</span>
-                      </a>
+                      </button>
+                      {registerMessage && (
+                        <p className="uno-info-register-message" role="status" aria-live="polite">
+                          {registerMessage}
+                        </p>
+                      )}
                     </>
                   )}
 

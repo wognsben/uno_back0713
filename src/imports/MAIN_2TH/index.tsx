@@ -1,3 +1,8 @@
+/*
+  Main page second section.
+  Manages the JOURNEYS product preview area, semi-package/daily-tour tabs, title list hover states, and image preview motion.
+  Product title rows and the right preview image link into product detail pages while product list/detail page rendering stays in src/pages/product.
+*/
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import imgImage21 from "./66cc55f7b10f09c3fd983a97214f281b9d50cc4f.png";
@@ -9,6 +14,7 @@ type PackageItem = {
   title: string;
   lines: string[];
   eyebrow: string;
+  href: string;
 };
 
 const SEMI_PACKAGE_ITEMS: PackageItem[] = [
@@ -18,6 +24,7 @@ const SEMI_PACKAGE_ITEMS: PackageItem[] = [
     title: "이탈리아 일주 9박 11일",
     lines: ["이탈리아 일주 9박 11일"],
     eyebrow: "ITALY GRAND TOUR",
+    href: "/product/detail/italy-11",
   },
   {
     id: "italy-9",
@@ -25,6 +32,7 @@ const SEMI_PACKAGE_ITEMS: PackageItem[] = [
     title: "이탈리아 일주 7박 9일",
     lines: ["이탈리아 일주 7박 9일"],
     eyebrow: "CLASSIC ITALY",
+    href: "/product/detail/italy-9",
   },
   {
     id: "dolomiti-11",
@@ -32,6 +40,7 @@ const SEMI_PACKAGE_ITEMS: PackageItem[] = [
     title: "[8-9]월 한정 이탈리아일주+돌로미티 11",
     lines: ["[8-9]월 한정", "이탈리아일주+돌로미티 11"],
     eyebrow: "DOLOMITI LIMITED",
+    href: "/product/detail/dolomiti-11",
   },
   {
     id: "sicilia-9",
@@ -39,6 +48,7 @@ const SEMI_PACKAGE_ITEMS: PackageItem[] = [
     title: "나의 두번째 이탈리아, 지중해의 황금빛 시칠리아 일주 9일",
     lines: ["나의 두번째 이탈리아,", "지중해의 황금빛 시칠리아 일주 9일"],
     eyebrow: "SICILIA COLLECTION",
+    href: "/product/detail/sicilia-9",
   },
   {
     id: "art-tour-11",
@@ -46,6 +56,7 @@ const SEMI_PACKAGE_ITEMS: PackageItem[] = [
     title: "이탈리아 아트투어 일주 9박 11일",
     lines: ["이탈리아 아트투어 일주 9박 11일"],
     eyebrow: "ART TOUR",
+    href: "/product/detail/art-tour-11",
   },
 ];
 
@@ -56,6 +67,7 @@ const DAILY_TOUR_ITEMS: PackageItem[] = [
     title: "DAILY TOUR 01",
     lines: ["DAILY TOUR 01"],
     eyebrow: "DAILY TOUR",
+    href: "/product/detail/daily/rome-vatican-daily",
   },
   {
     id: "daily-02",
@@ -63,6 +75,7 @@ const DAILY_TOUR_ITEMS: PackageItem[] = [
     title: "DAILY TOUR 02",
     lines: ["DAILY TOUR 02"],
     eyebrow: "DAILY TOUR",
+    href: "/product/detail/daily/rome-city-walk",
   },
   {
     id: "daily-03",
@@ -70,6 +83,7 @@ const DAILY_TOUR_ITEMS: PackageItem[] = [
     title: "DAILY TOUR 03",
     lines: ["DAILY TOUR 03"],
     eyebrow: "DAILY TOUR",
+    href: "/product/detail/daily/firenze-uffizi-daily",
   },
   {
     id: "daily-04",
@@ -77,6 +91,7 @@ const DAILY_TOUR_ITEMS: PackageItem[] = [
     title: "DAILY TOUR 04",
     lines: ["DAILY TOUR 04"],
     eyebrow: "DAILY TOUR",
+    href: "/product/detail/daily/venezia-walk-daily",
   },
   {
     id: "daily-05",
@@ -84,6 +99,7 @@ const DAILY_TOUR_ITEMS: PackageItem[] = [
     title: "DAILY TOUR 05",
     lines: ["DAILY TOUR 05"],
     eyebrow: "DAILY TOUR",
+    href: "/product/detail/daily/napoli-pompei-daily",
   },
 ];
 
@@ -112,6 +128,19 @@ const CATEGORY_LABELS: Record<CategoryKey, { title: string; shortTitle: string; 
 const SECTION2_BASE_WIDTH = 1600;
 const SECTION2_CANVAS_WIDTH = 1700;
 const SECTION2_CANVAS_HEIGHT = 1245;
+
+function navigateInternal(href: string) {
+  if (typeof window === "undefined") return;
+
+  if (window.location.pathname === href) {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    return;
+  }
+
+  window.history.pushState({}, "", href);
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  window.dispatchEvent(new Event("unotravel:navigate"));
+}
 
 function Group() {
   return (
@@ -153,8 +182,10 @@ function PackageRow({
   return (
     <button
       type="button"
+      onClick={() => navigateInternal(item.href)}
       onMouseEnter={onHover}
       onFocus={onHover}
+      aria-label={`${item.title} 상세페이지로 이동`}
       className="group h-[82px] relative shrink-0 w-[456px]"
       data-name={item.title}
       style={{
@@ -428,6 +459,18 @@ function PreviewImage({
           >
             {activeItem.eyebrow}
           </div>
+
+          <button
+            type="button"
+            className="absolute inset-0"
+            onClick={() => navigateInternal(activeItem.href)}
+            aria-label={`${activeItem.title} 상세페이지로 이동`}
+            style={{
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+            }}
+          />
         </div>
 
         <div
@@ -481,12 +524,11 @@ function PreviewImage({
   );
 }
 
-function Frame4({ item, category }: { item: PackageItem; category: CategoryKey }) {
+function Frame4({ item }: { item: PackageItem }) {
   const [isHovered, setIsHovered] = useState(false);
-  const href = `/${category === "semi" ? "semi-package" : "daily-tour"}/${item.id}`;
 
   const handleClick = () => {
-    window.location.href = href;
+    navigateInternal(item.href);
   };
 
   return (
@@ -500,31 +542,27 @@ function Frame4({ item, category }: { item: PackageItem; category: CategoryKey }
         cursor: "pointer",
         transform: "translateY(0)",
         transition:
-          "background 0.28s ease, box-shadow 0.32s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)",
+          "background 0.28s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)",
       }}
       onMouseEnter={(event) => {
         setIsHovered(true);
         event.currentTarget.style.background = "#f2c100";
         event.currentTarget.style.transform = "translateY(-2px)";
-        event.currentTarget.style.boxShadow = "0 14px 34px rgba(21,21,21,0.11)";
       }}
       onMouseLeave={(event) => {
         setIsHovered(false);
         event.currentTarget.style.background = "#fcc800";
         event.currentTarget.style.transform = "translateY(0)";
-        event.currentTarget.style.boxShadow = "none";
       }}
       onFocus={(event) => {
         setIsHovered(true);
         event.currentTarget.style.background = "#f2c100";
         event.currentTarget.style.transform = "translateY(-2px)";
-        event.currentTarget.style.boxShadow = "0 14px 34px rgba(21,21,21,0.11)";
       }}
       onBlur={(event) => {
         setIsHovered(false);
         event.currentTarget.style.background = "#fcc800";
         event.currentTarget.style.transform = "translateY(0)";
-        event.currentTarget.style.boxShadow = "none";
       }}
     >
       <div className="[word-break:break-word] flex flex-col font-mixed h-[50px] justify-center leading-[0] relative shrink-0 text-[#151515] text-[0px] text-center w-[160px]" style={{ fontVariationSettings: '"wght" 400' }}>
@@ -564,7 +602,7 @@ function Frame5({ category, activeItem }: { category: CategoryKey; activeItem: P
       <div className="[word-break:break-word] flex flex-col font-en h-[60px] justify-center leading-[0] not-italic relative shrink-0 text-[18px] text-black text-center w-[160px]">
         <p className="leading-[0px]">{label.shortTitle}</p>
       </div>
-      <Frame4 item={activeItem} category={category} />
+      <Frame4 item={activeItem} />
     </div>
   );
 }

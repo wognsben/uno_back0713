@@ -36,9 +36,9 @@ export const INFO_DOCUMENT_ITEMS: InfoDocumentItem[] = [
   {
     id: "notice",
     number: "02",
-    label: "NOTICE",
-    title: "공지사항",
-    description: "여행 전 확인해야 할 주요 공지사항을 안내합니다.",
+    label: "CAUTION",
+    title: "주의사항",
+    description: "예약 전 확인해야 할 주요 주의사항을 안내합니다.",
     path: "/info/notice",
   },
   {
