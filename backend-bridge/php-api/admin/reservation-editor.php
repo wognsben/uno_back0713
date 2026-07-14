@@ -76,6 +76,10 @@ function uno_api_reservation_editor_payment($row)
         return $payment;
     }
 
+    if (!uno_api_reservation_editor_table_exists('kspay_result')) {
+        return $payment;
+    }
+
     $safeCardPay = uno_api_reservation_editor_escape($cardPay);
     $payRow = sql_fetch("select * from kspay_result where ApplNum = '{$safeCardPay}' order by id desc limit 1");
     if (!$payRow || !is_array($payRow)) {
@@ -84,8 +88,8 @@ function uno_api_reservation_editor_payment($row)
 
     $cancelDate = isset($payRow['CancelDate']) ? trim((string) $payRow['CancelDate']) : '';
     $payMethod = isset($payRow['PayMethod']) ? (string) $payRow['PayMethod'] : '신용카드';
-    $payment['methodLabel'] = $cancelDate !== '' ? '은행' : '카드';
-    $payment['canCancelCard'] = $cancelDate === '' && $payMethod !== '계좌이체';
+    $payment['methodLabel'] = $cancelDate !== '' ? '카드 취소' : '카드';
+    $payment['canCancelCard'] = $cancelDate === '' && $payMethod !== '계좌이체' && $payMethod !== '실시간계좌이체';
     $payment['ksnet'] = array(
         'payMethod' => $payMethod,
         'result' => isset($payRow['Result']) ? (string) $payRow['Result'] : '',
@@ -95,6 +99,13 @@ function uno_api_reservation_editor_payment($row)
         'amountLabel' => uno_api_reservation_editor_money(isset($payRow['TotPrice']) ? $payRow['TotPrice'] : 0) . '원',
         'approvedAt' => isset($payRow['AppDate']) ? (string) $payRow['AppDate'] : '',
         'approvalNo' => isset($payRow['ApplNum']) ? (string) $payRow['ApplNum'] : $cardPay,
+        'cancelPayload' => array(
+            'authty' => '1010',
+            'trno' => isset($payRow['ApplNum']) ? (string) $payRow['ApplNum'] : $cardPay,
+            'canc_amt' => isset($payRow['TotPrice']) ? (string) $payRow['TotPrice'] : '',
+            'canc_seq' => '',
+            'canc_type' => '0',
+        ),
         'appCode' => isset($payRow['AppCode']) ? (string) $payRow['AppCode'] : '',
         'aquCode' => isset($payRow['AquCode']) ? (string) $payRow['AquCode'] : '',
         'message1' => isset($payRow['Meassage1']) ? (string) $payRow['Meassage1'] : '',
@@ -105,6 +116,21 @@ function uno_api_reservation_editor_payment($row)
     return $payment;
 }
 
+function uno_api_reservation_editor_table_exists($tableName)
+{
+    $safeTable = uno_api_reservation_editor_escape($tableName);
+    $row = sql_fetch("show tables like '{$safeTable}'");
+    return is_array($row) && count($row) > 0;
+}
+
+function uno_api_reservation_editor_column_exists($tableName, $columnName)
+{
+    $safeTable = uno_api_reservation_editor_escape($tableName);
+    $safeColumn = uno_api_reservation_editor_escape($columnName);
+    $row = sql_fetch("show columns from {$safeTable} like '{$safeColumn}'");
+    return is_array($row) && count($row) > 0;
+}
+
 function uno_api_reservation_editor_fetch($rid)
 {
     $rid = (int) $rid;
@@ -112,12 +138,15 @@ function uno_api_reservation_editor_fetch($rid)
         uno_api_error('VALIDATION_ERROR', '예약번호를 확인해 주세요.', 400);
     }
 
+    $hasAdminMemo = uno_api_reservation_editor_column_exists('tour_reg', 'adminMemo');
+    $hasAdminMemoCancel = uno_api_reservation_editor_column_exists('tour_reg', 'adminMemoCancel');
+
     $row = sql_fetch(
         "select r.*, p.wr_subject, p.ca_name
            from tour_reg r
            left join g5_write_product p on r.pid = p.wr_id
           where r.id = '{$rid}'
-            and r.status not in ('cart', 'booking')
+            and r.status <> 'cart'
           limit 1"
     );
 
@@ -153,8 +182,8 @@ function uno_api_reservation_editor_fetch($rid)
         'payment' => uno_api_reservation_editor_payment($row),
         'memo' => array(
             'request' => isset($row['regMemo']) ? (string) $row['regMemo'] : '',
-            'admin' => isset($row['adminMemo']) ? (string) $row['adminMemo'] : '',
-            'cancel' => isset($row['adminMemoCancel']) ? (string) $row['adminMemoCancel'] : '',
+            'admin' => $hasAdminMemo && isset($row['adminMemo']) ? (string) $row['adminMemo'] : '',
+            'cancel' => $hasAdminMemoCancel && isset($row['adminMemoCancel']) ? (string) $row['adminMemoCancel'] : '',
         ),
         'links' => array(
             'legacyDetail' => '/admin/booking.php?rid=' . (int) $row['id'],
@@ -179,16 +208,17 @@ function uno_api_reservation_editor_save($rid, $body)
         uno_api_error('VALIDATION_ERROR', '예약 상태값을 확인해 주세요.', 400);
     }
 
-    $adminMemo = uno_api_reservation_editor_escape(isset($body['adminMemo']) ? $body['adminMemo'] : '');
-    $cancelMemo = uno_api_reservation_editor_escape(isset($body['adminMemoCancel']) ? $body['adminMemoCancel'] : '');
+    $updates = array("status = '{$status}'");
+    if (uno_api_reservation_editor_column_exists('tour_reg', 'adminMemo')) {
+        $adminMemo = uno_api_reservation_editor_escape(isset($body['adminMemo']) ? $body['adminMemo'] : '');
+        $updates[] = "adminMemo = '{$adminMemo}'";
+    }
+    if (uno_api_reservation_editor_column_exists('tour_reg', 'adminMemoCancel')) {
+        $cancelMemo = uno_api_reservation_editor_escape(isset($body['adminMemoCancel']) ? $body['adminMemoCancel'] : '');
+        $updates[] = "adminMemoCancel = '{$cancelMemo}'";
+    }
 
-    sql_query(
-        "update tour_reg
-            set status = '{$status}',
-                adminMemo = '{$adminMemo}',
-                adminMemoCancel = '{$cancelMemo}'
-          where id = '{$rid}'"
-    );
+    sql_query("update tour_reg set " . implode(', ', $updates) . " where id = '{$rid}'");
 
     if (function_exists('re_cal_max_counter') && isset($previous['pid'], $previous['tourDay'])) {
         re_cal_max_counter((int) $previous['pid'], substr((string) $previous['tourDay'], 0, 10));

@@ -18,9 +18,9 @@ function uno_renewal_admin_menu_groups()
             'href' => '/admin/renewal/reservations.php',
             'items' => array(
                 array('label' => '예약 목록', 'href' => '/admin/renewal/reservations.php'),
-                array('label' => '세미패키지 예약', 'href' => '/admin/booking.php?sca=세미패키지'),
-                array('label' => '데일리투어 예약', 'href' => '/admin/booking.php?sca=데이투어'),
-                array('label' => '예약 캘린더', 'href' => '/admin/regist_calendar.php'),
+                array('label' => '세미패키지 예약', 'href' => '/admin/renewal/reservations.php?type=semi'),
+                array('label' => '데일리투어 예약', 'href' => '/admin/renewal/reservations.php?type=daily'),
+                array('label' => '예약 캘린더', 'href' => '/admin/renewal/reservations.php'),
                 array('label' => '관리자 1:1 문의', 'href' => '/admin/renewal/inquiries.php?board=cusTour'),
                 array('label' => 'KSNET 결제 내역', 'href' => '/admin/renewal/payments.php'),
             ),
@@ -187,7 +187,7 @@ function uno_renewal_admin_render_head($title)
     .uno-admin-submenu {
       position: absolute;
       z-index: 20;
-      top: calc(100% + 8px);
+      top: 100%;
       left: 50%;
       width: 220px;
       transform: translateX(-50%);
@@ -415,6 +415,21 @@ function uno_renewal_admin_render_head($title)
     .uno-admin-close::before { transform: rotate(45deg); }
     .uno-admin-close::after { transform: rotate(-45deg); }
 
+    .uno-admin-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 90;
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--uno-ink);
+      background: var(--uno-ink);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .16);
+    }
+
     @media (max-width: 1120px) {
       .uno-admin-header,
       .uno-admin-pagehead,
@@ -515,6 +530,7 @@ function uno_renewal_admin_render_pagehead($eyebrow, $title, $copy, $actions = a
 function uno_renewal_admin_render_footer()
 {
     ?>
+  <button class="uno-admin-top" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});" aria-label="맨 위로">TOP</button>
   </main>
 </body>
 </html>

@@ -42,7 +42,7 @@ function uno_api_find_member_for_login($loginId)
         return $member;
     }
 
-    if (strpos($loginId, '@') === false || !function_exists('sql_fetch')) {
+    if (!function_exists('sql_fetch')) {
         return $member;
     }
 
@@ -53,13 +53,41 @@ function uno_api_find_member_for_login($loginId)
         "select *
            from {$memberTable}
           where mb_email = '{$escapedLoginId}'
+             or mb_hp = '{$escapedLoginId}'
+             or replace(mb_hp, '-', '') = replace('{$escapedLoginId}', '-', '')
+             or mb_kakao = '{$escapedLoginId}'
           limit 1"
     );
 }
 
+function uno_api_login_password_matches($plainPassword, $storedHash)
+{
+    if ($storedHash === '') {
+        return false;
+    }
+
+    if (function_exists('check_password') && check_password($plainPassword, $storedHash)) {
+        return true;
+    }
+
+    if (function_exists('get_encrypt_string') && get_encrypt_string($plainPassword) === $storedHash) {
+        return true;
+    }
+
+    if (function_exists('sql_password') && sql_password($plainPassword) === $storedHash) {
+        return true;
+    }
+
+    if (function_exists('password_verify') && password_verify($plainPassword, $storedHash)) {
+        return true;
+    }
+
+    return false;
+}
+
 $body = uno_api_login_json_body();
 $mbId = isset($body['mb_id']) ? trim((string) $body['mb_id']) : '';
-$mbPassword = isset($body['mb_password']) ? trim((string) $body['mb_password']) : '';
+$mbPassword = isset($body['mb_password']) ? (string) $body['mb_password'] : '';
 
 if ($mbId === '' || $mbPassword === '') {
     uno_api_error(
@@ -79,7 +107,7 @@ if (!function_exists('get_member') || !function_exists('check_password') || !fun
 
 $mb = uno_api_find_member_for_login($mbId);
 
-if (!$mb || empty($mb['mb_id']) || !check_password($mbPassword, $mb['mb_password'])) {
+if (!$mb || empty($mb['mb_id']) || !uno_api_login_password_matches($mbPassword, isset($mb['mb_password']) ? (string) $mb['mb_password'] : '')) {
     uno_api_error(
         'PERMISSION_DENIED',
         uno_api_login_text('"\uc544\uc774\ub514 \ub610\ub294 \ube44\ubc00\ubc88\ud638\uac00 \uc62c\ubc14\ub974\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4."'),

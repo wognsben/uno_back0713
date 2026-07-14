@@ -1,8 +1,8 @@
-// RegisterForm.tsx
-// UNO Travel 회원가입 정보 입력 화면을 담당하며 입력값, 비밀번호 확인, Kcaptcha 표시/검증 상태를 관리합니다.
-// 실제 회원 DB 저장 API가 아니라 기존 그누보드 가입 흐름과 연결되기 전 프런트 입력 UI를 맡습니다.
-// LoginPage나 RegisterComplete와 역할이 겹치지 않도록 가입 폼 검증과 다음 단계 이동만 포함합니다.
-import { useEffect, useMemo, useState } from "react";
+﻿// RegisterForm.tsx
+// UNO Travel 회원가입 정보 입력 화면입니다.
+// 기존 그누보드 회원 DB와 연결되는 리뉴얼 회원가입 API를 호출합니다.
+import { useMemo, useState } from "react";
+import { registerMember } from "../../api/reservationApi";
 
 /* ==========================================================
    RegisterForm.tsx
@@ -14,38 +14,9 @@ import { useEffect, useMemo, useState } from "react";
 
    백엔드 연동
    ------------------------------------------
-   member register       ← 기존 그누보드 회원가입 처리 연결 예정
-   captcha               ← 기존 Kcaptcha 자동등록방지 연결 예정
+   member register       ← 기존 그누보드 회원 DB 생성
    register complete     ← 회원가입 완료 페이지 이동
-
-   Header / Footer는 App.tsx에서 /register 계열 진입 시 숨김 처리 권장
-
-   지금 Turnstile을 적용하지 않는 이유
-
-Figma Make는 프론트엔드 미리보기 환경이라
-
-PHP 실행 안 됨
-서버 검증 안 됨
-Secret Key 사용 불가
-실제 도메인 환경이 아님
-
-즉, Turnstile의 핵심인 서버 검증을 테스트할 수 없습니다.
 ========================================================== */
-
-const CAPTCHA_BASE_URL = "/plugin/kcaptcha";
-
-function isCaptchaPreviewBypass() {
-  if (typeof window === "undefined") return false;
-
-  const hostname = window.location.hostname;
-
-  return (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname.includes("figma.site") ||
-    hostname.includes("makeproxy")
-  );
-}
 
 function navigateTo(path: string) {
   if (typeof window === "undefined") return;
@@ -60,13 +31,9 @@ export default function RegisterForm() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [captchaKey, setCaptchaKey] = useState("");
-  const [captchaSeed, setCaptchaSeed] = useState(() => Date.now());
-  const [captchaImageFailed, setCaptchaImageFailed] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [notice, setNotice] = useState("");
-
-  const captchaBypass = isCaptchaPreviewBypass();
 
   const canSubmit = useMemo(() => {
     return (
@@ -74,68 +41,17 @@ export default function RegisterForm() {
       email.trim().length > 0 &&
       phone.trim().length > 0 &&
       password.trim().length > 0 &&
-      password === passwordConfirm &&
-      (captchaBypass || captchaKey.trim().length > 0)
+      password === passwordConfirm
     );
-  }, [captchaBypass, captchaKey, email, name, password, passwordConfirm, phone]);
-
-  const captchaImageUrl = `${CAPTCHA_BASE_URL}/kcaptcha_image.php?t=${captchaSeed}`;
-
-  useEffect(() => {
-    refreshCaptchaSession();
-  }, []);
+  }, [email, name, password, passwordConfirm, phone]);
 
   function clearNotice() {
     if (notice) setNotice("");
   }
 
-  async function refreshCaptchaSession() {
-    if (captchaBypass) {
-      setCaptchaImageFailed(true);
-      setCaptchaSeed(Date.now());
-      return;
-    }
-
-    try {
-      await fetch(`${CAPTCHA_BASE_URL}/kcaptcha_session.php`, {
-        method: "POST",
-        cache: "no-store",
-      });
-      setCaptchaImageFailed(false);
-    } catch (error) {
-      console.error("[UNOTRAVEL] captcha session error", error);
-      setCaptchaImageFailed(true);
-      setNotice("자동등록방지 이미지를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.");
-    } finally {
-      setCaptchaSeed(Date.now());
-    }
-  }
-
-  function refreshCaptcha() {
-    setCaptchaKey("");
-    clearNotice();
-    refreshCaptchaSession();
-  }
-
-  async function verifyCaptcha() {
-    if (captchaBypass) return true;
-
-    const formData = new FormData();
-    formData.append("captcha_key", captchaKey.trim());
-
-    const response = await fetch(`${CAPTCHA_BASE_URL}/kcaptcha_result.php`, {
-      method: "POST",
-      body: formData,
-      cache: "no-store",
-    });
-
-    const result = (await response.text()).trim();
-
-    return result === "1" || result === "true" || result === "TRUE";
-  }
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting) return;
 
     if (!name.trim() || !email.trim() || !phone.trim() || !password.trim()) {
       setNotice("필수 정보를 모두 입력해 주세요.");
@@ -147,39 +63,42 @@ export default function RegisterForm() {
       return;
     }
 
-    if (!captchaBypass && !captchaKey.trim()) {
-      setNotice("자동등록방지 문자를 입력해 주세요.");
-      return;
-    }
-
-    /*
-      Captcha Verify Hook
-      ------------------------------------------
-      기존 그누보드 Kcaptcha 검증 흐름과 연결한다.
-      테스트 환경에서 API 경로가 다르면 CAPTCHA_BASE_URL만 수정한다.
-    */
-    try {
-      const captchaValid = await verifyCaptcha();
-
-      if (!captchaValid) {
-        setNotice("자동등록방지 문자가 올바르지 않습니다. 새로고침 후 다시 입력해 주세요.");
-        refreshCaptcha();
-        return;
-      }
-    } catch (error) {
-      console.error("[UNOTRAVEL] captcha verify error", error);
-      setNotice("자동등록방지 확인 중 오류가 발생했습니다.");
-      return;
-    }
-
-    /*
-      Register Backend Hook
-      ------------------------------------------
-      실제 백엔드 연동 시 이 위치에서 기존 그누보드 회원가입 처리 또는 신규 API를 호출한다.
-      현재는 프론트 UI/동선 확인용 placeholder다.
-    */
     setNotice("");
-    navigateTo("/register/complete");
+    setIsSubmitting(true);
+
+    try {
+      const session = await registerMember({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password,
+      });
+
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem("unotravel:auth", "true");
+
+        if (session.member?.name) {
+          window.sessionStorage.setItem("unotravel:user-name", session.member.name);
+        }
+
+        if (session.member?.email) {
+          window.sessionStorage.setItem("unotravel:user-email", session.member.email);
+          window.sessionStorage.setItem("unotravel:email", session.member.email);
+        }
+
+        window.dispatchEvent(new Event("unotravel:auth-change"));
+      }
+
+      navigateTo("/register/complete");
+    } catch (error) {
+      setNotice(
+        error instanceof Error
+          ? error.message
+          : "회원가입 중 문제가 발생했습니다. 다시 시도해 주세요.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -204,7 +123,7 @@ export default function RegisterForm() {
 
             <p className="register-form-description">
               예약 내역과 문의 내역을 관리하기 위한 기본 정보를 입력합니다.
-              불필요한 항목은 줄이고, 계정 생성에 필요한 정보만 받습니다.
+              계정 생성에 필요한 최소 정보만 받습니다.
             </p>
           </div>
 
@@ -306,66 +225,6 @@ export default function RegisterForm() {
                 />
               </label>
             </div>
-
-            <section className="register-captcha" aria-label="자동등록방지">
-              <div className="register-captcha-head">
-                <span>자동등록방지</span>
-                <p>이미지에 표시된 문자를 입력해 주세요.</p>
-              </div>
-
-              <div className="register-captcha-body">
-                <div className={`register-captcha-image-wrap ${captchaImageFailed ? "is-fallback" : ""}`}>
-                  {captchaImageFailed ? (
-                    <div className="register-captcha-fallback" aria-label="자동등록방지 미리보기">
-                      <span>PREVIEW</span>
-                      <strong>KCAPTCHA</strong>
-                    </div>
-                  ) : (
-                    <img
-                      className="register-captcha-image"
-                      src={captchaImageUrl}
-                      alt="자동등록방지 이미지"
-                      onError={() => {
-                        setCaptchaImageFailed(true);
-                        if (!captchaBypass) {
-                          setNotice("자동등록방지 이미지 경로를 확인해 주세요. Kcaptcha 파일이 연결되지 않았습니다.");
-                        }
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div className="register-captcha-tools" aria-label="자동등록방지 도구">
-                  <button type="button" onClick={refreshCaptcha}>
-                    새로고침
-                  </button>
-                </div>
-              </div>
-
-              <label className="register-field register-captcha-field">
-                <span>보안문자</span>
-                <input
-                  type="text"
-                  value={captchaKey}
-                  placeholder={captchaBypass ? "미리보기에서는 입력 없이 진행됩니다" : "보안문자를 입력하세요"}
-                  autoComplete="off"
-                  inputMode="text"
-                  disabled={captchaBypass}
-                  onChange={(event) => {
-                    setCaptchaKey(event.target.value);
-                    clearNotice();
-                  }}
-                />
-              </label>
-
-              {captchaBypass && (
-                <p className="register-captcha-preview-note">
-                  Figma Make 미리보기에서는 Kcaptcha PHP가 실행되지 않아 검증을 임시로 통과합니다.
-                  실제 서버에서는 기존 Kcaptcha 검증이 적용됩니다.
-                </p>
-              )}
-            </section>
-
             {notice && (
               <p className="register-form-notice" role="alert" aria-live="polite">
                 <span aria-hidden="true" />
@@ -381,8 +240,12 @@ export default function RegisterForm() {
               >
                 이전
               </button>
-              <button type="submit" className={`register-form-submit ${canSubmit ? "is-ready" : ""}`}>
-                <span>계정 생성</span>
+              <button
+                type="submit"
+                className={`register-form-submit ${canSubmit ? "is-ready" : ""}`}
+                disabled={isSubmitting}
+              >
+                <span>{isSubmitting ? "계정 생성 중" : "계정 생성"}</span>
                 <span aria-hidden="true">→</span>
               </button>
             </div>

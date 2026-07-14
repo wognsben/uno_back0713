@@ -3,7 +3,8 @@
 // reservationStore의 완료 예약 목록을 읽어 예약일, 상품명, 투어일, 상태를 표시한다.
 // 새 예약 작성 페이지와 달리 이미 접수된 예약을 확인하는 역할만 담당한다.
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getMyReservations } from "../../api/reservationApi";
 import {
   type SubmittedReservation,
   getSubmittedReservations,
@@ -342,6 +343,14 @@ const formatDate = (value: number | string) => {
 const formatTourDate = (item: SubmittedReservation) =>
   item.selectedDateLabel || item.selectedDateId || "예약 확정 시 안내";
 
+type DisplayReservation = {
+  id: string;
+  reservedAt: string;
+  product: string;
+  tourDay: string;
+  status: string;
+};
+
 const getDisplayReservations = () => {
   const submittedItems = getSubmittedReservations();
   if (!submittedItems.length) return FALLBACK_RESERVATIONS;
@@ -356,10 +365,45 @@ const getDisplayReservations = () => {
 };
 
 export default function MyReservation() {
-  const reservations = useMemo(() => getDisplayReservations(), []);
+  const [serverReservations, setServerReservations] = useState<DisplayReservation[] | null>(null);
+  const [serverLoadFailed, setServerLoadFailed] = useState(false);
+  const fallbackReservations = useMemo(() => getDisplayReservations(), []);
+  const reservations = serverReservations ?? fallbackReservations;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getMyReservations()
+      .then((response) => {
+        if (!isMounted) return;
+        setServerReservations(
+          response.items.map((item) => ({
+            id: String(item.reservationNo || item.rid),
+            reservedAt: item.createdAt || "-",
+            product: item.product.title || "상품명 없음",
+            tourDay: item.tourDate || "-",
+            status: item.statusLabel || item.status,
+          })),
+        );
+        setServerLoadFailed(false);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setServerLoadFailed(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <MyPageLayout>
+      {serverLoadFailed ? (
+        <div className="notice-box">
+          <p>서버 예약내역을 불러오지 못해 임시 저장된 예약목록을 표시합니다. 로그인 상태를 확인해 주세요.</p>
+        </div>
+      ) : null}
       <div className="list">
         {reservations.map((item) => (
           <div className="list-row" key={item.id}>

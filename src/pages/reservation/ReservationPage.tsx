@@ -4,6 +4,7 @@
 // 마이페이지 예약목록과 달리 새 예약을 작성하는 역할만 맡아 경로와 기능이 겹치지 않도록 분리한다.
 
 import { useMemo, useState } from "react";
+import { createReservationDraft } from "../../api/reservationApi";
 import {
   DEFAULT_MY_CART_PAGE_URL,
   type ReservationStoragePayload,
@@ -908,6 +909,7 @@ export default function ReservationPage() {
   const [roomRequest, setRoomRequest] = useState("");
   const [finalAgreed, setFinalAgreed] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
   const isSemiPackage = reservation?.productType === "semi";
@@ -920,7 +922,7 @@ export default function ReservationPage() {
         (passportName.trim() && passportNumber.trim() && passportExpiry.trim())),
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!reservation) return;
 
     if (!canSubmit) {
@@ -952,17 +954,57 @@ export default function ReservationPage() {
         : null,
     };
 
+    setIsSubmitting(true);
+    setMessage("");
+
+    let serverReservationId: number | string | null = null;
+    try {
+      const response = await createReservationDraft(reservation, {
+        memo: memo.trim(),
+        applicant: {
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          kakaoId: kakaoId.trim(),
+        },
+        passports: isSemiPackage
+          ? [
+              {
+                nameEn: passportName.trim(),
+                passportNo: passportNumber.trim(),
+                birthDate: passportBirth.trim(),
+                passportExpireDate: passportExpiry.trim(),
+              },
+            ]
+          : [],
+        roomInfo: isSemiPackage
+          ? [roomType, roomRequest.trim()].filter(Boolean).join("\n")
+          : "",
+      });
+      serverReservationId = response.rid;
+    } catch (error) {
+      setIsSubmitting(false);
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "예약 신청을 서버에 저장하지 못했습니다. 로그인 상태를 확인해 주세요.",
+      );
+      return;
+    }
+
     window.sessionStorage.setItem(
       "unotravel_reservation_draft",
       JSON.stringify({
         ...reservation,
         ...reservationDetails,
+        reservationId: serverReservationId,
         policyAgreedAt: Date.now(),
         submittedAt: Date.now(),
       }),
     );
     saveSubmittedReservation(reservation, reservationDetails);
     setIsSubmitted(true);
+    setIsSubmitting(false);
     setMessage(
       "예약 신청 정보가 저장되었습니다. 실제 결제와 확정은 백엔드 연결 후 이어집니다.",
     );
@@ -1263,10 +1305,10 @@ export default function ReservationPage() {
             <button
               type="button"
               className="reservation-button is-yellow"
-              disabled={!canSubmit}
+              disabled={!canSubmit || isSubmitting}
               onClick={handleSubmit}
             >
-              예약 신청하기
+              {isSubmitting ? "예약 저장 중" : "예약 신청하기"}
             </button>
             <button
               type="button"

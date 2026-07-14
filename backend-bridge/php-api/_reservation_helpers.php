@@ -81,6 +81,24 @@ function uno_api_reservation_href_for_product($productId, $productType)
     return '/product/detail/' . rawurlencode($productId);
 }
 
+function uno_api_reservation_status_label_v2($status)
+{
+    $labels = array(
+        'cart' => '장바구니',
+        'booking' => '예약 입력 중',
+        '1' => '예약 대기',
+        '2' => '예약 확인',
+        '11' => '입금 확인',
+        '3' => '예약 확정',
+        '9' => '예약 취소',
+        '91' => '취소 요청',
+        '99' => '취소 완료',
+    );
+
+    $key = (string) $status;
+    return isset($labels[$key]) ? $labels[$key] : '예약상태 확인';
+}
+
 function uno_api_reservation_type_from_row($row)
 {
     if (isset($row['ca_name']) && strpos((string) $row['ca_name'], '패키지') !== false) {
@@ -253,7 +271,7 @@ function uno_api_reservation_response_from_row($row)
         'rid' => (int) $row['id'],
         'reservationNo' => (string) $row['id'],
         'status' => isset($row['status']) ? (string) $row['status'] : '',
-        'statusLabel' => uno_api_reservation_status_label(isset($row['status']) ? $row['status'] : ''),
+        'statusLabel' => uno_api_reservation_status_label_v2(isset($row['status']) ? $row['status'] : ''),
         'createdAt' => isset($row['regDate']) && $row['regDate'] ? date('Y-m-d H:i:s', (int) $row['regDate']) : '',
         'product' => array(
             'id' => $productId,

@@ -32,6 +32,13 @@ export type LoginCredentials = {
   mb_password: string;
 };
 
+export type RegisterMemberRequest = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+};
+
 export type ProductPrice = {
   deposit: number;
   localPayment?: number;
@@ -218,11 +225,14 @@ export type ReservationDraftRequest = {
   tourTime?: string;
   items: ReservationOptionRequest[];
   memo?: string;
+  applicant?: ReservationApplicant;
+  passports?: ReservationPassport[];
+  roomInfo?: string;
 };
 
 export type ReservationDraftResponse = {
   rid: number | string;
-  status: "booking" | "cart";
+  status: ReservationStatusCode;
   nextUrl?: string;
 };
 
@@ -286,9 +296,11 @@ export type ReservationStatusCode =
   | "booking"
   | "1"
   | "2"
+  | "11"
   | "3"
   | "9"
-  | "91";
+  | "91"
+  | "99";
 
 export type ReservationDetailResponse = {
   rid: number | string;
@@ -440,17 +452,20 @@ export type InquiryThreadResponse = {
 
 export const createReservationDraftRequest = (
   payload: ReservationStoragePayload,
+  details: Partial<ReservationDraftRequest> = {},
 ): ReservationDraftRequest => ({
   productId: payload.productId,
   legacyProductId: payload.legacyProductId,
   legacyPackageScheduleId: payload.legacyPackageScheduleId,
   tourDate: payload.selectedDateId,
+  tourTime: payload.selectedDateLabel,
   items: [
     {
       feeId: payload.legacyFeeOptionId,
       personCount: payload.personCount,
     },
   ],
+  ...details,
 });
 
 export const getAuthSession = () =>
@@ -462,6 +477,15 @@ export const loginWithCredentials = async (credentials: LoginCredentials) => {
   return unoApiData<AuthSessionResponse>("/auth/login.php", {
     method: "POST",
     body: credentials,
+  });
+};
+
+export const registerMember = async (payload: RegisterMemberRequest) => {
+  await getAuthSession().catch(() => null);
+
+  return unoApiData<AuthSessionResponse>("/auth/register.php", {
+    method: "POST",
+    body: payload,
   });
 };
 
@@ -513,10 +537,13 @@ export const deleteCartReservation = (rid: number | string) =>
     },
   );
 
-export const createReservationDraft = (payload: ReservationStoragePayload) =>
+export const createReservationDraft = (
+  payload: ReservationStoragePayload,
+  details: Partial<ReservationDraftRequest> = {},
+) =>
   unoApiData<ReservationDraftResponse>("/reservations/draft.php", {
     method: "POST",
-    body: createReservationDraftRequest(payload),
+    body: createReservationDraftRequest(payload, details),
   });
 
 export const getReservationDraft = (rid: number | string) =>

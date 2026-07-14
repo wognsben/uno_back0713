@@ -84,7 +84,7 @@ export default function LoginPage() {
     event.preventDefault();
 
     const normalizedLoginId = email.trim();
-    const normalizedPassword = password.trim();
+    const normalizedPassword = password;
 
     if (!normalizedLoginId) {
       setFormError("아이디 또는 이메일을 입력해 주세요.");

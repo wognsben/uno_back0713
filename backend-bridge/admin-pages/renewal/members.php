@@ -143,6 +143,18 @@ $result = sql_query(
                from tour_reg r
               where r.mb_id = m.mb_id
                 and r.status in ('1', '2', '11', '3', '91')) as active_reservation_count,
+            (select count(*)
+               from tour_reg r
+              where r.mb_id = m.mb_id
+                and r.status = '2') as checked_reservation_count,
+            (select count(*)
+               from tour_reg r
+              where r.mb_id = m.mb_id
+                and r.status in ('9', '91', '99')) as cancelled_reservation_count,
+            (select count(*)
+               from tour_reg r
+              where r.mb_id = m.mb_id
+                and r.status = '3') as confirmed_reservation_count,
             (select max(r.tourDay)
                from tour_reg r
               where r.mb_id = m.mb_id
@@ -195,7 +207,7 @@ $b2bPendingSum = isset($b2bAccountRow['pending_sum']) ? (int) $b2bAccountRow['pe
 $b2bDoneSum = isset($b2bAccountRow['done_sum']) ? (int) $b2bAccountRow['done_sum'] : 0;
 
 $socialRows = array();
-if (function_exists('sql_query')) {
+if (function_exists('sql_query') && uno_renewal_member_table_exists('g5_member_social_profiles')) {
     $socialResult = sql_query("select provider, count(*) as cnt from g5_member_social_profiles group by provider order by provider asc");
     while ($socialRow = sql_fetch_array($socialResult)) {
         $socialRows[] = $socialRow;
@@ -235,6 +247,10 @@ uno_renewal_admin_render_pagehead(
     .member-status { display: inline-flex; min-height: 28px; align-items: center; border: 1px solid rgba(15,118,110,.24); background: rgba(15,118,110,.06); color: var(--uno-good); padding: 0 8px; font-size: 12px; font-weight: 900; }
     .member-status.warn { border-color: rgba(159,41,41,.24); background: rgba(159,41,41,.07); color: var(--uno-danger); }
     .member-status.muted { border-color: rgba(111,116,123,.24); background: rgba(111,116,123,.07); color: var(--uno-muted); }
+    .member-reservation-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .member-reservation-tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 7px; border: 1px solid var(--uno-line); color: var(--uno-muted); font-size: 11px; font-weight: 900; }
+    .member-reservation-tag.good { border-color: rgba(15,118,110,.28); background: rgba(15,118,110,.06); color: var(--uno-good); }
+    .member-reservation-tag.danger { border-color: rgba(159,41,41,.28); background: rgba(159,41,41,.07); color: var(--uno-danger); }
     .member-action-stack { display: flex; flex-wrap: wrap; gap: 6px; }
     .member-b2b-amount { margin-top: 6px; font-weight: 900; }
     .member-pager { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
@@ -322,6 +338,9 @@ uno_renewal_admin_render_pagehead(
             $isLeft = isset($row['mb_leave_date']) && trim((string) $row['mb_leave_date']) !== '';
             $reservationCount = isset($row['reservation_count']) ? (int) $row['reservation_count'] : 0;
             $activeReservationCount = isset($row['active_reservation_count']) ? (int) $row['active_reservation_count'] : 0;
+            $checkedReservationCount = isset($row['checked_reservation_count']) ? (int) $row['checked_reservation_count'] : 0;
+            $cancelledReservationCount = isset($row['cancelled_reservation_count']) ? (int) $row['cancelled_reservation_count'] : 0;
+            $confirmedReservationCount = isset($row['confirmed_reservation_count']) ? (int) $row['confirmed_reservation_count'] : 0;
             $b2bPendingMemberSum = isset($row['b2b_pending_sum']) ? (int) $row['b2b_pending_sum'] : 0;
             $b2bDoneMemberSum = isset($row['b2b_done_sum']) ? (int) $row['b2b_done_sum'] : 0;
             $isB2bMember = isset($row['mb_level']) && (int) $row['mb_level'] === 5;
@@ -336,10 +355,15 @@ uno_renewal_admin_render_pagehead(
               <div class="member-sub"><?php echo uno_renewal_admin_escape(isset($row['mb_hp']) ? $row['mb_hp'] : '-'); ?></div>
               <div class="member-sub">카카오 <?php echo uno_renewal_admin_escape(isset($row['mb_1']) && $row['mb_1'] !== '' ? $row['mb_1'] : '-'); ?></div>
             </td>
-            <td><?php echo uno_renewal_admin_escape(uno_renewal_member_level_label(isset($row['mb_level']) ? $row['mb_level'] : 0)); ?><div class="member-sub">LV <?php echo uno_renewal_admin_escape(isset($row['mb_level']) ? $row['mb_level'] : '0'); ?></div></td>
+            <td><?php echo uno_renewal_admin_escape(uno_renewal_member_level_label(isset($row['mb_level']) ? $row['mb_level'] : 0)); ?><div class="member-sub">권한 레벨 <?php echo uno_renewal_admin_escape(isset($row['mb_level']) ? $row['mb_level'] : '0'); ?></div></td>
             <td>
               <div>전체 <?php echo number_format($reservationCount); ?>건</div>
               <div class="member-sub">진행 <?php echo number_format($activeReservationCount); ?>건</div>
+              <div class="member-reservation-tags">
+                <?php if ($checkedReservationCount > 0) { ?><span class="member-reservation-tag good">예약확인 <?php echo number_format($checkedReservationCount); ?></span><?php } ?>
+                <?php if ($confirmedReservationCount > 0) { ?><span class="member-reservation-tag good">확정 <?php echo number_format($confirmedReservationCount); ?></span><?php } ?>
+                <?php if ($cancelledReservationCount > 0) { ?><span class="member-reservation-tag danger">취소 <?php echo number_format($cancelledReservationCount); ?></span><?php } ?>
+              </div>
               <div class="member-sub">최근 투어 <?php echo uno_renewal_admin_escape(uno_renewal_member_date_label(isset($row['latest_tour_day']) ? $row['latest_tour_day'] : '')); ?></div>
               <?php if ($isB2bMember || $b2bPendingMemberSum > 0 || $b2bDoneMemberSum > 0) { ?>
                 <div class="member-b2b-amount">B2B 청구 <?php echo number_format($b2bPendingMemberSum); ?>원</div>

@@ -55,6 +55,22 @@ function uno_renewal_reservation_status_label($status)
     return isset($map[$status]) ? $map[$status] : $status;
 }
 
+function uno_renewal_reservation_status_class($status)
+{
+    $status = (string) $status;
+    if ($status === '2' || $status === '3' || $status === '11') {
+        return ' good';
+    }
+    if ($status === '9' || $status === '91' || $status === '99') {
+        return ' danger';
+    }
+    if ($status === '1') {
+        return ' warn';
+    }
+
+    return '';
+}
+
 function uno_renewal_reservation_date($value)
 {
     if ($value === null || $value === '') {
@@ -113,6 +129,42 @@ function uno_renewal_reservation_member_count($value)
     return $total;
 }
 
+function uno_renewal_reservation_type_condition_v2($type, $alias = 'p')
+{
+    if ($type === 'semi') {
+        return "(r.nation = 'semi' or {$alias}.ca_name like '%세미패키지%')";
+    }
+
+    if ($type === 'daily') {
+        return "(r.nation = 'daily' or {$alias}.ca_name like '%데일리투어%' or {$alias}.ca_name like '%데일리 투어%' or {$alias}.ca_name like '%데이투어%')";
+    }
+
+    return '1=1';
+}
+
+function uno_renewal_reservation_type_from_row_v2($row)
+{
+    $nation = isset($row['nation']) ? (string) $row['nation'] : '';
+    if ($nation === 'semi') {
+        return 'semi';
+    }
+
+    if ($nation === 'daily') {
+        return 'daily';
+    }
+
+    $category = isset($row['ca_name']) ? (string) $row['ca_name'] : '';
+    if (strpos($category, '세미패키지') !== false) {
+        return 'semi';
+    }
+
+    if (strpos($category, '데일리투어') !== false || strpos($category, '데일리 투어') !== false || strpos($category, '데이투어') !== false) {
+        return 'daily';
+    }
+
+    return 'other';
+}
+
 function uno_renewal_reservation_calendar_range($mode, $date)
 {
     $timestamp = strtotime($date);
@@ -146,7 +198,7 @@ function uno_renewal_reservation_fetch_calendar($startDate, $endDate)
     );
 
     $result = uno_renewal_reservation_query(
-        "select r.id, r.pid, r.event_pid, r.mb_name, r.membCnt, r.tourDay, r.status,
+        "select r.id, r.pid, r.event_pid, r.mb_name, r.membCnt, r.tourDay, r.status, r.nation,
                 p.wr_subject, p.ca_name
            from tour_reg r
            left join g5_write_product p on r.pid = p.wr_id
@@ -158,7 +210,7 @@ function uno_renewal_reservation_fetch_calendar($startDate, $endDate)
 
     while ($row = uno_renewal_reservation_fetch_array($result)) {
         $category = isset($row['ca_name']) ? (string) $row['ca_name'] : '';
-        $type = uno_renewal_reservation_type_from_category($category);
+        $type = uno_renewal_reservation_type_from_row_v2($row);
         if ($type === 'other') {
             continue;
         }
@@ -237,7 +289,7 @@ $calendarRows = uno_renewal_reservation_fetch_calendar($calendarRange['start'], 
 $where = array("r.status not in ('cart', 'booking')");
 
 if ($type === 'semi' || $type === 'daily') {
-    $where[] = uno_renewal_reservation_type_condition($type, 'p');
+    $where[] = uno_renewal_reservation_type_condition_v2($type, 'p');
 }
 
 if ($status !== 'all' && $status !== '') {
@@ -289,7 +341,7 @@ $reservationGroups = array(
     'other' => array('label' => '기타 예약내역', 'rows' => array()),
 );
 $result = uno_renewal_reservation_query(
-    "select r.id, r.regDate, r.mb_id, r.mb_name, r.mb_email, r.mb_hp, r.tourDay, r.status, r.total_fee1, r.total_fee2, r.card_pay,
+    "select r.id, r.regDate, r.mb_id, r.mb_name, r.mb_email, r.mb_hp, r.tourDay, r.status, r.nation, r.total_fee1, r.total_fee2, r.card_pay,
             p.wr_subject, p.ca_name
        from tour_reg r
        left join g5_write_product p on r.pid = p.wr_id
@@ -300,7 +352,7 @@ $result = uno_renewal_reservation_query(
 
 while ($row = uno_renewal_reservation_fetch_array($result)) {
     $rows[] = $row;
-    $rowType = uno_renewal_reservation_type_from_category(isset($row['ca_name']) ? $row['ca_name'] : '');
+    $rowType = uno_renewal_reservation_type_from_row_v2($row);
     if (!isset($reservationGroups[$rowType])) {
         $rowType = 'other';
     }
@@ -332,6 +384,9 @@ $listBaseParams = array_merge($calendarBaseParams, array(
     'calendarDate' => $calendarDate,
 ));
 $calendarWeekdays = array('일', '월', '화', '수', '목', '금', '토');
+$pagerStart = max(1, $page - 2);
+$pagerEnd = min($totalPages, $pagerStart + 4);
+$pagerStart = max(1, $pagerEnd - 4);
 
 uno_renewal_admin_render_head('UNO Renewal Reservations');
 uno_renewal_admin_render_header();
@@ -358,6 +413,7 @@ uno_renewal_admin_render_pagehead(
       .reservation-calendar-title { margin: 0; font-size: 24px; }
       .reservation-calendar-actions { display: flex; flex-wrap: wrap; gap: 8px; }
       .reservation-calendar-lanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .reservation-calendar-lanes.is-single { grid-template-columns: 1fr; }
       .reservation-calendar-lane { min-width: 0; border: 1px solid var(--uno-line); background: #fafaf8; padding: 12px; }
       .reservation-calendar-lane h3 { margin: 0 0 10px; font-size: 18px; }
       .reservation-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); width: 100%; border-top: 1px solid var(--uno-line); border-left: 1px solid var(--uno-line); overflow: hidden; }
@@ -371,6 +427,7 @@ uno_renewal_admin_render_pagehead(
       .reservation-calendar-item { display: block; margin-top: 8px; padding: 8px; border: 1px solid var(--uno-line); background: #fff; line-height: 1.35; }
       .reservation-calendar-item strong { display: block; font-size: 12px; overflow-wrap: anywhere; word-break: keep-all; }
       .reservation-calendar-item span { display: block; margin-top: 4px; color: var(--uno-muted); font-size: 11px; }
+      .reservation-calendar.is-loading { opacity: .55; pointer-events: none; }
       .reservation-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
       .reservation-card { border: 1px solid var(--uno-line); background: #fff; padding: 16px; }
       .reservation-card span { color: var(--uno-muted); font-size: 11px; font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase; }
@@ -382,6 +439,7 @@ uno_renewal_admin_render_pagehead(
       .reservation-table-heading span { color: var(--uno-muted); font-size: 12px; font-weight: 900; }
       .reservation-pager { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
       .reservation-pager span { min-height: 40px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--uno-muted); font-size: 12px; font-weight: 900; }
+      .reservation-pager .is-current { border-color: var(--uno-ink); background: var(--uno-ink); color: #fff; }
       .reservation-table { width: 100%; min-width: 980px; border-collapse: collapse; }
       .reservation-table th,
       .reservation-table td { padding: 14px 12px; border-bottom: 1px solid var(--uno-line); text-align: left; vertical-align: top; }
@@ -390,6 +448,9 @@ uno_renewal_admin_render_pagehead(
       .reservation-title { font-weight: 900; }
       .reservation-sub { margin-top: 4px; color: var(--uno-muted); font-size: 13px; }
       .reservation-status { display: inline-flex; min-height: 30px; align-items: center; padding: 0 10px; border: 1px solid var(--uno-line); font-weight: 900; white-space: nowrap; }
+      .reservation-status.good { border-color: rgba(15,118,110,.28); background: rgba(15,118,110,.06); color: var(--uno-good); }
+      .reservation-status.warn { border-color: rgba(154,106,0,.28); background: rgba(154,106,0,.07); color: var(--uno-warn); }
+      .reservation-status.danger { border-color: rgba(159,41,41,.28); background: rgba(159,41,41,.07); color: var(--uno-danger); }
       .reservation-actions { display: flex; flex-wrap: wrap; gap: 8px; }
       .reservation-modal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       .reservation-modal-card { border: 1px solid var(--uno-line); background: #fff; padding: 16px; }
@@ -459,22 +520,30 @@ uno_renewal_admin_render_pagehead(
       </div>
     </section>
 
-    <section class="reservation-calendar">
+    <section class="reservation-calendar" data-reservation-calendar>
       <div class="reservation-calendar-head">
         <div>
           <p class="uno-admin-eyebrow">Reservation Calendar</p>
           <h2 class="reservation-calendar-title"><?php echo uno_renewal_admin_escape($calendarRange['title']); ?> 예약 현황</h2>
         </div>
         <nav class="reservation-calendar-actions" aria-label="예약 캘린더 보기">
-          <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => $calendarMode, 'calendarDate' => $calendarPrevDate)))); ?>">이전</a>
-          <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => 'month', 'calendarDate' => $calendarDate)))); ?>">월간</a>
-          <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => 'week', 'calendarDate' => $calendarDate)))); ?>">주간</a>
-          <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => $calendarMode, 'calendarDate' => $calendarNextDate)))); ?>">다음</a>
+          <a class="uno-admin-button secondary" data-calendar-link href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => $calendarMode, 'calendarDate' => $calendarPrevDate)))); ?>">이전</a>
+          <a class="uno-admin-button secondary" data-calendar-link href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => 'month', 'calendarDate' => $calendarDate)))); ?>">월간</a>
+          <a class="uno-admin-button secondary" data-calendar-link href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => 'week', 'calendarDate' => $calendarDate)))); ?>">주간</a>
+          <a class="uno-admin-button secondary" data-calendar-link href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($calendarBaseParams, array('calendarMode' => $calendarMode, 'calendarDate' => $calendarNextDate)))); ?>">다음</a>
         </nav>
       </div>
 
-      <div class="reservation-calendar-lanes">
-        <?php foreach (array('semi' => '세미패키지', 'daily' => '데일리투어') as $laneType => $laneLabel) { ?>
+      <div class="reservation-calendar-lanes<?php echo $type === 'semi' || $type === 'daily' ? ' is-single' : ''; ?>">
+        <?php
+          $calendarLanes = array('semi' => '세미패키지', 'daily' => '데일리투어');
+          if ($type === 'semi') {
+              $calendarLanes = array('semi' => '세미패키지');
+          } elseif ($type === 'daily') {
+              $calendarLanes = array('daily' => '데일리투어');
+          }
+        ?>
+        <?php foreach ($calendarLanes as $laneType => $laneLabel) { ?>
           <article class="reservation-calendar-lane">
             <h3><?php echo uno_renewal_admin_escape($laneLabel); ?></h3>
             <div class="reservation-calendar-grid">
@@ -561,7 +630,7 @@ uno_renewal_admin_render_pagehead(
                     <div class="reservation-sub">입금 확인 필요</div>
                   <?php } ?>
                 </td>
-                <td><span class="reservation-status"><?php echo uno_renewal_admin_escape(uno_renewal_reservation_status_label(isset($row['status']) ? $row['status'] : '')); ?></span></td>
+                <td><span class="reservation-status<?php echo uno_renewal_admin_escape(uno_renewal_reservation_status_class(isset($row['status']) ? $row['status'] : '')); ?>"><?php echo uno_renewal_admin_escape(uno_renewal_reservation_status_label(isset($row['status']) ? $row['status'] : '')); ?></span></td>
                 <td>
                   <div class="reservation-actions">
                     <button class="uno-admin-button" type="button" data-open-reservation="<?php echo uno_renewal_admin_escape($row['id']); ?>">예약 확인</button>
@@ -577,11 +646,16 @@ uno_renewal_admin_render_pagehead(
 
     <nav class="reservation-pager" aria-label="예약내역 페이지">
       <?php if ($page > 1) { ?>
-        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $page - 1)))); ?>">이전 페이지</a>
+        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => 1)))); ?>">처음</a>
+        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $page - 1)))); ?>">이전</a>
       <?php } ?>
       <span>총 <?php echo number_format($totalCount); ?>건 · <?php echo number_format($page); ?> / <?php echo number_format($totalPages); ?> 페이지</span>
+      <?php for ($pagerPage = $pagerStart; $pagerPage <= $pagerEnd; $pagerPage++) { ?>
+        <a class="uno-admin-button secondary<?php echo $pagerPage === $page ? ' is-current' : ''; ?>" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $pagerPage)))); ?>"><?php echo number_format($pagerPage); ?></a>
+      <?php } ?>
       <?php if ($page < $totalPages) { ?>
-        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $page + 1)))); ?>">다음 페이지</a>
+        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $page + 1)))); ?>">다음</a>
+        <a class="uno-admin-button secondary" href="<?php echo uno_renewal_admin_escape(uno_renewal_reservation_url(array_merge($listBaseParams, array('page' => $totalPages)))); ?>">끝</a>
       <?php } ?>
     </nav>
 
@@ -643,10 +717,13 @@ uno_renewal_admin_render_pagehead(
 
       const ksnetCancelAction = async (payment) => {
         const ksnet = payment?.ksnet || {};
+        const cancelPayload = ksnet.cancelPayload || {};
         const body = new URLSearchParams();
-        body.append("authty", "1010");
-        body.append("trno", payment?.approvalNo || ksnet.approvalNo || "");
-        body.append("canc_amt", ksnet.amount || "");
+        body.append("authty", cancelPayload.authty || "1010");
+        body.append("trno", cancelPayload.trno || payment?.approvalNo || ksnet.approvalNo || "");
+        body.append("canc_amt", cancelPayload.canc_amt || ksnet.amount || "");
+        body.append("canc_seq", cancelPayload.canc_seq || "");
+        body.append("canc_type", cancelPayload.canc_type || "0");
         const response = await fetch("/KSPayCancelPost.php", {
           method: "POST",
           credentials: "same-origin",
@@ -751,6 +828,36 @@ uno_renewal_admin_render_pagehead(
       };
 
       document.addEventListener("click", async (event) => {
+        const calendarLink = event.target.closest("[data-calendar-link]");
+        if (calendarLink) {
+          event.preventDefault();
+          const calendar = document.querySelector("[data-reservation-calendar]");
+          if (!calendar) {
+            window.location.href = calendarLink.href;
+            return;
+          }
+          calendar.classList.add("is-loading");
+          try {
+            const response = await fetch(calendarLink.href, { credentials: "same-origin" });
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const nextCalendar = doc.querySelector("[data-reservation-calendar]");
+            if (!response.ok || !nextCalendar) throw new Error("캘린더를 불러오지 못했습니다.");
+            calendar.replaceWith(nextCalendar);
+            history.pushState(null, "", calendarLink.href);
+            const nextUrl = new URL(calendarLink.href);
+            const modeInput = document.querySelector('input[name="calendarMode"]');
+            const dateInput = document.querySelector('input[name="calendarDate"]');
+            if (modeInput && nextUrl.searchParams.get("calendarMode")) modeInput.value = nextUrl.searchParams.get("calendarMode");
+            if (dateInput && nextUrl.searchParams.get("calendarDate")) dateInput.value = nextUrl.searchParams.get("calendarDate");
+          } catch (error) {
+            window.location.href = calendarLink.href;
+          } finally {
+            const refreshed = document.querySelector("[data-reservation-calendar]");
+            if (refreshed) refreshed.classList.remove("is-loading");
+          }
+          return;
+        }
         const openButton = event.target.closest("[data-open-reservation]");
         if (openButton) {
           openReservation(openButton.dataset.openReservation);

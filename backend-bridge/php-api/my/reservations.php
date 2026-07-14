@@ -76,7 +76,7 @@ function uno_api_my_reservations_item($row)
             'deposit' => $detail['totalDeposit'],
             'localPayment' => $detail['totalLocalPayment'],
             'cardPayRef' => isset($row['card_pay']) && $row['card_pay'] !== '' ? (string) $row['card_pay'] : null,
-            'canPayByCard' => (string) $detail['status'] === '2',
+            'canPayByCard' => in_array((string) $detail['status'], array('1', '2', '11'), true),
         ),
     );
 }

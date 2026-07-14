@@ -200,10 +200,18 @@ function uno_api_draft_sum($lines, $key)
 function uno_api_draft_insert_row($payload, $mapping, $productType, $lines)
 {
     $member = uno_api_draft_member_defaults();
+    $applicant = isset($payload['applicant']) && is_array($payload['applicant'])
+        ? $payload['applicant']
+        : array();
     $legacyProductId = (int) $mapping['legacyProductId'];
     $tourDate = isset($payload['tourDate']) ? trim((string) $payload['tourDate']) : '';
     $tourTime = isset($payload['tourTime']) ? trim((string) $payload['tourTime']) : '';
     $memo = isset($payload['memo']) ? trim((string) $payload['memo']) : '';
+    $roomInfo = isset($payload['roomInfo']) ? trim((string) $payload['roomInfo']) : '';
+    $applicantName = isset($applicant['name']) && trim((string) $applicant['name']) !== '' ? trim((string) $applicant['name']) : $member['mb_name'];
+    $applicantEmail = isset($applicant['email']) && trim((string) $applicant['email']) !== '' ? trim((string) $applicant['email']) : $member['mb_email'];
+    $applicantPhone = isset($applicant['phone']) && trim((string) $applicant['phone']) !== '' ? trim((string) $applicant['phone']) : $member['mb_hp'];
+    $applicantKakao = isset($applicant['kakaoId']) && trim((string) $applicant['kakaoId']) !== '' ? trim((string) $applicant['kakaoId']) : $member['mb_kakao'];
 
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tourDate)) {
         uno_api_error('DATE_REQUIRED', '투어일이 필요합니다.', 400);
@@ -219,10 +227,10 @@ function uno_api_draft_insert_row($payload, $mapping, $productType, $lines)
     $fields = array(
         'regDate' => time(),
         'mb_id' => $member['mb_id'],
-        'mb_name' => $member['mb_name'],
-        'mb_email' => $member['mb_email'],
-        'mb_kakao' => $member['mb_kakao'],
-        'mb_hp' => $member['mb_hp'],
+        'mb_name' => $applicantName,
+        'mb_email' => $applicantEmail,
+        'mb_kakao' => $applicantKakao,
+        'mb_hp' => $applicantPhone,
         'tourDay' => $tourDate,
         'tourTime' => $tourTime,
         'pid' => $legacyProductId,
@@ -235,7 +243,8 @@ function uno_api_draft_insert_row($payload, $mapping, $productType, $lines)
         'total_fee4' => uno_api_draft_sum($lines, 'packageTotal'),
         'total_fee_air' => uno_api_draft_sum($lines, 'airfare'),
         'regMemo' => $memo,
-        'status' => 'booking',
+        'roominfo' => $roomInfo,
+        'status' => '1',
         'mb_ip' => uno_api_draft_client_ip(),
         'nation' => $productType,
         'isMobile' => 'N',
@@ -280,6 +289,6 @@ $rid = uno_api_draft_insert_row($payload, $mapping, $productType, $lines);
 
 uno_api_success(array(
     'rid' => $rid,
-    'status' => 'booking',
+    'status' => '1',
     'nextUrl' => '/reservation?rid=' . rawurlencode((string) $rid),
 ), 201);

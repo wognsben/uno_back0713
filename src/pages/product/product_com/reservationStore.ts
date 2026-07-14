@@ -59,7 +59,7 @@ export type ReservationStoragePayload = {
 
 export type SubmittedReservation = ReservationStoragePayload & {
   reservationId: string;
-  status: "예약 확인";
+  status: "예약 대기";
   submittedAt: number;
   customer?: {
     name?: string;
@@ -227,7 +227,7 @@ export const saveSubmittedReservation = (
     ...payload,
     ...details,
     reservationId,
-    status: "예약 확인",
+    status: "예약 대기",
     submittedAt,
   };
   const previousItems = getSubmittedReservations();

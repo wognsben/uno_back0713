@@ -21,6 +21,40 @@ if (file_exists($unoCommonPath)) {
 
 require_once __DIR__ . '/_response.php';
 
+function uno_api_shutdown_json_error()
+{
+    $error = error_get_last();
+
+    if (!$error) {
+        return;
+    }
+
+    $fatalTypes = array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR);
+    if (!in_array($error['type'], $fatalTypes, true)) {
+        return;
+    }
+
+    if (headers_sent()) {
+        return;
+    }
+
+    uno_api_send_json(array(
+        'ok' => false,
+        'error' => array(
+            'code' => 'SERVER_ERROR',
+            'message' => '서버에서 회원 처리 중 오류가 발생했습니다.',
+            'details' => array(
+                'type' => isset($error['type']) ? $error['type'] : null,
+                'message' => isset($error['message']) ? $error['message'] : '',
+                'file' => isset($error['file']) ? $error['file'] : '',
+                'line' => isset($error['line']) ? $error['line'] : 0,
+            ),
+        ),
+    ), 500);
+}
+
+register_shutdown_function('uno_api_shutdown_json_error');
+
 function uno_api_member()
 {
     global $member;
@@ -110,10 +144,29 @@ function uno_api_verify_csrf()
         return;
     }
 
+    $scriptName = isset($_SERVER['SCRIPT_NAME'])
+        ? str_replace('\\', '/', (string) $_SERVER['SCRIPT_NAME'])
+        : '';
+    $scriptFilename = isset($_SERVER['SCRIPT_FILENAME'])
+        ? str_replace('\\', '/', (string) $_SERVER['SCRIPT_FILENAME'])
+        : '';
+
+    if (preg_match('#/api/auth/login\.php$#', $scriptName)
+        || preg_match('#/php-api/auth/login\.php$#', $scriptFilename)
+        || preg_match('#/api/auth/register\.php$#', $scriptName)
+        || preg_match('#/php-api/auth/register\.php$#', $scriptFilename)
+    ) {
+        return;
+    }
+
     $expected = uno_api_csrf_token();
     $received = isset($_SERVER['HTTP_X_CSRF_TOKEN'])
         ? (string) $_SERVER['HTTP_X_CSRF_TOKEN']
         : '';
+
+    if ($received === '' && isset($_POST['unotravel_csrf_token'])) {
+        $received = (string) $_POST['unotravel_csrf_token'];
+    }
 
     if (!$received || !hash_equals($expected, $received)) {
         uno_api_error('PERMISSION_DENIED', '요청 보안 토큰이 올바르지 않습니다.', 403);
