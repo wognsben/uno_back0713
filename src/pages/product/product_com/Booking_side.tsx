@@ -6,6 +6,7 @@
 import { useEffect, useRef, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { createCartReservation } from "../../../api/reservationApi";
 import {
   PriceText,
   type AvailableDate,
@@ -21,7 +22,6 @@ import {
   isReservationUserLoggedIn,
   navigateInternal,
   navigateToLoginForReservation,
-  saveCartReservation,
   savePendingReservation,
 } from "./reservationStore";
 
@@ -1276,7 +1276,7 @@ export default function BookingSide({
       totalPrice,
     });
 
-  const handleCart = () => {
+  const handleCart = async () => {
     if (isSelectedSoldOut) return;
 
     if (isCartAdded) {
@@ -1284,8 +1284,21 @@ export default function BookingSide({
       return;
     }
 
-    saveCartReservation(getReservationPayload());
-    setIsCartAdded(true);
+    if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
+    try {
+      await createCartReservation(getReservationPayload());
+      setIsCartAdded(true);
+    } catch (error) {
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "장바구니에 담지 못했습니다. 다시 시도해 주세요.",
+      );
+    }
   };
 
   const handleReservation = async () => {

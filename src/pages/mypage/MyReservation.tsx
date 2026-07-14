@@ -1,20 +1,10 @@
-// MyReservation.tsx
-// 마이페이지의 예약목록 화면으로, 예약 신청 완료 데이터를 목록으로 보여준다.
-// reservationStore의 완료 예약 목록을 읽어 예약일, 상품명, 투어일, 상태를 표시한다.
-// 새 예약 작성 페이지와 달리 이미 접수된 예약을 확인하는 역할만 담당한다.
-
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getMyReservations } from "../../api/reservationApi";
-import {
-  type SubmittedReservation,
-  getSubmittedReservations,
-} from "../product/product_com/reservationStore";
 
 const FONT_EN = "var(--font-en)";
 const FONT_KO = "var(--font-ko)";
 const BLACK = "#151515";
 const BORDER = "#E8E9E9";
-const YELLOW = "#FCC800";
 
 function navigateTo(path: string) {
   if (typeof window === "undefined") return;
@@ -53,23 +43,6 @@ const MY_MENU = [
   { label: "1:1 문의하기", path: "/mypage/inquiry" },
   { label: "개인정보 수정", path: "/mypage/profile" },
   { label: "투어 신청 / 예약 현황", path: "/mypage/tour" },
-];
-
-const FALLBACK_RESERVATIONS = [
-  {
-    id: "R-2406-001",
-    reservedAt: "2026.07.18",
-    product: "나폴리 아말피 코스트 투어",
-    tourDay: "2026.08.12",
-    status: "예약 확인",
-  },
-  {
-    id: "R-2406-002",
-    reservedAt: "2026.07.20",
-    product: "로마 바티칸 프리미엄 투어",
-    tourDay: "2026.08.15",
-    status: "예약 완료",
-  },
 ];
 
 const STYLE = `
@@ -121,7 +94,8 @@ const STYLE = `
   }
 
   .mypage-side p,
-  .notice-box p {
+  .notice-box p,
+  .list-row p {
     margin: 0;
     font-family: ${FONT_KO};
     font-size: 14px;
@@ -230,18 +204,9 @@ const STYLE = `
     border-bottom: 1px solid ${BORDER};
   }
 
-  .list-row p {
-    margin: 0;
-    font-family: ${FONT_KO};
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.55;
-    letter-spacing: -0.04em;
-    color: rgba(21,21,21,.62);
-    word-break: keep-all;
-  }
-
   .list-row strong {
+    display: block;
+    margin-bottom: 6px;
     font-family: ${FONT_KO};
     font-size: 18px;
     letter-spacing: -0.05em;
@@ -259,6 +224,16 @@ const STYLE = `
     font-size: 12px;
     font-weight: 850;
     letter-spacing: -0.04em;
+  }
+
+  .tag.is-canceled {
+    background: rgba(211, 47, 47, .12);
+    color: #b71c1c;
+  }
+
+  .tag.is-confirmed {
+    background: rgba(46, 125, 50, .12);
+    color: #1b5e20;
   }
 
   .notice-box {
@@ -282,6 +257,14 @@ const STYLE = `
   }
 `;
 
+type DisplayReservation = {
+  id: string;
+  reservedAt: string;
+  product: string;
+  tourDay: string;
+  status: string;
+};
+
 function MyPageLayout({ children }: { children: React.ReactNode }) {
   const userName = getUserName();
 
@@ -292,7 +275,7 @@ function MyPageLayout({ children }: { children: React.ReactNode }) {
         <aside className="mypage-side">
           <div className="mypage-side-kicker">MY PAGE</div>
           <h1>{userName}님</h1>
-          <p>예약과 문의, 회원 정보를 한곳에서 관리합니다.</p>
+          <p>예약과 문의, 회원 정보를 한 곳에서 관리합니다.</p>
 
           <nav className="mypage-nav" aria-label="마이페이지 메뉴">
             {MY_MENU.map((item) => (
@@ -303,7 +286,7 @@ function MyPageLayout({ children }: { children: React.ReactNode }) {
                 onClick={() => navigateTo(item.path)}
               >
                 <span>{item.label}</span>
-                <span aria-hidden="true">›</span>
+                <span aria-hidden="true">→</span>
               </button>
             ))}
           </nav>
@@ -317,7 +300,7 @@ function MyPageLayout({ children }: { children: React.ReactNode }) {
           <div className="mypage-heading">
             <span>RESERVATION</span>
             <h2>예약목록</h2>
-            <p>예약일, 예약상품, 투어일, 현재 상태를 확인합니다.</p>
+            <p>현재 로그인한 회원의 예약대기, 예약확정, 예약취소 내역만 표시합니다.</p>
           </div>
           {children}
         </div>
@@ -326,49 +309,16 @@ function MyPageLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const formatDate = (value: number | string) => {
-  const date = typeof value === "number" ? new Date(value) : new Date(value);
-  if (Number.isNaN(date.getTime())) return String(value);
-
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  })
-    .format(date)
-    .replace(/\. /g, ".")
-    .replace(/\.$/, "");
-};
-
-const formatTourDate = (item: SubmittedReservation) =>
-  item.selectedDateLabel || item.selectedDateId || "예약 확정 시 안내";
-
-type DisplayReservation = {
-  id: string;
-  reservedAt: string;
-  product: string;
-  tourDay: string;
-  status: string;
-};
-
-const getDisplayReservations = () => {
-  const submittedItems = getSubmittedReservations();
-  if (!submittedItems.length) return FALLBACK_RESERVATIONS;
-
-  return submittedItems.map((item) => ({
-    id: item.reservationId,
-    reservedAt: formatDate(item.submittedAt),
-    product: item.title,
-    tourDay: formatTourDate(item),
-    status: item.status,
-  }));
+const getStatusClassName = (status: string) => {
+  if (status.includes("취소")) return "tag is-canceled";
+  if (status.includes("확정") || status.includes("확인")) return "tag is-confirmed";
+  return "tag";
 };
 
 export default function MyReservation() {
-  const [serverReservations, setServerReservations] = useState<DisplayReservation[] | null>(null);
-  const [serverLoadFailed, setServerLoadFailed] = useState(false);
-  const fallbackReservations = useMemo(() => getDisplayReservations(), []);
-  const reservations = serverReservations ?? fallbackReservations;
+  const [reservations, setReservations] = useState<DisplayReservation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -376,7 +326,7 @@ export default function MyReservation() {
     getMyReservations()
       .then((response) => {
         if (!isMounted) return;
-        setServerReservations(
+        setReservations(
           response.items.map((item) => ({
             id: String(item.reservationNo || item.rid),
             reservedAt: item.createdAt || "-",
@@ -385,11 +335,15 @@ export default function MyReservation() {
             status: item.statusLabel || item.status,
           })),
         );
-        setServerLoadFailed(false);
+        setErrorMessage("");
       })
-      .catch(() => {
+      .catch((error: Error) => {
         if (!isMounted) return;
-        setServerLoadFailed(true);
+        setReservations([]);
+        setErrorMessage(error.message || "예약목록을 불러오지 못했습니다. 로그인 상태를 확인해 주세요.");
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
       });
 
     return () => {
@@ -399,33 +353,38 @@ export default function MyReservation() {
 
   return (
     <MyPageLayout>
-      {serverLoadFailed ? (
+      {errorMessage ? (
         <div className="notice-box">
-          <p>서버 예약내역을 불러오지 못해 임시 저장된 예약목록을 표시합니다. 로그인 상태를 확인해 주세요.</p>
+          <p>{errorMessage}</p>
         </div>
       ) : null}
-      <div className="list">
-        {reservations.map((item) => (
-          <div className="list-row" key={item.id}>
-            <p>
-              {item.reservedAt}
-              <br />
-              {item.id}
-            </p>
-            <div>
-              <strong>{item.product}</strong>
-              <p>투어일 {item.tourDay}</p>
+
+      {isLoading ? (
+        <div className="notice-box">
+          <p>예약목록을 불러오는 중입니다.</p>
+        </div>
+      ) : reservations.length ? (
+        <div className="list">
+          {reservations.map((item) => (
+            <div className="list-row" key={item.id}>
+              <p>
+                {item.reservedAt}
+                <br />
+                {item.id}
+              </p>
+              <div>
+                <strong>{item.product}</strong>
+                <p>투어일 {item.tourDay}</p>
+              </div>
+              <span className={getStatusClassName(item.status)}>{item.status}</span>
             </div>
-            <span className="tag">{item.status}</span>
-          </div>
-        ))}
-      </div>
-      <div className="notice-box">
-        <p>
-          예약금 결제, 취소 요청, 바우처 출력은 백엔드 예약 데이터 연결 후 기존
-          my_reser.php 흐름과 이어질 예정입니다.
-        </p>
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="notice-box">
+          <p>예약 내역이 없습니다.</p>
+        </div>
+      )}
     </MyPageLayout>
   );
 }

@@ -68,6 +68,21 @@ function uno_api_cart_client_ip()
     return isset($_SERVER['REMOTE_ADDR']) ? (string) $_SERVER['REMOTE_ADDR'] : '';
 }
 
+function uno_api_cart_normalize_tour_time($value)
+{
+    $value = trim((string) $value);
+
+    if ($value === '') {
+        return '';
+    }
+
+    if (preg_match('/\b([01]\d|2[0-3]):[0-5]\d\b/', $value, $matches)) {
+        return $matches[0];
+    }
+
+    uno_api_error('INVALID_TOUR_TIME', '?ъ뼱 ?쒓컙???щ컮瑜댁? ?딆뒿?덈떎.', 400);
+}
+
 function uno_api_cart_insert_id()
 {
     if (function_exists('sql_insert_id')) {
@@ -173,9 +188,13 @@ function uno_api_cart_build_lines($payload, $mapping, $productType)
         }
 
         if ($productType === 'semi') {
-            $scheduleId = isset($item['feeId']) && $item['feeId']
-                ? $item['feeId']
-                : (isset($payload['legacyPackageScheduleId']) ? $payload['legacyPackageScheduleId'] : null);
+            if (isset($item['legacyPackageScheduleId']) && $item['legacyPackageScheduleId']) {
+                $scheduleId = $item['legacyPackageScheduleId'];
+            } elseif (isset($item['feeId']) && $item['feeId']) {
+                $scheduleId = $item['feeId'];
+            } else {
+                $scheduleId = isset($payload['legacyPackageScheduleId']) ? $payload['legacyPackageScheduleId'] : null;
+            }
             if (!$scheduleId) {
                 uno_api_error('VALIDATION_ERROR', '출발 일정 ID가 필요합니다.', 400);
             }
@@ -212,8 +231,11 @@ function uno_api_cart_insert_row($payload, $mapping, $productType, $lines)
     $member = uno_api_cart_member_defaults();
     $legacyProductId = (int) $mapping['legacyProductId'];
     $tourDate = isset($payload['tourDate']) ? trim((string) $payload['tourDate']) : '';
-    $tourTime = isset($payload['tourTime']) ? trim((string) $payload['tourTime']) : '';
+    $tourTime = uno_api_cart_normalize_tour_time(isset($payload['tourTime']) ? $payload['tourTime'] : '');
     $memo = isset($payload['memo']) ? trim((string) $payload['memo']) : '';
+    $adminMemo = isset($payload['adminMemo'])
+        ? trim((string) $payload['adminMemo'])
+        : '';
 
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tourDate)) {
         uno_api_error('DATE_REQUIRED', '투어일이 필요합니다.', 400);
@@ -245,10 +267,15 @@ function uno_api_cart_insert_row($payload, $mapping, $productType, $lines)
         'total_fee4' => uno_api_cart_sum($lines, 'packageTotal'),
         'total_fee_air' => uno_api_cart_sum($lines, 'airfare'),
         'regMemo' => $memo,
+        'adminMemo' => $adminMemo,
+        'adminMemoCancel' => '',
+        'roominfo' => '',
         'status' => 'cart',
         'mb_ip' => uno_api_cart_client_ip(),
         'nation' => $productType,
         'isMobile' => 'N',
+        'memCancelDate' => 0,
+        'adminCancelDate' => 0,
         'del_time' => 0,
     );
 

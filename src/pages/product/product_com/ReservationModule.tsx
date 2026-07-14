@@ -7,6 +7,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { createCartReservation } from "../../../api/reservationApi";
 import BookingBoardingPass from "./BoardingPass";
 import DailyTourCalendar from "./DailyTourCalendar";
 import {
@@ -25,7 +26,6 @@ import {
   isReservationUserLoggedIn,
   navigateInternal,
   navigateToLoginForReservation,
-  saveCartReservation,
   savePendingReservation,
 } from "./reservationStore";
 
@@ -394,11 +394,24 @@ const canIncrease = safePeople < safeMaxPeople;
       totalPrice,
     });
 
-  const handleCart = () => {
+  const handleCart = async () => {
     if (isReservationDisabled) return;
 
-    saveCartReservation(getReservationPayload());
-    navigateInternal(DEFAULT_MY_CART_PAGE_URL);
+    if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
+    try {
+      await createCartReservation(getReservationPayload());
+      navigateInternal(DEFAULT_MY_CART_PAGE_URL);
+    } catch (error) {
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "장바구니에 담지 못했습니다. 다시 시도해 주세요.",
+      );
+    }
   };
 
   const handleReserve = async () => {

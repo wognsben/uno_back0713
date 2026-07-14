@@ -1,5 +1,9 @@
-import type { ReactNode } from "react";
-
+import { useEffect, useState } from "react";
+import {
+  deleteCartReservation,
+  getCart,
+  type CartItemResponse,
+} from "../../api/reservationApi";
 
 const FONT_EN = "var(--font-en)";
 const FONT_KO = "var(--font-ko)";
@@ -43,7 +47,7 @@ const MY_MENU = [
   { label: "예약목록", path: "/mypage/reservations" },
   { label: "1:1 문의하기", path: "/mypage/inquiry" },
   { label: "개인정보 수정", path: "/mypage/profile" },
-  { label: "투어 신청 / 예약 전환", path: "/mypage/tour" },
+  { label: "투어 신청 / 예약 현황", path: "/mypage/tour" },
 ];
 
 function MyPageLayout({
@@ -102,6 +106,16 @@ function MyPageLayout({
   );
 }
 
+const formatMoney = (value?: number) =>
+  typeof value === "number" && value > 0
+    ? `${value.toLocaleString("ko-KR")}원`
+    : "-";
+
+const formatOptions = (item: CartItemResponse) =>
+  item.options
+    .map((option) => `${option.label || "요금 옵션"} ${option.personCount}명`)
+    .join(", ");
+
 const STYLE = `
   .mypage-shell {
     width: 100%;
@@ -134,8 +148,7 @@ const STYLE = `
   }
 
   .mypage-side-kicker,
-  .mypage-heading span,
-  .card-kicker {
+  .mypage-heading span {
     font-family: ${FONT_EN};
     font-size: 11px;
     font-weight: 800;
@@ -151,15 +164,22 @@ const STYLE = `
     letter-spacing: -0.06em;
   }
 
-  .mypage-side p {
-    margin: 0 0 28px;
+  .mypage-side p,
+  .notice-box p,
+  .list-row p {
+    margin: 0;
     font-family: ${FONT_KO};
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     line-height: 1.55;
     letter-spacing: -0.04em;
-    color: rgba(21,21,21,.58);
+    color: rgba(21,21,21,.62);
     word-break: keep-all;
+  }
+
+  .mypage-side p {
+    margin-bottom: 28px;
+    font-size: 13px;
   }
 
   .mypage-nav {
@@ -170,9 +190,9 @@ const STYLE = `
 
   .mypage-nav button,
   .mypage-logout,
-  .card-link,
   .primary-action,
-  .ghost-action {
+  .ghost-action,
+  .danger-action {
     border: none;
     background: transparent;
     cursor: pointer;
@@ -213,8 +233,6 @@ const STYLE = `
     text-align: left;
   }
 
-  .mypage-logout:hover { color: ${BLACK}; }
-
   .mypage-content { min-width: 0; }
 
   .mypage-heading {
@@ -248,39 +266,60 @@ const STYLE = `
     word-break: keep-all;
   }
 
-  .grid { display: grid; gap: 16px; margin-top: 30px; }
-  .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
-
-  .card {
-    border: 1px solid ${BORDER};
-    border-radius: 22px;
-    background: #fff;
-    padding: 24px;
-    box-sizing: border-box;
-    min-height: 150px;
+  .list {
+    margin-top: 30px;
+    border-top: 1px solid ${BORDER};
   }
 
-  .card h3 {
-    margin: 14px 0 10px;
-    font-family: ${FONT_KO};
-    font-size: 22px;
-    line-height: 1.15;
-    letter-spacing: -0.06em;
+  .list-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 128px;
+    gap: 24px;
+    align-items: center;
+    padding: 22px 0;
+    border-bottom: 1px solid ${BORDER};
   }
 
-  .card p, .list-row p, .notice-box p, .field label {
-    margin: 0;
+  .list-row strong {
+    display: block;
+    margin-bottom: 6px;
     font-family: ${FONT_KO};
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.55;
+    font-size: 18px;
+    letter-spacing: -0.05em;
+  }
+
+  .danger-action {
+    justify-self: end;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid rgba(212, 58, 58, .28);
+    border-radius: 999px;
+    color: #c62828;
+    font-size: 12px;
+    font-weight: 850;
     letter-spacing: -0.04em;
-    color: rgba(21,21,21,.62);
-    word-break: keep-all;
   }
 
-  .card-link, .primary-action, .ghost-action {
+  .danger-action:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+  }
+
+  .notice-box {
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    background: rgba(21,21,21,.035);
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .primary-action,
+  .ghost-action {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -292,66 +331,8 @@ const STYLE = `
     letter-spacing: -0.04em;
   }
 
-  .card-link { margin-top: 20px; background: rgba(21,21,21,.045); color: ${BLACK}; }
   .primary-action { background: ${YELLOW}; color: ${BLACK}; }
   .ghost-action { border: 1px solid ${BORDER}; color: ${BLACK}; }
-
-  .list { margin-top: 30px; border-top: 1px solid ${BORDER}; }
-  .list-row {
-    display: grid;
-    grid-template-columns: 150px 1fr 140px;
-    gap: 24px;
-    align-items: center;
-    padding: 22px 0;
-    border-bottom: 1px solid ${BORDER};
-  }
-
-  .list-row strong {
-    font-family: ${FONT_KO};
-    font-size: 18px;
-    letter-spacing: -0.05em;
-  }
-
-  .tag {
-    justify-self: end;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    border-radius: 999px;
-    padding: 0 12px;
-    background: rgba(252,200,0,.18);
-    font-family: ${FONT_KO};
-    font-size: 12px;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-  }
-
-  .notice-box {
-    margin-top: 24px;
-    padding: 20px 22px;
-    border-radius: 18px;
-    background: rgba(21,21,21,.035);
-  }
-
-  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 30px; }
-  .field { display: flex; flex-direction: column; gap: 9px; }
-  .field input, .field textarea {
-    width: 100%;
-    border: 1px solid rgba(21,21,21,.16);
-    border-radius: 16px;
-    background: #fff;
-    padding: 0 16px;
-    box-sizing: border-box;
-    font-family: ${FONT_KO};
-    font-size: 14px;
-    font-weight: 650;
-    outline: none;
-  }
-  .field input { height: 52px; }
-  .field textarea { min-height: 150px; padding-top: 16px; resize: vertical; }
-  .field.full { grid-column: 1 / -1; }
-
-  .actions { display: flex; gap: 10px; margin-top: 24px; }
 
   @media (max-width: 1180px) {
     .mypage-inner { grid-template-columns: 260px minmax(0,1fr); gap: 32px; padding-left: 38px; padding-right: 38px; }
@@ -359,28 +340,106 @@ const STYLE = `
   }
 `;
 
-
-
-const CART_ITEMS = [
-  { id: "CART-001", product: "폼페이 & 나폴리 데이 투어", date: "2026.08.19", deposit: "50,000원", local: "20유로" },
-  { id: "CART-002", product: "로마 바티칸 프리미엄 투어", date: "2026.08.21", deposit: "80,000원", local: "없음" },
-];
-
 export default function MyCart() {
+  const [items, setItems] = useState<CartItemResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [deletingRid, setDeletingRid] = useState<number | string | null>(null);
+
+  const loadCart = () => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    getCart()
+      .then((response) => {
+        setItems(response.items);
+      })
+      .catch((error: Error) => {
+        setItems([]);
+        setErrorMessage(error.message || "장바구니를 불러오지 못했습니다. 로그인 상태를 확인해 주세요.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  const handleDelete = async (rid: number | string) => {
+    if (deletingRid !== null) return;
+
+    setDeletingRid(rid);
+    setErrorMessage("");
+
+    try {
+      await deleteCartReservation(rid);
+      setItems((currentItems) => currentItems.filter((item) => item.rid !== rid));
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "장바구니 항목을 삭제하지 못했습니다.");
+    } finally {
+      setDeletingRid(null);
+    }
+  };
+
   return (
-    <MyPageLayout title="장바구니" eyebrow="CART" description="기존 tour_reg status='cart' 데이터와 연결될 예정입니다." activePath="/mypage/cart">
-      <div className="list">
-        {CART_ITEMS.map((item) => (
-          <div className="list-row" key={item.id}>
-            <p>{item.date}<br />{item.id}</p>
-            <div><strong>{item.product}</strong><p>예약금 {item.deposit} · 현지지불금 {item.local}</p></div>
-            <span className="tag">예약 전</span>
-          </div>
-        ))}
-      </div>
+    <MyPageLayout
+      title="장바구니"
+      eyebrow="CART"
+      description="상품 상세에서 장바구니에 담은 투어만 표시됩니다."
+      activePath="/mypage/cart"
+    >
+      {errorMessage ? (
+        <div className="notice-box">
+          <p>{errorMessage}</p>
+        </div>
+      ) : null}
+
+      {isLoading ? (
+        <div className="notice-box">
+          <p>장바구니를 불러오는 중입니다.</p>
+        </div>
+      ) : items.length ? (
+        <div className="list">
+          {items.map((item) => (
+            <div className="list-row" key={item.rid}>
+              <p>
+                {item.tourDate || "-"}
+                <br />#{item.rid}
+              </p>
+              <div>
+                <strong>{item.title || "상품명 없음"}</strong>
+                <p>{formatOptions(item) || "선택 옵션 없음"}</p>
+                <p>
+                  예약금 {formatMoney(item.totalDeposit)} · 현지지불금{" "}
+                  {formatMoney(item.totalLocalPayment)}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="danger-action"
+                disabled={deletingRid === item.rid}
+                onClick={() => handleDelete(item.rid)}
+              >
+                {deletingRid === item.rid ? "삭제 중" : "삭제"}
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="notice-box">
+          <p>장바구니에 담긴 투어가 없습니다.</p>
+        </div>
+      )}
+
       <div className="actions">
-        <button className="primary-action" type="button" onClick={() => navigateTo("/mypage/tour")}>투어 신청하기</button>
-        <button className="ghost-action" type="button" onClick={() => navigateTo("/product/semi/italy")}>투어 더보기</button>
+        <button className="primary-action" type="button" onClick={() => navigateTo("/product/semi/italy")}>
+          투어 둘러보기
+        </button>
+        <button className="ghost-action" type="button" onClick={loadCart}>
+          새로고침
+        </button>
       </div>
     </MyPageLayout>
   );
