@@ -14,6 +14,7 @@ import {
   type AvailableDate,
   formatAvailablePeople,
   getAvailabilityClassName,
+  getAvailabilityDisplayLabel,
   getAvailabilityStatus,
   getInitialDailyDateId,
 } from "./reservationUtils";
@@ -402,9 +403,9 @@ const isSemiPackage = product.productType === "semi";
 const hasSemiSchedulePrice =
   !isSemiPackage || (activeDate?.deposit ?? 0) > 0 || (activeDate?.totalPrice ?? activeDate?.price ?? 0) > 0;
 const unitPrice = isSemiPackage ? activeDate?.deposit ?? activeDate?.price ?? 0 : activeDate?.price ?? product.basePrice ?? 0;
-const dailyFeeOptions = product.productType === "daily" ? product.feeOptions ?? [] : [];
-const hasDailyFeeOptions = dailyFeeOptions.length > 0;
-const selectedFeeItems = dailyFeeOptions
+const selectableFeeOptions = product.feeOptions ?? [];
+const hasSelectableFeeOptions = selectableFeeOptions.length > 0;
+const selectedFeeItems = selectableFeeOptions
   .map((option) => ({
     feeId: option.id,
     personCount: feeCounts[String(option.id)] ?? 0,
@@ -412,16 +413,16 @@ const selectedFeeItems = dailyFeeOptions
   }))
   .filter((item) => item.personCount > 0);
 const selectedFeePeople = selectedFeeItems.reduce((sum, item) => sum + item.personCount, 0);
-const effectivePeople = hasDailyFeeOptions ? selectedFeePeople : safePeople;
+const effectivePeople = hasSelectableFeeOptions ? selectedFeePeople : safePeople;
 const remainingSeats = Math.max(0, availableSeats - effectivePeople);
-const totalPrice = hasDailyFeeOptions
+const totalPrice = hasSelectableFeeOptions
   ? selectedFeeItems.reduce((sum, item) => sum + item.deposit * item.personCount, 0)
   : unitPrice * safePeople;
-const packageTotal = isSemiPackage ? (activeDate?.totalPrice ?? activeDate?.price ?? 0) * safePeople : totalPrice;
 const canDecrease = safePeople > minPeople;
 const canIncrease = safePeople < safeMaxPeople;
-const isDailySelectionEmpty = hasDailyFeeOptions && selectedFeePeople < 1;
+const isFeeSelectionEmpty = hasSelectableFeeOptions && selectedFeePeople < 1;
 const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
+const statusLabel = status === "soldout" ? "예약 마감" : getAvailabilityDisplayLabel(status);
 
   useEffect(() => {
     setPeopleCount((value) => Math.max(minPeople, Math.min(value, safeMaxPeople)));
@@ -445,16 +446,19 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
       personCount: effectivePeople,
       unitPrice,
       totalPrice,
-      items: hasDailyFeeOptions
+      items: hasSelectableFeeOptions
         ? selectedFeeItems.map((item) => ({
             feeId: item.feeId,
+            legacyPackageScheduleId: isSemiPackage
+              ? activeDate?.legacyPackageScheduleId
+              : undefined,
             personCount: item.personCount,
           }))
         : undefined,
     });
 
   const handleCart = async () => {
-    if (isReservationDisabled || isDailySelectionEmpty || isSemiPriceMissing) return;
+    if (isReservationDisabled || isFeeSelectionEmpty || isSemiPriceMissing) return;
 
     if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
       setIsLoginModalOpen(true);
@@ -474,7 +478,7 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
   };
 
   const handleReserve = async () => {
-    if (isReservationDisabled || isDailySelectionEmpty || isSemiPriceMissing) return;
+    if (isReservationDisabled || isFeeSelectionEmpty || isSemiPriceMissing) return;
 
     if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
       setIsLoginModalOpen(true);
@@ -537,10 +541,13 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
       />
     </div>
   ) : (
-    <BookingBoardingPass
-      outbound={product.ticket?.outbound}
-      inbound={product.ticket?.inbound}
-    />
+    <>
+      <BookingBoardingPass
+        outbound={product.ticket?.outbound}
+        inbound={product.ticket?.inbound}
+      />
+      <p>개별 항공권은 포함되지 않습니다.</p>
+    </>
   )}
 </div>
 
@@ -550,9 +557,9 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
               <strong>{effectivePeople}명</strong>
             </div>
 
-            {hasDailyFeeOptions ? (
+            {hasSelectableFeeOptions ? (
               <div className="pd-book-fee-options">
-                {dailyFeeOptions.map((option) => {
+                {selectableFeeOptions.map((option) => {
                   const optionId = String(option.id);
                   const count = feeCounts[optionId] ?? 0;
                   return (
@@ -618,7 +625,7 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
             )}
 
             <div className="pd-book-side-price">
-  <span>{isSemiPackage ? "Reservation Deposit" : "Total Deposit"}</span>
+  <span>총 예약금</span>
 
   <strong className="pd-book-price">
     <span className="pd-book-price-symbol">₩</span>
@@ -626,23 +633,15 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
       {totalPrice.toLocaleString("ko-KR")}
     </span>
   </strong>
-  {isSemiPackage ? (
-    <p>
-      총 상품금액 {packageTotal.toLocaleString("ko-KR")}원
-      {activeDate?.intermediatePayment ? ` · 중도금 ${activeDate.intermediatePayment.toLocaleString("ko-KR")}원` : ""}
-      {activeDate?.balance ? ` · 잔금 ${activeDate.balance.toLocaleString("ko-KR")}원` : ""}
-      {activeDate?.airfare ? ` · 항공요금 ${activeDate.airfare.toLocaleString("ko-KR")}원` : ""}
-    </p>
-  ) : null}
 </div>
 
-            <p>{formatAvailablePeople(remainingSeats)}</p>
+            <p>{isSemiPackage ? statusLabel : formatAvailablePeople(remainingSeats)}</p>
 
             <div className="pd-book-actions">
               <button
                 type="button"
                 className="pd-book-action is-secondary"
-                disabled={isReservationDisabled || isDailySelectionEmpty || isSemiPriceMissing}
+                disabled={isReservationDisabled || isFeeSelectionEmpty || isSemiPriceMissing}
                 onClick={handleCart}
               >
                 장바구니 담기
@@ -650,7 +649,7 @@ const isSemiPriceMissing = isSemiPackage && !hasSemiSchedulePrice;
               <button
                 type="button"
                 className={`pd-book-action is-primary ${statusClassName}`}
-                disabled={isReservationDisabled || isDailySelectionEmpty || isSemiPriceMissing}
+                disabled={isReservationDisabled || isFeeSelectionEmpty || isSemiPriceMissing}
                 onClick={handleReserve}
               >
                 예약하기

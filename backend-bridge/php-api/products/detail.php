@@ -462,16 +462,7 @@ $packageSchedules = array();
 
 if ($productType === 'semi') {
     $packageSchedules = uno_api_fetch_package_schedules($legacyProductId);
-    foreach ($packageSchedules as $schedule) {
-        $feeOptions[] = array(
-            'id' => $schedule['id'],
-            'label' => $schedule['label'],
-            'deposit' => $schedule['deposit'],
-            'localPayment' => $schedule['middlePayment'],
-            'localPaymentCurrency' => 'KRW',
-            'isDefault' => $schedule['isDefault'],
-        );
-    }
+    $feeOptions = uno_api_fetch_daily_fee_options($legacyProductId);
 } else {
     $feeOptions = uno_api_fetch_daily_fee_options($legacyProductId);
 }

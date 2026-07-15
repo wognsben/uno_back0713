@@ -587,15 +587,17 @@ function uno_api_editor_get_payload($legacyProductId)
         'guideOptions' => uno_api_editor_fetch_guide_options(),
         'ticketFeeOptions' => uno_api_editor_fetch_ticket_fee_options(),
         'productOptions' => uno_api_editor_fetch_product_options($legacyProductId),
+        'feeOptions' => array(),
         'semiSchedules' => array(),
         'dailyFeeOptions' => array(),
         'dailyCalendar' => array(),
     );
 
+    $data['feeOptions'] = uno_api_editor_fetch_daily_fee_options($legacyProductId);
     if ($product['productType'] === 'semi') {
         $data['semiSchedules'] = uno_api_editor_fetch_semi_schedules($legacyProductId);
     } else {
-        $data['dailyFeeOptions'] = uno_api_editor_fetch_daily_fee_options($legacyProductId);
+        $data['dailyFeeOptions'] = $data['feeOptions'];
         $data['dailyCalendar'] = uno_api_editor_fetch_daily_calendar($legacyProductId);
     }
 

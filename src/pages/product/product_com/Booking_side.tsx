@@ -1214,9 +1214,9 @@ export default function BookingSide({
     : selectedDate?.deposit ?? selectedDate?.price ?? 0;
   const maxPeople = Math.max(1, selectedDate?.seats ?? 99);
   const isSelectedSoldOut = !selectedDate || isDateSoldOut(selectedDate);
-  const dailyFeeOptions = product.productType === "daily" ? product.feeOptions ?? [] : [];
-  const hasDailyFeeOptions = dailyFeeOptions.length > 0;
-  const selectedFeeItems = dailyFeeOptions
+  const selectableFeeOptions = product.feeOptions ?? [];
+  const hasSelectableFeeOptions = selectableFeeOptions.length > 0;
+  const selectedFeeItems = selectableFeeOptions
     .map((option) => ({
       feeId: option.id,
       personCount: feeCounts[String(option.id)] ?? 0,
@@ -1224,13 +1224,17 @@ export default function BookingSide({
     }))
     .filter((item) => item.personCount > 0);
   const selectedFeePeople = selectedFeeItems.reduce((sum, item) => sum + item.personCount, 0);
-  const effectivePeopleCount = hasDailyFeeOptions ? selectedFeePeople : peopleCount;
-  const totalPrice = hasDailyFeeOptions
+  const effectivePeopleCount = hasSelectableFeeOptions ? selectedFeePeople : peopleCount;
+  const totalPrice = hasSelectableFeeOptions
     ? selectedFeeItems.reduce((sum, item) => sum + item.deposit * item.personCount, 0)
     : selectedPrice * peopleCount;
-  const isDailySelectionEmpty = hasDailyFeeOptions && selectedFeePeople < 1;
+  const isFeeSelectionEmpty = hasSelectableFeeOptions && selectedFeePeople < 1;
   const isSemiPriceMissing = !isDailyTour && !hasSemiSchedulePrice;
-  const packageTotal = !isDailyTour ? (selectedDate?.totalPrice ?? selectedDate?.price ?? 0) * peopleCount : totalPrice;
+  const selectedStatusLabel = isSelectedSoldOut
+    ? "예약 마감"
+    : selectedDate
+      ? getAvailabilityDisplayLabel(getAvailabilityStatus(selectedDate))
+      : "";
 
   useEffect(() => {
     if (import.meta.env.DEV && isSemiPriceMissing) {
@@ -1315,16 +1319,19 @@ export default function BookingSide({
       personCount: effectivePeopleCount,
       unitPrice: selectedPrice,
       totalPrice,
-      items: hasDailyFeeOptions
+      items: hasSelectableFeeOptions
         ? selectedFeeItems.map((item) => ({
             feeId: item.feeId,
+            legacyPackageScheduleId: !isDailyTour
+              ? selectedDate?.legacyPackageScheduleId
+              : undefined,
             personCount: item.personCount,
           }))
         : undefined,
     });
 
   const handleCart = async () => {
-    if (isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing) return;
+    if (isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing) return;
 
     if (isCartAdded) {
       navigateInternal(cartHref);
@@ -1349,7 +1356,7 @@ export default function BookingSide({
   };
 
   const handleReservation = async () => {
-    if (isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing) return;
+    if (isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing) return;
 
     if (!isReservationUserLoggedIn() && !(await ensureReservationUserLoggedIn())) {
       setIsLoginModalOpen(true);
@@ -1493,7 +1500,7 @@ export default function BookingSide({
                   >
                     {availableDates.map((date) => (
                       <option key={date.id} value={date.id} disabled={isDateSoldOut(date)}>
-                        {formatCompactDateLabel(date.label)} ({date.day}) · {getAvailabilityDisplayLabel(getAvailabilityStatus(date))} · 잔여 {date.seats}석
+                        {formatCompactDateLabel(date.label)} ({date.day}) · {getAvailabilityDisplayLabel(getAvailabilityStatus(date))}
                       </option>
                     ))}
                   </select>
@@ -1505,11 +1512,11 @@ export default function BookingSide({
             <div className="uno-booking-panel__section">
               <div className="uno-booking-side__label-row">
                 <strong className="uno-booking-side__label">인원</strong>
-                <span className="uno-booking-side__hint">최대 {maxPeople}명</span>
+                <span className="uno-booking-side__hint">{isDailyTour ? `최대 ${maxPeople}명` : selectedStatusLabel}</span>
               </div>
-              {hasDailyFeeOptions ? (
+              {hasSelectableFeeOptions ? (
                 <div className="uno-booking-side__fee-options">
-                  {dailyFeeOptions.map((option) => {
+                  {selectableFeeOptions.map((option) => {
                     const optionId = String(option.id);
                     const count = feeCounts[optionId] ?? 0;
                     return (
@@ -1580,21 +1587,16 @@ export default function BookingSide({
           {/* 패널 내 가격 + 확인 */}
           <div className="uno-booking-panel__footer">
             <div className="uno-booking-panel__footer-price">
-              <span className="uno-booking-panel__footer-price-label">{effectivePeopleCount}명 합계</span>
+              <span className="uno-booking-panel__footer-price-label">총 예약금</span>
               <strong className="uno-booking-panel__footer-price-value">
                 <PriceText price={totalPrice} currency={product.currency ?? "KRW"} />
               </strong>
-              {!isDailyTour && packageTotal > 0 ? (
-                <span className="uno-booking-panel__footer-price-label">
-                  총 상품금액 {packageTotal.toLocaleString("ko-KR")}원
-                </span>
-              ) : null}
             </div>
             <div className="uno-booking-panel__footer-actions">
               <button
                 type="button"
                 className={`uno-booking-toolbar__btn is-cart${isCartAdded ? " is-added" : ""}`}
-                disabled={isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing}
+                disabled={isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing}
                 onClick={handleCart}
               >
                 {isCartAdded ? "장바구니 보기" : "장바구니 담기"}
@@ -1602,7 +1604,7 @@ export default function BookingSide({
               <button
                 type="button"
                 className="uno-booking-toolbar__btn is-primary"
-                disabled={isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing}
+                disabled={isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing}
                 onClick={() => { setIsPanelOpen(false); handleReservation(); }}
               >
                 예약 진행하기
@@ -1644,18 +1646,15 @@ export default function BookingSide({
           {/* 오른쪽: 가격 + 버튼 */}
           <div className="uno-booking-toolbar__right">
             <div className="uno-booking-toolbar__price-block">
-              <div className="uno-booking-toolbar__price-label">합계</div>
+              <div className="uno-booking-toolbar__price-label">총 예약금</div>
               <div className="uno-booking-toolbar__price">
                 <PriceText price={totalPrice} currency={product.currency ?? "KRW"} />
-                {!isDailyTour && packageTotal > 0 ? (
-                  <span> / 총 상품금액 {packageTotal.toLocaleString("ko-KR")}원</span>
-                ) : null}
               </div>
             </div>
             <button
               type="button"
               className={`uno-booking-toolbar__btn is-cart${isCartAdded ? " is-added" : ""}`}
-              disabled={isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing}
+              disabled={isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing}
               onClick={handleCart}
             >
               {isCartAdded ? "장바구니 보기" : "장바구니 담기"}
@@ -1671,7 +1670,7 @@ export default function BookingSide({
             <button
               type="button"
               className="uno-booking-toolbar__btn is-primary"
-              disabled={isSelectedSoldOut || isDailySelectionEmpty || isSemiPriceMissing}
+              disabled={isSelectedSoldOut || isFeeSelectionEmpty || isSemiPriceMissing}
               onClick={() => { setIsPanelOpen(false); handleReservation(); }}
             >
               예약 진행하기
