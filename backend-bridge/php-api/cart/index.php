@@ -190,8 +190,6 @@ function uno_api_cart_build_lines($payload, $mapping, $productType)
         if ($productType === 'semi') {
             if (isset($item['legacyPackageScheduleId']) && $item['legacyPackageScheduleId']) {
                 $scheduleId = $item['legacyPackageScheduleId'];
-            } elseif (isset($item['feeId']) && $item['feeId']) {
-                $scheduleId = $item['feeId'];
             } else {
                 $scheduleId = isset($payload['legacyPackageScheduleId']) ? $payload['legacyPackageScheduleId'] : null;
             }

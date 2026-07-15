@@ -178,12 +178,9 @@ function uno_api_draft_build_lines($payload, $mapping, $productType)
         }
 
         if ($productType === 'semi') {
-            $scheduleId = isset($item['feeId']) && $item['feeId']
-                ? $item['feeId']
+            $scheduleId = isset($item['legacyPackageScheduleId']) && $item['legacyPackageScheduleId']
+                ? $item['legacyPackageScheduleId']
                 : (isset($payload['legacyPackageScheduleId']) ? $payload['legacyPackageScheduleId'] : null);
-            if (isset($item['legacyPackageScheduleId']) && $item['legacyPackageScheduleId']) {
-                $scheduleId = $item['legacyPackageScheduleId'];
-            }
             if (!$scheduleId) {
                 uno_api_error('VALIDATION_ERROR', '출발 일정 ID가 필요합니다.', 400);
             }

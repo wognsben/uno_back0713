@@ -231,7 +231,9 @@ export const createReservationPayload = ({
     legacyProductId: product.legacyProductId,
     legacyFeeOptionId: selectedDate?.legacyFeeOptionId ?? product.legacyFeeOptionId,
     legacyPackageScheduleId:
-      selectedDate?.legacyPackageScheduleId ?? product.legacyPackageScheduleId,
+      product.productType === "semi"
+        ? selectedDate?.legacyPackageScheduleId
+        : selectedDate?.legacyPackageScheduleId ?? product.legacyPackageScheduleId,
     items,
     productType: product.productType,
     title: product.title,

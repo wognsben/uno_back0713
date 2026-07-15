@@ -92,6 +92,12 @@ const getAvailabilityQueryRange = () => {
   };
 };
 
+const normalizeDateKey = (value?: string | null) => {
+  const match = String(value ?? "").match(/(\d{4})[-.\/](\d{1,2})[-.\/](\d{1,2})/);
+  if (!match) return "";
+  return `${match[1]}-${match[2].padStart(2, "0")}-${match[3].padStart(2, "0")}`;
+};
+
 /*
   Recently Viewed Storage
   ------------------------------------------
@@ -2429,7 +2435,8 @@ export default function ProductDetail({
         const schedule = remoteProductDetail?.packageSchedules?.find(
           (item) =>
             String(item.id) === String(date.legacyPackageScheduleId) ||
-            item.startDate === date.date,
+            item.startDate === date.date ||
+            normalizeDateKey(item.startDate) === normalizeDateKey(date.date),
         );
         const parsedDate = parseDateId(date.date);
         const price = schedule?.totalPrice ?? schedule?.deposit ?? 0;
