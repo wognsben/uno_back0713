@@ -59,8 +59,71 @@ function uno_renewal_payment_money($value)
 
 function uno_renewal_payment_order_rid($orderNumber)
 {
+    $parsed = uno_renewal_payment_parse_order_number($orderNumber);
+    return $parsed['reservationId'];
+}
+
+function uno_renewal_payment_parse_order_number($orderNumber)
+{
     $parts = explode('_', (string) $orderNumber);
-    return isset($parts[1]) && preg_match('/^\d+$/', $parts[1]) ? (int) $parts[1] : 0;
+    $reservationId = isset($parts[1]) && preg_match('/^\d+$/', $parts[1]) ? (int) $parts[1] : 0;
+    $feeStage = count($parts) > 2 ? implode('_', array_slice($parts, 2)) : '';
+    $stageLabels = array(
+        'fee1' => 'fee1 예약금',
+        'fee2' => 'fee2 중도금',
+        'fee_air' => 'fee_air 항공요금',
+        'fee3' => 'fee3 잔금',
+    );
+
+    return array(
+        'reservationId' => $reservationId,
+        'feeStage' => $feeStage,
+        'feeStageLabel' => $feeStage === '' ? '일반' : (isset($stageLabels[$feeStage]) ? $stageLabels[$feeStage] : $feeStage),
+    );
+}
+
+function uno_renewal_payment_reservation_join_sql()
+{
+    return "left join (
+            select min(id) as id, card_pay
+              from tour_reg
+             where card_pay <> ''
+             group by card_pay
+        ) rk on rk.card_pay = k.ApplNum
+        left join tour_reg r on r.id = rk.id";
+}
+
+function uno_renewal_payment_keyword_sql($safeKeyword)
+{
+    return "(k.OrderNumber like '%{$safeKeyword}%'
+        or k.ApplNum like '%{$safeKeyword}%'
+        or exists (
+            select 1
+              from tour_reg kr
+              left join g5_member km on km.mb_id = kr.mb_id
+              left join g5_write_product kp on kp.wr_id = kr.pid
+             where (kr.card_pay = k.ApplNum
+                or kr.id = cast(substring_index(substring_index(k.OrderNumber, '_', 2), '_', -1) as unsigned))
+               and (km.mb_name like '%{$safeKeyword}%'
+                or km.mb_id like '%{$safeKeyword}%'
+                or kp.wr_subject like '%{$safeKeyword}%')
+        ))";
+}
+
+function uno_renewal_payment_fetch_reservation($rid)
+{
+    $rid = (int) $rid;
+    if ($rid <= 0) {
+        return array();
+    }
+
+    return uno_renewal_payment_fetch(
+        "select r.id as reservation_id, r.mb_id, r.mb_name, r.pid, p.wr_subject, p.ca_name
+           from tour_reg r
+           left join g5_write_product p on p.wr_id = r.pid
+          where r.id = '{$rid}'
+          limit 1"
+    );
 }
 
 $hasPaymentTable = uno_renewal_payment_table_exists('kspay_result');
@@ -81,7 +144,7 @@ if ($dateTo !== '') {
 }
 if ($keyword !== '') {
     $safeKeyword = uno_renewal_payment_escape_db($keyword);
-    $where[] = "(k.OrderNumber like '%{$safeKeyword}%' or k.ApplNum like '%{$safeKeyword}%' or m.mb_name like '%{$safeKeyword}%' or m.mb_id like '%{$safeKeyword}%' or p.wr_subject like '%{$safeKeyword}%')";
+    $where[] = uno_renewal_payment_keyword_sql($safeKeyword);
 }
 if ($status === 'cancelled') {
     $where[] = "k.CancelDate <> ''";
@@ -99,17 +162,11 @@ if ($hasPaymentTable) {
     $totalRow = uno_renewal_payment_fetch(
         "select count(*) as cnt, coalesce(sum(case when k.CancelDate = '' or k.CancelDate is null then k.TotPrice else 0 end), 0) as total
            from kspay_result k
-           left join tour_reg r on r.card_pay = k.ApplNum
-           left join g5_member m on m.mb_id = r.mb_id
-           left join g5_write_product p on p.wr_id = r.pid
           where {$whereSql}"
     );
     $cancelRow = uno_renewal_payment_fetch(
         "select count(*) as cnt
            from kspay_result k
-           left join tour_reg r on r.card_pay = k.ApplNum
-           left join g5_member m on m.mb_id = r.mb_id
-           left join g5_write_product p on p.wr_id = r.pid
           where {$whereSql}
             and k.CancelDate <> ''"
     );
@@ -125,16 +182,25 @@ if ($hasPaymentTable) {
     $result = uno_renewal_payment_query(
         "select k.*, r.id as reservation_id, r.mb_id, r.mb_name, r.pid, p.wr_subject, p.ca_name
            from kspay_result k
-           left join tour_reg r on r.card_pay = k.ApplNum
+           " . uno_renewal_payment_reservation_join_sql() . "
            left join g5_member m on m.mb_id = r.mb_id
            left join g5_write_product p on p.wr_id = r.pid
           where {$whereSql}
-          group by k.OrderNumber
           order by k.AppDate desc, k.id desc
           limit {$offset}, {$perPage}"
     );
 
     while ($row = uno_renewal_payment_fetch_array($result)) {
+        $parsedOrder = uno_renewal_payment_parse_order_number(isset($row['OrderNumber']) ? $row['OrderNumber'] : '');
+        $row['parsed_reservation_id'] = $parsedOrder['reservationId'];
+        $row['fee_stage'] = $parsedOrder['feeStage'];
+        $row['fee_stage_label'] = $parsedOrder['feeStageLabel'];
+        if (empty($row['reservation_id']) && $parsedOrder['reservationId'] > 0) {
+            $fallbackReservation = uno_renewal_payment_fetch_reservation($parsedOrder['reservationId']);
+            if ($fallbackReservation) {
+                $row = array_merge($row, $fallbackReservation);
+            }
+        }
         $rows[] = $row;
     }
 } else {
@@ -241,6 +307,7 @@ uno_renewal_admin_render_pagehead(
           <td>
             <div class="payment-title"><?php echo uno_renewal_admin_escape($row['OrderNumber'] ?? '-'); ?></div>
             <div class="payment-sub">승인 <?php echo uno_renewal_admin_escape($row['ApplNum'] ?? '-'); ?></div>
+            <div class="payment-sub"><?php echo uno_renewal_admin_escape($row['fee_stage_label'] ?? '일반'); ?></div>
           </td>
           <td>
             <div class="payment-title"><?php echo uno_renewal_admin_escape($row['mb_name'] ?? '-'); ?></div>
