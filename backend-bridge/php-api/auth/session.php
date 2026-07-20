@@ -21,6 +21,7 @@ if (!uno_api_is_logged_in()) {
 
 uno_api_success(array(
     'isLoggedIn' => true,
+    'isAdmin' => uno_api_is_admin(),
     'member' => array(
         'id' => isset($member['mb_id']) ? (string) $member['mb_id'] : '',
         'name' => isset($member['mb_name']) ? (string) $member['mb_name'] : '',

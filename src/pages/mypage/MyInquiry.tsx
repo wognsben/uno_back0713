@@ -759,10 +759,10 @@ export default function MyInquiry() {
     event.preventDefault();
 
     const trimmedContent = content.trim();
-    if (trimmedContent.length < 20) {
+    if (trimmedContent.length < 10) {
       setStatus({
         type: "error",
-        message: "문의 내용은 20자 이상 입력해 주세요.",
+        message: "문의 내용은 10자 이상 입력해 주세요.",
       });
       return;
     }

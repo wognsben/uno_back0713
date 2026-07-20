@@ -21,6 +21,25 @@ import { useCommunityPosts } from "../useCommunityPosts";
 
 const LOGIN_PATH = "/login";
 const MY_INQUIRY_PATH = "/mypage/inquiry";
+const ALLOWED_ATTACHMENT_EXTENSIONS = ["jpg", "jpeg", "png", "pdf", "doc", "docx", "xls", "xlsx"];
+const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024;
+
+function formatAttachmentSize(size: number) {
+  if (size >= 1024 * 1024) {
+    return `${(size / 1024 / 1024).toFixed(1)}MB`;
+  }
+
+  if (size >= 1024) {
+    return `${(size / 1024).toFixed(1)}KB`;
+  }
+
+  return `${size}B`;
+}
+
+function isAllowedAttachment(file: File) {
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return ALLOWED_ATTACHMENT_EXTENSIONS.includes(extension) && file.size <= MAX_ATTACHMENT_SIZE;
+}
 
 function navigateTo(path: string) {
   if (typeof window === "undefined") return;
@@ -38,6 +57,8 @@ export default function CommunityInquiryPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
+  const [attachment, setAttachment] = useState<File | null>(null);
+  const [isSecret, setIsSecret] = useState(false);
   const [status, setStatus] = useState<{
     type: "success" | "error";
     message: string;
@@ -81,8 +102,8 @@ export default function CommunityInquiryPage() {
       return;
     }
 
-    if (trimmedContent.length < 20) {
-      setStatus({ type: "error", message: "문의 내용은 20자 이상 입력해 주세요." });
+    if (trimmedContent.length < 10) {
+      setStatus({ type: "error", message: "문의 내용은 10자 이상 입력해 주세요." });
       return;
     }
 
@@ -93,9 +114,13 @@ export default function CommunityInquiryPage() {
       await createCommunityInquiry({
         subject: trimmedSubject,
         content: trimmedContent,
+        attachment,
+        isSecret,
       });
       setSubject("");
       setContent("");
+      setAttachment(null);
+      setIsSecret(false);
       setPage(1);
       reload();
       setStatus({
@@ -111,6 +136,26 @@ export default function CommunityInquiryPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleAttachmentChange = (fileList: FileList | null) => {
+    const file = fileList?.[0] ?? null;
+    if (!file) {
+      setAttachment(null);
+      return;
+    }
+
+    if (!isAllowedAttachment(file)) {
+      setAttachment(null);
+      setStatus({
+        type: "error",
+        message: "JPG, PNG, PDF, DOC, DOCX, XLS, XLSX / 최대 10MB 파일 1개만 첨부할 수 있습니다.",
+      });
+      return;
+    }
+
+    setAttachment(file);
+    setStatus(null);
   };
 
   return (
@@ -151,6 +196,41 @@ export default function CommunityInquiryPage() {
                   placeholder="공개 문의로 남길 내용을 입력해 주세요."
                   rows={7}
                 />
+              </label>
+              <div className="community-inquiry-attachment">
+                <div className="community-inquiry-attachment-controls">
+                  <label className="community-inquiry-file-button" htmlFor="community-inquiry-attachment">
+                    첨부파일 선택
+                  </label>
+                  <button
+                    type="button"
+                    className="community-inquiry-file-remove"
+                    onClick={() => setAttachment(null)}
+                    disabled={!attachment}
+                  >
+                    삭제
+                  </button>
+                  <span className="community-inquiry-file-name">
+                    {attachment
+                      ? `${attachment.name} (${formatAttachmentSize(attachment.size)})`
+                      : "선택된 파일 없음"}
+                  </span>
+                </div>
+                <input
+                  id="community-inquiry-attachment"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"
+                  onChange={(event) => handleAttachmentChange(event.target.files)}
+                />
+                <p>JPG, PNG, PDF, DOC, DOCX, XLS, XLSX / 최대 10MB / 1개</p>
+              </div>
+              <label className="community-inquiry-secret">
+                <input
+                  type="checkbox"
+                  checked={isSecret}
+                  onChange={(event) => setIsSecret(event.target.checked)}
+                />
+                <span>비밀글로 작성</span>
               </label>
               {status && (
                 <p className={`community-inquiry-status is-${status.type}`}>

@@ -24,6 +24,7 @@ export type AuthSessionMember = {
 
 export type AuthSessionResponse = {
   isLoggedIn: boolean;
+  isAdmin?: boolean;
   member: AuthSessionMember | null;
 };
 
@@ -411,6 +412,7 @@ export type InquiryCreateRequest = {
   subject?: string;
   content: string;
   attachment?: File | null;
+  isSecret?: boolean;
 };
 
 export type InquiryCreateResponse = {
@@ -425,6 +427,14 @@ export type InquiryCreateResponse = {
 
 export type CommunityInquiryCreateResponse = {
   board: "qna";
+  postId: number | string;
+  subject: string;
+  createdAt: string;
+  nextUrl?: string;
+};
+
+export type CommunityReviewCreateResponse = {
+  board: "write";
   postId: number | string;
   subject: string;
   createdAt: string;
@@ -448,9 +458,26 @@ export type CommunityBoardPost = {
   author?: string;
   date: string;
   views?: number;
+  isSecret?: boolean;
+  canView?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
+  canAnswer?: boolean;
+  attachments?: InquiryAttachment[];
+  comments?: CommunityPostComment[];
   href: string;
   isPinned?: boolean;
   isNew?: boolean;
+};
+
+export type CommunityPostComment = {
+  id: string;
+  author?: string;
+  contentHtml?: string;
+  contentText?: string;
+  date: string;
+  canEdit?: boolean;
+  canDelete?: boolean;
 };
 
 export type CommunityPostsResponse = {
@@ -469,6 +496,13 @@ export type CommunityPostDetailResponse = {
   type: CommunityBoardType;
   board: string;
   item: CommunityBoardPost;
+};
+
+export type CommunityInquiryAnswerResponse = {
+  board: "qna" | "write";
+  postId: number | string;
+  commentId: number | string;
+  createdAt: string;
 };
 
 export type InquiryMessage = {
@@ -651,6 +685,9 @@ export const createInquiry = (body: InquiryCreateRequest) => {
           }
           formData.append("content", body.content);
           formData.append("attachment", attachment);
+          if (body.isSecret) {
+            formData.append("isSecret", "1");
+          }
           return formData;
         })()
       : body;
@@ -664,11 +701,47 @@ export const createInquiry = (body: InquiryCreateRequest) => {
 export const getMyInquiryThread = () =>
   unoApiData<InquiryThreadResponse>("/inquiries/index.php");
 
-export const createCommunityInquiry = (body: InquiryCreateRequest) =>
-  unoApiData<CommunityInquiryCreateResponse>("/community/inquiries/create.php", {
+export const createCommunityInquiry = (body: InquiryCreateRequest) => {
+  const attachment = body.attachment ?? null;
+  const requestBody =
+    typeof File !== "undefined" && attachment instanceof File
+      ? (() => {
+          const formData = new FormData();
+          if (body.subject) {
+            formData.append("subject", body.subject);
+          }
+          formData.append("content", body.content);
+          formData.append("attachment", attachment);
+          return formData;
+        })()
+      : body;
+
+  return unoApiData<CommunityInquiryCreateResponse>("/community/inquiries/create.php", {
     method: "POST",
-    body,
+    body: requestBody,
   });
+};
+
+export const createCommunityReview = (body: InquiryCreateRequest) => {
+  const attachment = body.attachment ?? null;
+  const requestBody =
+    typeof File !== "undefined" && attachment instanceof File
+      ? (() => {
+          const formData = new FormData();
+          if (body.subject) {
+            formData.append("subject", body.subject);
+          }
+          formData.append("content", body.content);
+          formData.append("attachment", attachment);
+          return formData;
+        })()
+      : body;
+
+  return unoApiData<CommunityReviewCreateResponse>("/community/reviews/create.php", {
+    method: "POST",
+    body: requestBody,
+  });
+};
 
 export const getCommunityPosts = (query: {
   type: CommunityBoardType;
@@ -683,3 +756,53 @@ export const getCommunityPostDetail = (
 ) => unoApiData<CommunityPostDetailResponse>("/community/posts.php", {
   query: { type, id },
 });
+
+export const createCommunityInquiryAnswer = (
+  postId: number | string,
+  content: string,
+  board: "qna" | "write" = "qna",
+) =>
+  unoApiData<CommunityInquiryAnswerResponse>("/community/inquiries/answer.php", {
+    method: "POST",
+    body: { action: "create", board, postId, content },
+  });
+
+export const updateCommunityComment = (
+  board: "qna" | "write",
+  postId: number | string,
+  commentId: number | string,
+  content: string,
+) =>
+  unoApiData<{ updated: boolean }>("/community/inquiries/answer.php", {
+    method: "POST",
+    body: { action: "update", board, postId, commentId, content },
+  });
+
+export const deleteCommunityComment = (
+  board: "qna" | "write",
+  postId: number | string,
+  commentId: number | string,
+) =>
+  unoApiData<{ deleted: boolean }>("/community/inquiries/answer.php", {
+    method: "POST",
+    body: { action: "delete", board, postId, commentId },
+  });
+
+export const updateCommunityPost = (
+  board: "qna" | "write",
+  postId: number | string,
+  body: { subject: string; content: string; isSecret?: boolean },
+) =>
+  unoApiData<{ updated: boolean }>("/community/post.php", {
+    method: "POST",
+    body: { action: "update", board, postId, ...body },
+  });
+
+export const deleteCommunityPost = (
+  board: "qna" | "write",
+  postId: number | string,
+) =>
+  unoApiData<{ deleted: boolean }>("/community/post.php", {
+    method: "POST",
+    body: { action: "delete", board, postId },
+  });

@@ -473,8 +473,8 @@ $subject = uno_api_inquiry_text(
     255
 );
 
-if (uno_api_inquiry_text_length($content) < 20) {
-    uno_api_error('VALIDATION_ERROR', '문의 내용은 한글 기준 20자 이상 입력해 주세요.', 400);
+if (uno_api_inquiry_text_length($content) < 10) {
+    uno_api_error('VALIDATION_ERROR', '문의 내용은 한글 기준 10자 이상 입력해 주세요.', 400);
 }
 
 if ($subject === '') {

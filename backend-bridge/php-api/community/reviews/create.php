@@ -1,9 +1,7 @@
 <?php
 /*
- * community/inquiries/create.php
- * 커뮤니티 공개 문의를 기존 Gnuboard 공개 Q&A 게시판(qna)에 저장하는 API endpoint입니다.
- * 마이페이지 1:1 문의(cusTour)와 분리된 공개 글 등록만 담당합니다.
- * 로그인 확인, 스팸 가드, 게시판 카운트 갱신, 새 글 기록을 함께 처리합니다.
+ * community/reviews/create.php
+ * Public community travel review writer for legacy bo_table=write.
  */
 
 require_once dirname(dirname(__DIR__)) . '/_bootstrap.php';
@@ -12,7 +10,7 @@ require_once dirname(dirname(__DIR__)) . '/_spam_guard.php';
 uno_api_require_method('POST');
 uno_api_require_login();
 
-function uno_api_public_inquiry_read_json()
+function uno_api_public_review_read_payload()
 {
     if (isset($_POST['subject']) || isset($_POST['content'])) {
         return array(
@@ -31,7 +29,7 @@ function uno_api_public_inquiry_read_json()
     return $payload;
 }
 
-function uno_api_public_inquiry_escape($value)
+function uno_api_public_review_escape($value)
 {
     if (function_exists('sql_escape_string')) {
         return sql_escape_string((string) $value);
@@ -44,7 +42,7 @@ function uno_api_public_inquiry_escape($value)
     return addslashes((string) $value);
 }
 
-function uno_api_public_inquiry_text($value, $maxLength)
+function uno_api_public_review_text($value, $maxLength)
 {
     $text = html_entity_decode(strip_tags((string) $value), ENT_QUOTES, 'UTF-8');
     $text = preg_replace("/\r\n|\r|\n/", "\n", $text);
@@ -58,7 +56,7 @@ function uno_api_public_inquiry_text($value, $maxLength)
     return substr($text, 0, $maxLength);
 }
 
-function uno_api_public_inquiry_text_length($value)
+function uno_api_public_review_text_length($value)
 {
     if (function_exists('mb_strlen')) {
         return mb_strlen((string) $value, 'UTF-8');
@@ -67,17 +65,17 @@ function uno_api_public_inquiry_text_length($value)
     return strlen((string) $value);
 }
 
-function uno_api_public_inquiry_write_table()
+function uno_api_public_review_write_table()
 {
     global $g5;
     $prefix = isset($g5['write_prefix']) && $g5['write_prefix'] !== ''
         ? $g5['write_prefix']
         : 'g5_write_';
 
-    return $prefix . 'qna';
+    return $prefix . 'write';
 }
 
-function uno_api_public_inquiry_tables()
+function uno_api_public_review_tables()
 {
     global $g5;
 
@@ -94,7 +92,7 @@ function uno_api_public_inquiry_tables()
     );
 }
 
-function uno_api_public_inquiry_insert_id()
+function uno_api_public_review_insert_id()
 {
     if (function_exists('sql_insert_id')) {
         return sql_insert_id();
@@ -107,7 +105,7 @@ function uno_api_public_inquiry_insert_id()
     return 0;
 }
 
-function uno_api_public_inquiry_next_num($table)
+function uno_api_public_review_next_num($table)
 {
     if (function_exists('get_next_num')) {
         return get_next_num($table);
@@ -118,7 +116,7 @@ function uno_api_public_inquiry_next_num($table)
     return $min - 1;
 }
 
-function uno_api_public_inquiry_query($sql, $message)
+function uno_api_public_review_query($sql, $message)
 {
     $result = sql_query($sql, false);
 
@@ -129,7 +127,7 @@ function uno_api_public_inquiry_query($sql, $message)
     return $result;
 }
 
-function uno_api_public_inquiry_has_attachment()
+function uno_api_public_review_has_attachment()
 {
     return isset($_FILES['attachment'])
         && is_array($_FILES['attachment'])
@@ -137,9 +135,9 @@ function uno_api_public_inquiry_has_attachment()
         && (int) $_FILES['attachment']['error'] !== UPLOAD_ERR_NO_FILE;
 }
 
-function uno_api_public_inquiry_validate_attachment()
+function uno_api_public_review_validate_attachment()
 {
-    if (!uno_api_public_inquiry_has_attachment()) {
+    if (!uno_api_public_review_has_attachment()) {
         return null;
     }
 
@@ -168,20 +166,19 @@ function uno_api_public_inquiry_validate_attachment()
         'tmpName' => $file['tmp_name'],
         'sourceName' => $sourceName,
         'extension' => $extension,
-        'size' => $size,
     );
 }
 
-function uno_api_public_inquiry_upload_dir()
+function uno_api_public_review_upload_dir()
 {
     if (defined('G5_DATA_PATH')) {
-        return G5_DATA_PATH . '/file/qna';
+        return G5_DATA_PATH . '/file/write';
     }
 
-    return dirname(__DIR__, 3) . '/bbs/data/file/qna';
+    return dirname(__DIR__, 3) . '/bbs/data/file/write';
 }
 
-function uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now)
+function uno_api_public_review_save_attachment($table, $wrId, $attachment, $now)
 {
     if (!$attachment) {
         return;
@@ -192,7 +189,7 @@ function uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now
         return;
     }
 
-    $uploadDir = uno_api_public_inquiry_upload_dir();
+    $uploadDir = uno_api_public_review_upload_dir();
     if (!is_dir($uploadDir)) {
         @mkdir($uploadDir, defined('G5_DIR_PERMISSION') ? G5_DIR_PERMISSION : 0755, true);
     }
@@ -201,7 +198,7 @@ function uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now
         uno_api_error('SERVER_ERROR', '첨부파일 저장 폴더를 사용할 수 없습니다.', 500);
     }
 
-    $storedFile = date('YmdHis') . '_qna_' . $wrId . '_' . bin2hex(random_bytes(4)) . '.' . $attachment['extension'];
+    $storedFile = date('YmdHis') . '_write_' . $wrId . '_' . bin2hex(random_bytes(4)) . '.' . $attachment['extension'];
     $destination = $uploadDir . '/' . $storedFile;
 
     if (!move_uploaded_file($attachment['tmpName'], $destination)) {
@@ -214,15 +211,15 @@ function uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now
     $width = $imageInfo && isset($imageInfo[0]) ? (int) $imageInfo[0] : 0;
     $height = $imageInfo && isset($imageInfo[1]) ? (int) $imageInfo[1] : 0;
     $type = $imageInfo ? 1 : 0;
-    $tables = uno_api_public_inquiry_tables();
-    $source = uno_api_public_inquiry_escape($attachment['sourceName']);
-    $stored = uno_api_public_inquiry_escape($storedFile);
+    $tables = uno_api_public_review_tables();
+    $source = uno_api_public_review_escape($attachment['sourceName']);
+    $stored = uno_api_public_review_escape($storedFile);
     $fileSize = (int) @filesize($destination);
-    $safeNow = uno_api_public_inquiry_escape($now);
+    $safeNow = uno_api_public_review_escape($now);
 
-    uno_api_public_inquiry_query(
+    uno_api_public_review_query(
         "insert into {$tables['boardFileTable']}
-            set bo_table = 'qna',
+            set bo_table = 'write',
                 wr_id = '{$wrId}',
                 bf_no = '0',
                 bf_source = '{$source}',
@@ -237,44 +234,17 @@ function uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now
         '첨부파일 정보를 저장하지 못했습니다.'
     );
 
-    uno_api_public_inquiry_query(
+    uno_api_public_review_query(
         "update {$table} set wr_file = '1' where wr_id = '{$wrId}'",
         '첨부파일 개수를 갱신하지 못했습니다.'
     );
-}
-
-function uno_api_public_inquiry_assert_spam_policy($subject, $content, $memberId)
-{
-    if (uno_api_is_admin()) {
-        return;
-    }
-
-    $combined = $subject . "\n" . $content;
-    $normalized = function_exists('mb_strtolower')
-        ? mb_strtolower($combined, 'UTF-8')
-        : strtolower($combined);
-    $blockedKeywords = array(
-        '성인', '섹스', '조건만남', '출장마사지', '오피', '유흥', '바카라', '카지노', '토토',
-        '도박', '대출', '작업대출', '불법', '텔레그램', 'telegram', 't.me/', 'bit.ly', 'tinyurl'
-    );
-
-    foreach ($blockedKeywords as $keyword) {
-        $needle = function_exists('mb_strtolower') ? mb_strtolower($keyword, 'UTF-8') : strtolower($keyword);
-        if ($needle !== '' && strpos($normalized, $needle) !== false) {
-            uno_api_error('SPAM_BLOCKED', '스팸 의심 문구가 포함되어 등록할 수 없습니다.', 429);
-        }
-    }
-
-    if (uno_spam_guard_recent_post_count('qna', $memberId, uno_spam_guard_client_ip(), 10) >= 1) {
-        uno_api_error('RATE_LIMITED', '공개 문의는 10분에 한 번만 등록할 수 있습니다.', 429);
-    }
 }
 
 if (!function_exists('sql_query') || !function_exists('sql_fetch')) {
     uno_api_error('SERVER_ERROR', 'Gnuboard DB 함수를 찾을 수 없습니다.', 500);
 }
 
-$payload = uno_api_public_inquiry_read_json();
+$payload = uno_api_public_review_read_payload();
 $member = uno_api_member();
 $memberId = isset($member['mb_id']) ? (string) $member['mb_id'] : '';
 $memberName = isset($member['mb_name']) && $member['mb_name'] !== ''
@@ -283,44 +253,41 @@ $memberName = isset($member['mb_name']) && $member['mb_name'] !== ''
 $memberEmail = isset($member['mb_email']) ? (string) $member['mb_email'] : '';
 $memberPassword = isset($member['mb_password']) ? (string) $member['mb_password'] : '';
 
-$subject = uno_api_public_inquiry_text(isset($payload['subject']) ? $payload['subject'] : '', 255);
-$content = uno_api_public_inquiry_text(isset($payload['content']) ? $payload['content'] : '', 65536);
-$isSecret = !empty($payload['isSecret']);
+$subject = uno_api_public_review_text(isset($payload['subject']) ? $payload['subject'] : '', 255);
+$content = uno_api_public_review_text(isset($payload['content']) ? $payload['content'] : '', 65536);
 
-if (uno_api_public_inquiry_text_length($subject) < 2) {
-    uno_api_error('VALIDATION_ERROR', '문의 제목을 입력해 주세요.', 400);
+if (uno_api_public_review_text_length($subject) < 2) {
+    uno_api_error('VALIDATION_ERROR', '리뷰 제목을 입력해 주세요.', 400);
 }
 
-if (uno_api_public_inquiry_text_length($content) < 10) {
-    uno_api_error('VALIDATION_ERROR', '문의 내용은 10자 이상 입력해 주세요.', 400);
+if (uno_api_public_review_text_length($content) < 10) {
+    uno_api_error('VALIDATION_ERROR', '리뷰 내용은 10자 이상 입력해 주세요.', 400);
 }
 
-uno_api_public_inquiry_assert_spam_policy($subject, $content, $memberId);
-uno_spam_guard_assert_write('qna', $subject, $content, $memberId, uno_api_is_admin());
-$attachment = uno_api_public_inquiry_validate_attachment();
+uno_spam_guard_assert_write('write', $subject, $content, $memberId, uno_api_is_admin());
+$attachment = uno_api_public_review_validate_attachment();
 
-$tables = uno_api_public_inquiry_tables();
-$board = sql_fetch("select * from {$tables['boardTable']} where bo_table = 'qna' limit 1");
+$tables = uno_api_public_review_tables();
+$board = sql_fetch("select * from {$tables['boardTable']} where bo_table = 'write' limit 1");
 if (!$board || empty($board['bo_table'])) {
-    uno_api_error('SERVER_ERROR', '공개 문의 게시판을 찾을 수 없습니다.', 500);
+    uno_api_error('SERVER_ERROR', '여행후기 게시판을 찾을 수 없습니다.', 500);
 }
 
-$table = uno_api_public_inquiry_write_table();
-$wrNum = uno_api_public_inquiry_next_num($table);
+$table = uno_api_public_review_write_table();
+$wrNum = uno_api_public_review_next_num($table);
 $now = defined('G5_TIME_YMDHIS') ? G5_TIME_YMDHIS : date('Y-m-d H:i:s');
 $ip = isset($_SERVER['REMOTE_ADDR']) ? (string) $_SERVER['REMOTE_ADDR'] : '';
 
-$safeSubject = uno_api_public_inquiry_escape($subject);
-$safeContent = uno_api_public_inquiry_escape($content);
-$safeMemberId = uno_api_public_inquiry_escape($memberId);
-$safeMemberName = uno_api_public_inquiry_escape(function_exists('clean_xss_tags') ? clean_xss_tags($memberName) : $memberName);
-$safeEmail = uno_api_public_inquiry_escape($memberEmail);
-$safePassword = uno_api_public_inquiry_escape($memberPassword);
-$safeNow = uno_api_public_inquiry_escape($now);
-$safeIp = uno_api_public_inquiry_escape($ip);
-$safeOption = $isSecret ? 'secret' : '';
+$safeSubject = uno_api_public_review_escape($subject);
+$safeContent = uno_api_public_review_escape($content);
+$safeMemberId = uno_api_public_review_escape($memberId);
+$safeMemberName = uno_api_public_review_escape(function_exists('clean_xss_tags') ? clean_xss_tags($memberName) : $memberName);
+$safeEmail = uno_api_public_review_escape($memberEmail);
+$safePassword = uno_api_public_review_escape($memberPassword);
+$safeNow = uno_api_public_review_escape($now);
+$safeIp = uno_api_public_review_escape($ip);
 
-uno_api_public_inquiry_query(
+uno_api_public_review_query(
     "insert into {$table}
         set wr_num = '{$wrNum}',
             wr_reply = '',
@@ -329,7 +296,7 @@ uno_api_public_inquiry_query(
             wr_is_comment = '0',
             wr_comment = '0',
             ca_name = '',
-            wr_option = '{$safeOption}',
+            wr_option = '',
             wr_subject = '{$safeSubject}',
             wr_content = '{$safeContent}',
             wr_link1 = '',
@@ -360,38 +327,38 @@ uno_api_public_inquiry_query(
             wr_8 = '',
             wr_9 = '',
             wr_10 = ''",
-    '공개 문의 저장에 실패했습니다.'
+    '여행후기 저장에 실패했습니다.'
 );
 
-$wrId = uno_api_public_inquiry_insert_id();
+$wrId = uno_api_public_review_insert_id();
 if (!$wrId) {
-    uno_api_error('SERVER_ERROR', '공개 문의 저장에 실패했습니다.', 500);
+    uno_api_error('SERVER_ERROR', '여행후기 저장에 실패했습니다.', 500);
 }
 
-uno_api_public_inquiry_query(
+uno_api_public_review_query(
     "update {$table} set wr_parent = '{$wrId}' where wr_id = '{$wrId}'",
-    '공개 문의 원글 연결에 실패했습니다.'
+    '여행후기 부모 연결에 실패했습니다.'
 );
 
-uno_api_public_inquiry_save_attachment($table, $wrId, $attachment, $now);
+uno_api_public_review_save_attachment($table, $wrId, $attachment, $now);
 
-uno_api_public_inquiry_query(
+uno_api_public_review_query(
     "insert into {$tables['boardNewTable']}
         (bo_table, wr_id, wr_parent, bn_datetime, mb_id)
      values
-        ('qna', '{$wrId}', '{$wrId}', '{$safeNow}', '{$safeMemberId}')",
-    '공개 문의 새 글 기록에 실패했습니다.'
+        ('write', '{$wrId}', '{$wrId}', '{$safeNow}', '{$safeMemberId}')",
+    '여행후기 새 글 기록에 실패했습니다.'
 );
 
-uno_api_public_inquiry_query(
-    "update {$tables['boardTable']} set bo_count_write = bo_count_write + 1 where bo_table = 'qna'",
-    '공개 문의 게시판 카운트 갱신에 실패했습니다.'
+uno_api_public_review_query(
+    "update {$tables['boardTable']} set bo_count_write = bo_count_write + 1 where bo_table = 'write'",
+    '여행후기 게시판 카운트 갱신에 실패했습니다.'
 );
 
 uno_api_success(array(
-    'board' => 'qna',
+    'board' => 'write',
     'postId' => (int) $wrId,
     'subject' => $subject,
     'createdAt' => $now,
-    'nextUrl' => '/community/inquiry',
+    'nextUrl' => '/community/review',
 ), 201);

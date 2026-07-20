@@ -56,6 +56,112 @@ function uno_api_community_board_table($boTable)
     return $prefix . $boTable;
 }
 
+function uno_api_community_table_name($key, $fallback)
+{
+    global $g5;
+    return isset($g5[$key]) && $g5[$key] !== '' ? $g5[$key] : $fallback;
+}
+
+function uno_api_community_file_url($boTable, $wrId, $fileNo)
+{
+    return '/api/community/file.php'
+        . '?bo_table=' . rawurlencode($boTable)
+        . '&wr_id=' . (int) $wrId
+        . '&no=' . (int) $fileNo;
+}
+
+function uno_api_community_is_secret($row)
+{
+    $option = isset($row['wr_option']) ? (string) $row['wr_option'] : '';
+    return strpos(',' . $option . ',', ',secret,') !== false || trim($option) === 'secret';
+}
+
+function uno_api_community_is_owner($row)
+{
+    $memberId = uno_api_current_member_id();
+    return $memberId !== '' && isset($row['mb_id']) && (string) $row['mb_id'] === $memberId;
+}
+
+function uno_api_community_can_view($row, $boTable)
+{
+    if ($boTable !== 'qna' || !uno_api_community_is_secret($row)) {
+        return true;
+    }
+
+    return uno_api_is_admin() || uno_api_community_is_owner($row);
+}
+
+function uno_api_community_fetch_files($boTable, $wrId)
+{
+    $wrId = (int) $wrId;
+    if ($wrId <= 0 || !in_array($boTable, array('qna', 'write'), true)) {
+        return array();
+    }
+
+    $safeBoard = uno_api_community_escape($boTable);
+    $boardFileTable = uno_api_community_table_name('board_file_table', 'g5_board_file');
+    $result = sql_query(
+        "select bf_no, bf_source, bf_file, bf_filesize
+           from {$boardFileTable}
+          where bo_table = '{$safeBoard}'
+            and wr_id = '{$wrId}'
+            and bf_file <> ''
+          order by bf_no asc",
+        false
+    );
+
+    $files = array();
+    while ($result && ($row = sql_fetch_array($result))) {
+        $fileNo = isset($row['bf_no']) ? (int) $row['bf_no'] : 0;
+        $files[] = array(
+            'no' => $fileNo,
+            'source' => isset($row['bf_source']) && $row['bf_source'] !== '' ? (string) $row['bf_source'] : (string) ($row['bf_file'] ?? ''),
+            'size' => isset($row['bf_filesize']) ? (int) $row['bf_filesize'] : 0,
+            'url' => uno_api_community_file_url($boTable, $wrId, $fileNo),
+        );
+    }
+
+    return $files;
+}
+
+function uno_api_community_comment_payload($row)
+{
+    $id = isset($row['wr_id']) ? (int) $row['wr_id'] : 0;
+    return array(
+        'id' => (string) $id,
+        'author' => isset($row['wr_name']) ? uno_api_community_text($row['wr_name'], 80) : '',
+        'contentHtml' => isset($row['wr_content']) ? (string) $row['wr_content'] : '',
+        'contentText' => uno_api_community_text(isset($row['wr_content']) ? $row['wr_content'] : ''),
+        'date' => isset($row['wr_datetime']) ? substr((string) $row['wr_datetime'], 0, 16) : '',
+        'canEdit' => uno_api_is_admin(),
+        'canDelete' => uno_api_is_admin(),
+    );
+}
+
+function uno_api_community_fetch_comments($table, $threadId)
+{
+    $threadId = (int) $threadId;
+    if ($threadId <= 0) {
+        return array();
+    }
+
+    $result = sql_query(
+        "select wr_id, wr_content, wr_name, mb_id, wr_datetime
+           from {$table}
+          where wr_parent = '{$threadId}'
+            and wr_is_comment = '1'
+          order by wr_comment asc, wr_comment_reply asc, wr_id asc",
+        false
+    );
+
+    $comments = array();
+    while ($result && ($row = sql_fetch_array($result))) {
+        $comments[] = uno_api_community_comment_payload($row);
+    }
+
+    return $comments;
+}
+
 function uno_api_community_board_map($type)
 {
     $map = array(
@@ -71,8 +177,13 @@ function uno_api_community_board_map($type)
 function uno_api_community_post_payload($row, $type, $boTable, $contentLength = 160)
 {
     $id = isset($row['wr_id']) ? (int) $row['wr_id'] : 0;
-    $subject = uno_api_community_text(isset($row['wr_subject']) ? $row['wr_subject'] : '', 255);
-    $contentHtml = isset($row['wr_content']) ? (string) $row['wr_content'] : '';
+    $isSecret = uno_api_community_is_secret($row);
+    $canView = uno_api_community_can_view($row, $boTable);
+    $isOwner = uno_api_community_is_owner($row);
+    $subject = $canView
+        ? uno_api_community_text(isset($row['wr_subject']) ? $row['wr_subject'] : '', 255)
+        : '비밀글입니다.';
+    $contentHtml = $canView && isset($row['wr_content']) ? (string) $row['wr_content'] : '';
     $date = isset($row['wr_datetime']) ? substr((string) $row['wr_datetime'], 0, 10) : '';
     $hrefType = $type === 'qna' ? 'inquiry' : $type;
 
@@ -89,6 +200,13 @@ function uno_api_community_post_payload($row, $type, $boTable, $contentLength = 
         'date' => $date,
         'views' => isset($row['wr_hit']) ? (int) $row['wr_hit'] : 0,
         'href' => '/community/' . $hrefType . '/' . $id,
+        'isSecret' => $isSecret,
+        'canView' => $canView,
+        'canEdit' => uno_api_is_admin() || $isOwner,
+        'canDelete' => uno_api_is_admin() || $isOwner,
+        'canAnswer' => ($boTable === 'qna' || $boTable === 'write') && uno_api_is_admin(),
+        'attachments' => $canView && in_array($boTable, array('qna', 'write'), true) ? uno_api_community_fetch_files($boTable, $id) : array(),
+        'comments' => array(),
         'isPinned' => false,
         'isNew' => $date === date('Y-m-d'),
     );
@@ -117,7 +235,7 @@ $postId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 if ($postId > 0) {
     $row = sql_fetch(
-        "select wr_id, wr_subject, wr_content, wr_name, mb_id, wr_datetime, wr_hit
+        "select wr_id, wr_subject, wr_content, wr_name, mb_id, wr_datetime, wr_hit, wr_option
            from {$table}
           where wr_is_comment = 0
             and wr_id = '{$postId}'
@@ -128,12 +246,21 @@ if ($postId > 0) {
         uno_api_error('PRODUCT_NOT_FOUND', 'Community post was not found.', 404);
     }
 
+    if (!uno_api_community_can_view($row, $boTable)) {
+        uno_api_error('PERMISSION_DENIED', '비밀글은 작성자와 관리자만 확인할 수 있습니다.', 403);
+    }
+
     sql_query("update {$table} set wr_hit = wr_hit + 1 where wr_id = '{$postId}'", false);
+
+    $item = uno_api_community_post_payload($row, $type, $boTable, 0);
+    if ($boTable === 'qna' || $boTable === 'write') {
+        $item['comments'] = uno_api_community_fetch_comments($table, $postId);
+    }
 
     uno_api_success(array(
         'type' => $type,
         'board' => $boTable,
-        'item' => uno_api_community_post_payload($row, $type, $boTable, 0),
+        'item' => $item,
     ));
 }
 
@@ -148,7 +275,7 @@ $total = isset($countRow['cnt']) ? (int) $countRow['cnt'] : 0;
 $totalPages = $total > 0 ? (int) ceil($total / $perPage) : 1;
 
 $result = sql_query(
-    "select wr_id, wr_subject, wr_content, wr_name, mb_id, wr_datetime, wr_hit
+    "select wr_id, wr_subject, wr_content, wr_name, mb_id, wr_datetime, wr_hit, wr_option
        from {$table}
        {$where}
       order by wr_num asc, wr_reply asc

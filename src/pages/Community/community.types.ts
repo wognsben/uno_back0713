@@ -31,6 +31,26 @@ export type CommunityPost = {
     author?: string;
     date: string;
     views?: number;
+    isSecret?: boolean;
+    canView?: boolean;
+    canEdit?: boolean;
+    canDelete?: boolean;
+    canAnswer?: boolean;
+    attachments?: {
+        no: number;
+        source: string;
+        size: number;
+        url: string;
+    }[];
+    comments?: {
+        id: string;
+        author?: string;
+        contentHtml?: string;
+        contentText?: string;
+        date: string;
+        canEdit?: boolean;
+        canDelete?: boolean;
+    }[];
     thumbnail?: string;
     href: string;
     status?: CommunityStatus;
@@ -67,6 +87,12 @@ export type CommunityCardProps = {
 
 export type CommunityDetailProps = {
     item: CommunityPost;
+    canAnswer?: boolean;
+    onAnswerSubmit?: (content: string) => Promise<void>;
+    onPostUpdate?: (payload: { subject: string; content: string; isSecret?: boolean }) => Promise<void>;
+    onPostDelete?: () => Promise<void>;
+    onCommentUpdate?: (commentId: string, content: string) => Promise<void>;
+    onCommentDelete?: (commentId: string) => Promise<void>;
 };
 
 export type CommunitySearchProps = {

@@ -280,7 +280,7 @@
 .community-card-title,
 .community-card h2 {
     margin: 0;
-    font-size: clamp(20px, 1.65vw, 28px);
+    font-size: clamp(18px, 1.45vw, 24px);
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 1.25;
@@ -320,6 +320,45 @@
 }
 
 /* ==========================================================
+   Review Write
+========================================================== */
+
+.community-review-write {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.34fr) minmax(0, 0.66fr);
+    gap: clamp(24px, 4vw, 56px);
+    margin-bottom: 52px;
+    border-top: 1px solid rgba(17, 17, 17, 0.16);
+    border-bottom: 1px solid rgba(17, 17, 17, 0.16);
+    padding: clamp(28px, 4vw, 48px) 0;
+}
+
+.community-review-write-head span {
+    display: block;
+    color: rgba(17, 17, 17, 0.46);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+.community-review-write-head h2 {
+    margin: 14px 0 12px;
+    color: #111111;
+    font-size: clamp(30px, 4vw, 52px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+
+.community-review-write-head p {
+    margin: 0;
+    color: rgba(17, 17, 17, 0.58);
+    font-size: 15px;
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+/* ==========================================================
    Detail
 ========================================================== */
 
@@ -336,7 +375,7 @@
 .community-detail-title,
 .community-detail h1 {
     margin: 20px 0 0;
-    font-size: clamp(40px, 5vw, 76px);
+    font-size: clamp(32px, 4.2vw, 58px);
     font-weight: 500;
     letter-spacing: -0.06em;
     line-height: 1.02;
@@ -344,10 +383,78 @@
 
 .community-detail-info {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     margin-top: 24px;
     font-size: 13px;
     color: rgba(17, 17, 17, 0.45);
+}
+
+.community-detail-actions,
+.community-detail-edit-actions,
+.community-detail-comment-actions,
+.community-detail-comment-edit > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.community-detail-actions button,
+.community-detail-edit-actions button,
+.community-detail-comment-actions button,
+.community-detail-comment-edit button {
+    min-height: 38px;
+    border: 1px solid rgba(17, 17, 17, 0.18);
+    background: #ffffff;
+    padding: 0 12px;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.community-detail-edit-form {
+    display: grid;
+    gap: 10px;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.14);
+    padding: 28px 0;
+}
+
+.community-detail-edit-form input,
+.community-detail-edit-form textarea,
+.community-detail-comment-edit textarea {
+    width: 100%;
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: #ffffff;
+    padding: 12px;
+    color: #111111;
+    font-family: var(--font-ko);
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.6;
+    outline: none;
+}
+
+.community-detail-edit-form textarea,
+.community-detail-comment-edit textarea {
+    resize: vertical;
+}
+
+.community-detail-secret-toggle,
+.community-inquiry-secret {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(17, 17, 17, 0.62);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.community-detail-secret-toggle input,
+.community-inquiry-secret input {
+    width: 16px;
+    height: 16px;
 }
 
 .community-detail-thumbnail {
@@ -363,6 +470,162 @@
     font-size: 17px;
     line-height: 1.9;
     color: rgba(17, 17, 17, 0.72);
+    white-space: pre-wrap;
+}
+
+.community-detail-content div,
+.community-detail-content p {
+    white-space: pre-wrap;
+}
+
+.community-detail-attachments {
+    margin: -18px 0 44px;
+    border-top: 1px solid rgba(17, 17, 17, 0.12);
+    padding-top: 24px;
+}
+
+.community-detail-attachments h2 {
+    margin: 0 0 14px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.community-detail-attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.community-detail-attachment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: #ffffff;
+    padding: 10px 12px;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.community-detail-attachment-link small {
+    color: rgba(17, 17, 17, 0.48);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.community-detail-comments,
+.community-detail-answer {
+    border-top: 1px solid rgba(17, 17, 17, 0.14);
+    padding: 34px 0;
+}
+
+.community-detail-comments h2,
+.community-detail-answer h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.community-detail-comment-list {
+    display: grid;
+    gap: 14px;
+}
+
+.community-detail-comment {
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    background: #fafafa;
+    padding: 18px;
+}
+
+.community-detail-comment-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: rgba(17, 17, 17, 0.48);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.community-detail-comment-head strong {
+    color: #111111;
+}
+
+.community-detail-comment-body {
+    color: rgba(17, 17, 17, 0.72);
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.community-detail-comment-body div,
+.community-detail-comment-body p {
+    white-space: pre-wrap;
+}
+
+.community-detail-answer form {
+    display: grid;
+    gap: 12px;
+}
+
+.community-detail-answer textarea {
+    width: 100%;
+    min-height: 132px;
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: #ffffff;
+    padding: 14px;
+    color: #111111;
+    font-family: var(--font-ko);
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+}
+
+.community-detail-answer textarea:focus {
+    border-color: #111111;
+}
+
+.community-detail-answer button {
+    width: max-content;
+    min-width: 132px;
+    min-height: 44px;
+    border: 1px solid #111111;
+    background: #111111;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.community-detail-answer button:disabled {
+    cursor: wait;
+    opacity: 0.62;
+}
+
+.community-detail-answer-status {
+    margin: 0;
+    border-left: 3px solid rgba(17, 17, 17, 0.24);
+    padding-left: 12px;
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.55;
+}
+
+.community-detail-answer-status.is-success {
+    border-left-color: #008f68;
+    color: #008f68;
+}
+
+.community-detail-answer-status.is-error {
+    border-left-color: #c4392d;
+    color: #c4392d;
 }
 
 .community-detail-footer {
@@ -757,6 +1020,69 @@
     border-color: #111111;
 }
 
+.community-inquiry-attachment {
+    display: grid;
+    gap: 8px;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    background: #fafafa;
+    padding: 12px;
+}
+
+.community-inquiry-attachment input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    padding: 0;
+}
+
+.community-inquiry-attachment-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.community-inquiry-file-button,
+.community-inquiry-file-remove {
+    min-width: 0;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(17, 17, 17, 0.18);
+    background: #ffffff;
+    padding: 0 12px;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.community-inquiry-file-remove:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.community-inquiry-file-name {
+    color: rgba(17, 17, 17, 0.56);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.community-inquiry-attachment p {
+    margin: 0;
+    color: rgba(17, 17, 17, 0.5);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.community-inquiry-form .community-inquiry-secret {
+    display: inline-flex;
+}
+
 .community-inquiry-status {
     margin: 2px 0 0;
     border-left: 3px solid rgba(17, 17, 17, 0.24);
@@ -822,6 +1148,7 @@
     .community-card--event a,
     .community-card--event .community-card-link,
     .community-faq,
+    .community-review-write,
     .community-inquiry-grid {
         grid-template-columns: 1fr;
     }
